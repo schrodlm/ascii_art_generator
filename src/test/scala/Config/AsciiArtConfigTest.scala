@@ -2,38 +2,48 @@ package Config
 
 import Config.Tables.{CustomTable, DefaultTable, PaulBorkesTable}
 import Filter.{AsciiArtFilter, GrayscaleImageFilter, RGBImageFilter}
-import org.mockito.MockitoSugar.mock
+import Image.{AsciiArt, GrayscaleImage, RGBImage}
 import org.scalatest.{FlatSpec, Matchers}
 
 class AsciiArtConfigTest extends FlatSpec with Matchers {
+  private def newAsciiFilter(): AsciiArtFilter = new AsciiArtFilter {
+    def apply(image: AsciiArt): AsciiArt = image
+  }
+  private def newGrayscaleFilter(): GrayscaleImageFilter = new GrayscaleImageFilter {
+    def apply(image: GrayscaleImage): GrayscaleImage = image
+  }
+  private def newRgbFilter(): RGBImageFilter = new RGBImageFilter {
+    def apply(image: RGBImage): RGBImage = image
+  }
+
 
   "AsciiArtConfig builder" should "correctly build a config with all properties set" in {
-    val source = mock[ImageSource]
-    val output = mock[ImageOutput]
+    val source = PathImageSource("x.png")
+    val output = ConsoleImageOutput()
     val chars = Array('.', ':', '-', '=', '+', '*')
-    val mockAsciiFilter = mock[AsciiArtFilter]
-    val mockGrayscaleFilter = mock[GrayscaleImageFilter]
-    val mockRgbFilter = mock[RGBImageFilter]
+    val asciiFilter = newAsciiFilter()
+    val grayscaleFilter = newGrayscaleFilter()
+    val rgbFilter = newRgbFilter()
 
     val config = new AsciiArtConfig.Builder()
       .withImageSource(source)
       .withImageOutput(output)
       .withTable(chars)
-      .withFilters(Array(mockAsciiFilter, mockGrayscaleFilter, mockRgbFilter))
+      .withFilters(Array(asciiFilter, grayscaleFilter, rgbFilter))
       .build()
 
     config.imageSource shouldBe source
     config.imageOutput shouldBe output
     config.table shouldBe a[CustomTable]
-    config.asciiFilters should contain theSameElementsAs Array(mockAsciiFilter)
-    config.grayscaleFilters should contain theSameElementsAs Array(mockGrayscaleFilter)
-    config.rgbImageFilters should contain theSameElementsAs Array(mockRgbFilter)
+    config.asciiFilters should contain theSameElementsAs Array(asciiFilter)
+    config.grayscaleFilters should contain theSameElementsAs Array(grayscaleFilter)
+    config.rgbImageFilters should contain theSameElementsAs Array(rgbFilter)
 
   }
 
   it should "build when name of available tables are provided" in {
-    val source = mock[ImageSource]
-    val output = mock[ImageOutput]
+    val source = PathImageSource("x.png")
+    val output = ConsoleImageOutput()
     val PaulBorkeTable = "PaulBorkes"
 
 
@@ -48,8 +58,8 @@ class AsciiArtConfigTest extends FlatSpec with Matchers {
   }
 
   it should "build when no custom table is provided (by using default table)" in {
-    val source = mock[ImageSource]
-    val output = mock[ImageOutput]
+    val source = PathImageSource("x.png")
+    val output = ConsoleImageOutput()
 
     val config = new AsciiArtConfig.Builder()
       .withImageSource(source)
@@ -64,7 +74,7 @@ class AsciiArtConfigTest extends FlatSpec with Matchers {
 
   it should "throw an exception when image source is not set" in {
 
-    val output = mock[ImageOutput]
+    val output = ConsoleImageOutput()
 
     an[IllegalStateException] should be thrownBy {
       new AsciiArtConfig.Builder()
@@ -75,7 +85,7 @@ class AsciiArtConfigTest extends FlatSpec with Matchers {
 
   it should "throw an exception when image output is not set" in {
 
-    val source = mock[ImageSource]
+    val source = PathImageSource("x.png")
 
     an[IllegalStateException] should be thrownBy {
       new AsciiArtConfig.Builder()
@@ -86,8 +96,8 @@ class AsciiArtConfigTest extends FlatSpec with Matchers {
 
   it should "build correctly with only image source and image output " in {
 
-    val source = mock[ImageSource]
-    val output = mock[ImageOutput]
+    val source = PathImageSource("x.png")
+    val output = ConsoleImageOutput()
 
      val config =  new AsciiArtConfig.Builder()
         .withImageSource(source)
@@ -104,13 +114,13 @@ class AsciiArtConfigTest extends FlatSpec with Matchers {
   }
 
   it should "correctly categorize filters" in {
-    val asciiFilter = mock[AsciiArtFilter]
-    val grayscaleFilter = mock[GrayscaleImageFilter]
-    val rgbFilter = mock[RGBImageFilter]
+    val asciiFilter = newAsciiFilter()
+    val grayscaleFilter = newGrayscaleFilter()
+    val rgbFilter = newRgbFilter()
 
     val config = new AsciiArtConfig.Builder()
-      .withImageSource(mock[ImageSource])
-      .withImageOutput(mock[ImageOutput])
+      .withImageSource(PathImageSource("x.png"))
+      .withImageOutput(ConsoleImageOutput())
       .addFilter(asciiFilter)
       .addFilter(grayscaleFilter)
       .addFilter(rgbFilter)
@@ -123,8 +133,8 @@ class AsciiArtConfigTest extends FlatSpec with Matchers {
 
   it should "throw an exception when provided with two image sources" in {
 
-    val source1 = mock[ImageSource]
-    val source2 = mock[ImageSource]
+    val source1 = PathImageSource("x.png")
+    val source2 = PathImageSource("x.png")
 
     an[IllegalArgumentException] should be thrownBy {
       new AsciiArtConfig.Builder()

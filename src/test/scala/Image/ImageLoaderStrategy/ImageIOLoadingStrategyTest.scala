@@ -1,30 +1,26 @@
 package Image.ImageLoaderStrategy
 
 import Image.RGBImage
-import org.mockito.MockitoSugar.{mock, verify, when}
 import org.scalatest.{FlatSpec, Matchers}
 
 import java.awt.image.BufferedImage
-import java.io.File
-import javax.imageio.ImageIO
 
 class ImageIOLoadingStrategyTest extends FlatSpec with Matchers {
   "ImageIOLoadingStrategy" should "correctly load an image and apply the converter" in {
     val path = "test.jpg"
-    val mockBufferedImage = mock[BufferedImage]
-    val mockRGBImage = mock[RGBImage]
-
-    // Mock converter function
-    val mockConverter: BufferedImage => RGBImage = mock[BufferedImage => RGBImage]
-    when(mockConverter.apply(mockBufferedImage)).thenReturn(mockRGBImage)
-
-    val strategy = new ImageIOLoadingStrategy(path, mockConverter) {
-      override protected def readImage(path: String): BufferedImage = mockBufferedImage
+    val bufferedImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB)
+    val rgbImage = new RGBImage(1, 1, Array(0))
+    var converted: Option[BufferedImage] = None
+    val converter: BufferedImage => RGBImage = { image =>
+      converted = Some(image)
+      rgbImage
     }
 
-    val resultImage = strategy.load()
+    val strategy = new ImageIOLoadingStrategy(path, converter) {
+      override protected def readImage(path: String): BufferedImage = bufferedImage
+    }
 
-    resultImage shouldBe mockRGBImage
-    verify(mockConverter).apply(mockBufferedImage)
+    strategy.load() shouldBe rgbImage
+    converted shouldBe Some(bufferedImage)
   }
 }
