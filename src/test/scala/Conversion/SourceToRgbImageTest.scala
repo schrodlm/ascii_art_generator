@@ -3,9 +3,10 @@ package Conversion
 import Config.PathImageSource
 import Image.ImageLoaderStrategy.ImageLoadingStrategy
 import Image.RGBImage
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class SourceToRgbImageTest extends FlatSpec with Matchers {
+class SourceToRgbImageTest extends AnyFlatSpec with Matchers {
 
   "SourceToRgbImage" should "load the image through the injected loading strategy" in {
     val image = new RGBImage(1, 1, Array(0))

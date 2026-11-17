@@ -1,11 +1,12 @@
 package Image.ImageLoaderStrategy
 
 import Image.RGBImage
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 import java.awt.image.BufferedImage
 
-class ImageIOLoadingStrategyTest extends FlatSpec with Matchers {
+class ImageIOLoadingStrategyTest extends AnyFlatSpec with Matchers {
   "ImageIOLoadingStrategy" should "correctly load an image and apply the converter" in {
     val path = "test.jpg"
     val bufferedImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB)

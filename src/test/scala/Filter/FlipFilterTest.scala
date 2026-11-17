@@ -1,9 +1,10 @@
 package Filter
 
 import Image.AsciiArt
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class FlipFilterTest extends FlatSpec with Matchers{
+class FlipFilterTest extends AnyFlatSpec with Matchers{
 
   val width = 2
   val height = 3

@@ -1,11 +1,12 @@
 package Config
 
 import Image.AsciiArt
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 import java.io.{BufferedReader, File, FileReader}
 
-class PathImageOutputTest extends FlatSpec with Matchers {
+class PathImageOutputTest extends AnyFlatSpec with Matchers {
 
   "PathImageOutput" should "correctly save ASCII art to a file" in {
     val asciiArt = new AsciiArt(10, 5, Array.fill(50)('x'))
@@ -23,7 +24,7 @@ class PathImageOutputTest extends FlatSpec with Matchers {
   }
 }
 
-class ConsoleImageOutputTest extends FlatSpec with Matchers {
+class ConsoleImageOutputTest extends AnyFlatSpec with Matchers {
 
   "ConsoleImageOutput" should "correctly print ASCII art to the console" in {
     val asciiArt = new AsciiArt(10, 5, Array.fill(50)('x'))

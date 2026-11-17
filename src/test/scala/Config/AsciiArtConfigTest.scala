@@ -3,9 +3,10 @@ package Config
 import Config.Tables.{CustomTable, DefaultTable, PaulBorkesTable}
 import Filter.{AsciiArtFilter, GrayscaleImageFilter, RGBImageFilter}
 import Image.{AsciiArt, GrayscaleImage, RGBImage}
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class AsciiArtConfigTest extends FlatSpec with Matchers {
+class AsciiArtConfigTest extends AnyFlatSpec with Matchers {
   private def newAsciiFilter(): AsciiArtFilter = new AsciiArtFilter {
     def apply(image: AsciiArt): AsciiArt = image
   }

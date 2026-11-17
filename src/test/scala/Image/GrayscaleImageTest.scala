@@ -1,8 +1,9 @@
 package Image
 
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class GrayscaleImageTest extends FlatSpec with Matchers{
+class GrayscaleImageTest extends AnyFlatSpec with Matchers{
 
   "GrayscaleImage" should "correctly extract grayscale values from pixel data" in {
     val width = 2

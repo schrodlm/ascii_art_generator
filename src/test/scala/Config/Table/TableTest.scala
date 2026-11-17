@@ -1,10 +1,11 @@
 package Config.Table
 
 import Config.Tables.{LinearTable, NonLinearTable}
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 
-class LinearTableTest extends FlatSpec with Matchers {
+class LinearTableTest extends AnyFlatSpec with Matchers {
 
   "LinearTable" should "correctly map values to characters" in {
     val chars = Array('a', 'b', 'c', 'd')
@@ -16,7 +17,7 @@ class LinearTableTest extends FlatSpec with Matchers {
   }
 }
 
-class NonLinearTableTest extends FlatSpec with Matchers {
+class NonLinearTableTest extends AnyFlatSpec with Matchers {
 
   "NonLinearTable" should "correctly map values to characters" in {
     val chars = Array((85, 'a'), (170, 'b'), (255, 'c'))

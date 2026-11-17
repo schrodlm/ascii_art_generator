@@ -1,11 +1,12 @@
 package Conversion
 
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 import java.awt.Color
 import java.awt.image.BufferedImage
 
-class BufferedToRgbConverterTest extends FlatSpec with Matchers{
+class BufferedToRgbConverterTest extends AnyFlatSpec with Matchers{
   "BufferedToRgbConverter" should "correctly convert a BufferedImage to an RGBImage" in {
     val width = 10
     val height = 10

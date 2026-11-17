@@ -1,9 +1,10 @@
 package Filter
 
 import Image.GrayscaleImage
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class BrightnessFilterTest extends FlatSpec with Matchers{
+class BrightnessFilterTest extends AnyFlatSpec with Matchers{
 
   "BrightnessFilter" should "correctly adjust the brightness of a GrayscaleImage" in {
     val width = 10

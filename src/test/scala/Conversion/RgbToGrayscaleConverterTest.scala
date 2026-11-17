@@ -1,9 +1,10 @@
 package Conversion
 
 import Image.RGBImage
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class RgbToGrayscaleConverterTest extends FlatSpec with Matchers {
+class RgbToGrayscaleConverterTest extends AnyFlatSpec with Matchers {
   "RgbToGrayscaleConverter" should "correctly convert an RGBImage to a GrayscaleImage" in {
     val width = 10
     val height = 10

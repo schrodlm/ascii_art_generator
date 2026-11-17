@@ -2,9 +2,10 @@ package Conversion
 
 import Config.Tables.Table
 import Image.GrayscaleImage
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class GrayscaleToAsciiConverterTest extends FlatSpec with Matchers {
+class GrayscaleToAsciiConverterTest extends AnyFlatSpec with Matchers {
   "GrayscaleToAsciiConverter" should "correctly convert a GrayscaleImage to AsciiArt" in {
     val width = 10
     val height = 10

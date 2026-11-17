@@ -3,9 +3,10 @@ package InputParser
 import Config.Tables.CustomTable
 import Config.{ConsoleImageOutput, PathImageOutput, PathImageSource, RandomImageSource}
 import Filter.{BrightnessFilter, FlipFilter, ScaleFilter}
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class CommandLineParserTest extends FlatSpec with Matchers {
+class CommandLineParserTest extends AnyFlatSpec with Matchers {
 
   "CommandLineParser" should "correctly parse image source and output options" in {
 
