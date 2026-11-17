@@ -1,19 +1,13 @@
-import Config.AsciiArtConfig
+import Conversion.SourceToRgbImage
 import InputParser.CommandLineParser
-import Processing.AsciiArtFacade
+import Processing.AsciiArtPipeline
 
-
-object Main{
-
+object Main {
   def main(args: Array[String]): Unit = {
-
-    val parser: CommandLineParser = new CommandLineParser(args)
-    val config: AsciiArtConfig = parser.parse().getOrElse(return)
-
-
-    val asciiArtFacade = new AsciiArtFacade(config)
-    val asciiArt = asciiArtFacade.process()
-
+    val parser = new CommandLineParser(args)
+    val config = parser.parse().getOrElse(return)
+    val image = new SourceToRgbImage(config.imageSource).convert()
+    val asciiArt = AsciiArtPipeline.render(image, config.render)
     config.imageOutput.save(asciiArt)
   }
 }
