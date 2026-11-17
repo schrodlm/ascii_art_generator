@@ -38,7 +38,7 @@ class ScaleFilterTest extends AnyFlatSpec with Matchers {
 
     scaledArt.getWidth() shouldBe (width / scale).toInt
     scaledArt.getHeight() shouldBe (height / scale).toInt
-    scaledArt.getData shouldBe Array(
+    scaledArt.getData() shouldBe Array(
       'a', 'a', 'b', 'b', 'c', 'c', 'd', 'd',
       'a', 'a', 'b', 'b', 'c', 'c', 'd', 'd',
       'e', 'e', 'f', 'f', 'g', 'g', 'h', 'h',
