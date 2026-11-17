@@ -22,10 +22,7 @@ sealed trait ImageOutput {
 case class PathImageOutput(path: String) extends ImageOutput {
   def save(asciiArt: AsciiArt): Unit = {
 
-    val asciiString = asciiArt.getData()
-      .grouped(asciiArt.getWidth())
-      .map(_.map(_.toChar).mkString)
-      .mkString("\n")
+    val asciiString = asciiArt.toText
 
     // Write the ASCII string to a file
     val file = new BufferedWriter(new FileWriter(path))
@@ -47,10 +44,7 @@ case class ConsoleImageOutput() extends ImageOutput {
 
   def save(asciiArt: AsciiArt): Unit = {
 
-    val asciiString = asciiArt.getData()
-      .grouped(asciiArt.getWidth())
-      .map(_.map(_.toChar).mkString)
-      .mkString("\n")
+    val asciiString = asciiArt.toText
 
     // Print the ASCII string to the console
     println(asciiString)

@@ -10,4 +10,6 @@ package asciiart.core.image
  * @param data Array containing ASCII values representing the art.
  */
 class AsciiArt(width: Int, height: Int, data: Array[Int]) extends BaseImage(width,height,data){
+  def toText: String =
+    getData().grouped(getWidth()).map(_.map(_.toChar).mkString).mkString("\n")
 }
