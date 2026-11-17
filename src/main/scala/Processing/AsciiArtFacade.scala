@@ -35,19 +35,19 @@ class AsciiArtFacade(config: AsciiArtConfig) {
     val rgbImage = loadRgbImage(config.imageSource)
 
     // Apply the configured RGB filters to the image.
-    val filteredRgbImage = applyFilters(rgbImage, config.rgbImageFilters)
+    val filteredRgbImage = applyFilters(rgbImage, config.render.rgbFilters)
 
     // Convert the filtered RGB image to grayscale.
     val grayscaleImage = convertToGrayscale(filteredRgbImage)
 
     // Apply the configured grayscale filters to the image.
-    val filteredGrayscaleImage = applyFilters(grayscaleImage, config.grayscaleFilters)
+    val filteredGrayscaleImage = applyFilters(grayscaleImage, config.render.grayscaleFilters)
 
     // Convert the filtered grayscale image to ASCII art.
-    val asciiArt = convertToAsciiArt(filteredGrayscaleImage, config.table)
+    val asciiArt = convertToAsciiArt(filteredGrayscaleImage, config.render.table)
 
     // Apply the configured ASCII filters to the ASCII art.
-    val filteredAsciiArt = applyFilters(asciiArt, config.asciiFilters)
+    val filteredAsciiArt = applyFilters(asciiArt, config.render.asciiFilters)
 
     // Return the final ASCII art.
     filteredAsciiArt
@@ -71,7 +71,7 @@ class AsciiArtFacade(config: AsciiArtConfig) {
    * @return The generated ASCII art.
    */
   private def convertToAsciiArt(image: GrayscaleImage, table: Table): AsciiArt = {
-    new GrayscaleToAsciiConverter(image, config.table).convert()
+    new GrayscaleToAsciiConverter(image, config.render.table).convert()
   }
 
   /**
@@ -92,7 +92,7 @@ class AsciiArtFacade(config: AsciiArtConfig) {
    * @tparam T The type of the image (e.g., RGBImage, GrayscaleImage, AsciiArt).
    * @return The image after all filters have been applied.
    */
-  private def applyFilters[T <: Image](image: T, filters: Array[_ <: Filter[T]]): T = {
+  private def applyFilters[T <: Image](image: T, filters: Seq[Filter[T]]): T = {
     filters.foldLeft(image) { (currentImage, filter) =>
       filter.apply(currentImage)
     }

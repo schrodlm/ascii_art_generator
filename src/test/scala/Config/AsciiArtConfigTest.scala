@@ -30,15 +30,17 @@ class AsciiArtConfigTest extends AnyFlatSpec with Matchers {
       .withImageSource(source)
       .withImageOutput(output)
       .withTable(chars)
-      .withFilters(Array(asciiFilter, grayscaleFilter, rgbFilter))
+      .addFilter(asciiFilter)
+      .addFilter(grayscaleFilter)
+      .addFilter(rgbFilter)
       .build()
 
     config.imageSource shouldBe source
     config.imageOutput shouldBe output
-    config.table shouldBe a[CustomTable]
-    config.asciiFilters should contain theSameElementsAs Array(asciiFilter)
-    config.grayscaleFilters should contain theSameElementsAs Array(grayscaleFilter)
-    config.rgbImageFilters should contain theSameElementsAs Array(rgbFilter)
+    config.render.table shouldBe a[CustomTable]
+    config.render.asciiFilters should contain theSameElementsAs Array(asciiFilter)
+    config.render.grayscaleFilters should contain theSameElementsAs Array(grayscaleFilter)
+    config.render.rgbFilters should contain theSameElementsAs Array(rgbFilter)
 
   }
 
@@ -54,7 +56,7 @@ class AsciiArtConfigTest extends AnyFlatSpec with Matchers {
       .withTable(PaulBorkeTable)
       .build()
 
-    config.table shouldBe a[PaulBorkesTable]
+    config.render.table shouldBe a[PaulBorkesTable]
 
   }
 
@@ -69,7 +71,7 @@ class AsciiArtConfigTest extends AnyFlatSpec with Matchers {
 
     config.imageSource shouldBe source
     config.imageOutput shouldBe output
-    config.table shouldBe a[DefaultTable]
+    config.render.table shouldBe a[DefaultTable]
   }
 
 
@@ -107,10 +109,10 @@ class AsciiArtConfigTest extends AnyFlatSpec with Matchers {
 
     config.imageSource shouldBe source
     config.imageOutput shouldBe output
-    config.table shouldBe a[DefaultTable]
-    config.asciiFilters shouldBe empty
-    config.grayscaleFilters shouldBe empty
-    config.rgbImageFilters shouldBe empty
+    config.render.table shouldBe a[DefaultTable]
+    config.render.asciiFilters shouldBe empty
+    config.render.grayscaleFilters shouldBe empty
+    config.render.rgbFilters shouldBe empty
 
   }
 
@@ -127,9 +129,9 @@ class AsciiArtConfigTest extends AnyFlatSpec with Matchers {
       .addFilter(rgbFilter)
       .build()
 
-    config.asciiFilters should contain only asciiFilter
-    config.grayscaleFilters should contain only grayscaleFilter
-    config.rgbImageFilters should contain only rgbFilter
+    config.render.asciiFilters should contain only asciiFilter
+    config.render.grayscaleFilters should contain only grayscaleFilter
+    config.render.rgbFilters should contain only rgbFilter
   }
 
   it should "throw an exception when provided with two image sources" in {
