@@ -8,7 +8,7 @@ lazy val commonSettings = Seq(
 
 lazy val root = project
   .in(file("."))
-  .aggregate(core.jvm, core.js, cli)
+  .aggregate(core.jvm, core.js, cli, web)
   .settings(name := "ascii-art")
 
 // The platform-free image pipeline, compiled for both the JVM and the browser.
@@ -20,3 +20,12 @@ lazy val core = crossProject(JVMPlatform, JSPlatform)
 lazy val cli = project
   .dependsOn(core.jvm)
   .settings(commonSettings)
+
+lazy val web = project
+  .enablePlugins(ScalaJSPlugin)
+  .dependsOn(core.js)
+  .settings(
+    commonSettings,
+    libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "2.8.1",
+    scalaJSUseMainModuleInitializer := true
+  )
