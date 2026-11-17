@@ -1,9 +1,22 @@
-name := "ASCIIArt"
+ThisBuild / scalaVersion := "2.13.18"
+ThisBuild / version := "1.0.0"
 
-version := "1.0.0"
+lazy val commonSettings = Seq(
+  scalacOptions ++= Seq("-deprecation", "-feature"),
+  libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.20" % Test
+)
 
-scalaVersion := "2.13.18"
+lazy val root = project
+  .in(file("."))
+  .aggregate(core.jvm, core.js, cli)
+  .settings(name := "ascii-art")
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.20" % Test
+// The platform-free image pipeline, compiled for both the JVM and the browser.
+lazy val core = crossProject(JVMPlatform, JSPlatform)
+  .crossType(CrossType.Pure)
+  .in(file("core"))
+  .settings(commonSettings)
 
-scalacOptions ++= Seq("-deprecation", "-feature")
+lazy val cli = project
+  .dependsOn(core.jvm)
+  .settings(commonSettings)

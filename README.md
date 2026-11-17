@@ -28,7 +28,7 @@ cd ascii-art-generator
 Run the application using sbt:
 
 ```
-sbt run [command line arguments]
+sbt "cli/run [command line arguments]"
 
 ```
 
