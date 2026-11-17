@@ -1,6 +1,6 @@
 package InputParser
 
-import Config.AsciiArtConfig
+import Config.CliConfig
 /**
  * A trait defining a parser for ASCII art configuration.
  *
@@ -11,15 +11,15 @@ import Config.AsciiArtConfig
 trait Parser {
 
   /**
-   * Parses the configuration data and constructs an `AsciiArtConfig` object.
+   * Parses the configuration data and constructs a `CliConfig` object.
    *
    * This method is responsible for reading and interpreting the configuration data necessary
    * to generate ASCII art. It should handle the parsing logic specific to the data source or format
-   * and construct an `AsciiArtConfig` object based on the parsed data.
+   * and construct a `CliConfig` object based on the parsed data.
    *
-   * @return An `Option[AsciiArtConfig]` which is `Some(AsciiArtConfig)` if parsing is successful,
+   * @return An `Option[CliConfig]` which is `Some(CliConfig)` if parsing is successful,
    *         or `None` if parsing fails or the data is invalid. This approach allows for handling
    *         parsing errors or missing data gracefully.
    */
-  def parse() : Option[AsciiArtConfig]
+  def parse() : Option[CliConfig]
 }

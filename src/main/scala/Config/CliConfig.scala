@@ -9,13 +9,13 @@ import Config.Tables.{CustomTable, TableNameMapper}
  * What the CLI was asked to do: where the image comes from, where the art
  * goes, and how to render it.
  */
-final case class AsciiArtConfig(
+final case class CliConfig(
   imageSource: ImageSource,
   imageOutput: ImageOutput,
   render: RenderSettings
 )
 
-object AsciiArtConfig {
+object CliConfig {
 
   /** Fluent builder used by the command line parser. */
   class Builder {
@@ -56,11 +56,11 @@ object AsciiArtConfig {
       this
     }
 
-    def build(): AsciiArtConfig = {
+    def build(): CliConfig = {
       if (imageSource.isEmpty || imageOutput.isEmpty) {
         throw new IllegalStateException("Missing required fields")
       }
-      AsciiArtConfig(imageSource.get, imageOutput.get, render)
+      CliConfig(imageSource.get, imageOutput.get, render)
     }
   }
 }

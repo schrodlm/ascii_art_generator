@@ -6,7 +6,7 @@ import Image.{AsciiArt, GrayscaleImage, RGBImage}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
-class AsciiArtConfigTest extends AnyFlatSpec with Matchers {
+class CliConfigTest extends AnyFlatSpec with Matchers {
   private def newAsciiFilter(): AsciiArtFilter = new AsciiArtFilter {
     def apply(image: AsciiArt): AsciiArt = image
   }
@@ -18,7 +18,7 @@ class AsciiArtConfigTest extends AnyFlatSpec with Matchers {
   }
 
 
-  "AsciiArtConfig builder" should "correctly build a config with all properties set" in {
+  "CliConfig builder" should "correctly build a config with all properties set" in {
     val source = PathImageSource("x.png")
     val output = ConsoleImageOutput()
     val chars = Array('.', ':', '-', '=', '+', '*')
@@ -26,7 +26,7 @@ class AsciiArtConfigTest extends AnyFlatSpec with Matchers {
     val grayscaleFilter = newGrayscaleFilter()
     val rgbFilter = newRgbFilter()
 
-    val config = new AsciiArtConfig.Builder()
+    val config = new CliConfig.Builder()
       .withImageSource(source)
       .withImageOutput(output)
       .withTable(chars)
@@ -50,7 +50,7 @@ class AsciiArtConfigTest extends AnyFlatSpec with Matchers {
     val PaulBorkeTable = "PaulBorkes"
 
 
-    val config = new AsciiArtConfig.Builder()
+    val config = new CliConfig.Builder()
       .withImageSource(source)
       .withImageOutput(output)
       .withTable(PaulBorkeTable)
@@ -64,7 +64,7 @@ class AsciiArtConfigTest extends AnyFlatSpec with Matchers {
     val source = PathImageSource("x.png")
     val output = ConsoleImageOutput()
 
-    val config = new AsciiArtConfig.Builder()
+    val config = new CliConfig.Builder()
       .withImageSource(source)
       .withImageOutput(output)
       .build()
@@ -80,7 +80,7 @@ class AsciiArtConfigTest extends AnyFlatSpec with Matchers {
     val output = ConsoleImageOutput()
 
     an[IllegalStateException] should be thrownBy {
-      new AsciiArtConfig.Builder()
+      new CliConfig.Builder()
         .withImageOutput(output)
         .build()
     }
@@ -91,7 +91,7 @@ class AsciiArtConfigTest extends AnyFlatSpec with Matchers {
     val source = PathImageSource("x.png")
 
     an[IllegalStateException] should be thrownBy {
-      new AsciiArtConfig.Builder()
+      new CliConfig.Builder()
         .withImageSource(source)
         .build()
     }
@@ -102,7 +102,7 @@ class AsciiArtConfigTest extends AnyFlatSpec with Matchers {
     val source = PathImageSource("x.png")
     val output = ConsoleImageOutput()
 
-     val config =  new AsciiArtConfig.Builder()
+     val config =  new CliConfig.Builder()
         .withImageSource(source)
         .withImageOutput(output)
         .build()
@@ -121,7 +121,7 @@ class AsciiArtConfigTest extends AnyFlatSpec with Matchers {
     val grayscaleFilter = newGrayscaleFilter()
     val rgbFilter = newRgbFilter()
 
-    val config = new AsciiArtConfig.Builder()
+    val config = new CliConfig.Builder()
       .withImageSource(PathImageSource("x.png"))
       .withImageOutput(ConsoleImageOutput())
       .addFilter(asciiFilter)
@@ -140,7 +140,7 @@ class AsciiArtConfigTest extends AnyFlatSpec with Matchers {
     val source2 = PathImageSource("x.png")
 
     an[IllegalArgumentException] should be thrownBy {
-      new AsciiArtConfig.Builder()
+      new CliConfig.Builder()
         .withImageSource(source1)
         .withImageSource(source2)
         .build()
