@@ -43,9 +43,48 @@ class ScaleFilterTest extends AnyFlatSpec with Matchers {
     scaledArt.getData() shouldBe Array('f', 'h', 'n', 'p')
   }
 
+  it should "cover the whole image for a non-integer factor" in {
+    val scaledArt = new ScaleFilter(1.5).apply(asciiArt)
+
+    scaledArt.getWidth() shouldBe 6
+    scaledArt.getHeight() shouldBe 6
+    scaledArt.getData() shouldBe Array(
+      'a', 'b', 'b', 'c', 'd', 'd',
+      'e', 'f', 'f', 'g', 'h', 'h',
+      'e', 'f', 'f', 'g', 'h', 'h',
+      'i', 'j', 'j', 'k', 'l', 'l',
+      'm', 'n', 'n', 'o', 'p', 'p',
+      'm', 'n', 'n', 'o', 'p', 'p'
+    ).map(c => c.toInt)
+  }
+
+  it should "keep at least one character when the factor shrinks below it" in {
+    val scaledArt = new ScaleFilter(0.1).apply(asciiArt)
+
+    scaledArt.getWidth() shouldBe 1
+    scaledArt.getHeight() shouldBe 1
+    scaledArt.getData() shouldBe Array('k')
+  }
+
   it should "throw IllegalArgumentException for non-positive scale values" in {
     val scaleFilter = new ScaleFilter(0)
 
     an[IllegalArgumentException] should be thrownBy scaleFilter.apply(asciiArt)
+  }
+
+  it should "throw IllegalArgumentException for factors that are not finite" in {
+    for (scale <- Seq(Double.NaN, Double.PositiveInfinity)) {
+      an[IllegalArgumentException] should be thrownBy new ScaleFilter(scale).apply(asciiArt)
+    }
+  }
+
+  it should "throw IllegalArgumentException when the output would not fit in an array" in {
+    an[IllegalArgumentException] should be thrownBy new ScaleFilter(1e6).apply(asciiArt)
+  }
+
+  it should "keep a very wide image unchanged at a factor of 1" in {
+    val wide = new AsciiArt(40000, 1, Array.tabulate(40000)(identity))
+
+    new ScaleFilter(1).apply(wide).getData() shouldBe wide.getData()
   }
 }
