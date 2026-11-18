@@ -164,6 +164,13 @@ project/plugins/project/
 .bsp/
 .lib/
 
+### Metals and VS Code ###
+.metals/
+.bloop/
+.vscode/
+project/metals.sbt
+project/project/
+
 ### Scala ###
 *.class
 *.log
