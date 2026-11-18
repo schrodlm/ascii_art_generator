@@ -5,7 +5,7 @@ import asciiart.core.image.AsciiArt
 /**
  * Scales an AsciiArt image.
  *
- * @param scale Scaling factor for the image.
+ * @param scale Factor the output size is multiplied by: 2 doubles it, 0.5 halves it.
  */
 class ScaleFilter(val scale: Double) extends AsciiArtFilter {
 
@@ -13,56 +13,30 @@ class ScaleFilter(val scale: Double) extends AsciiArtFilter {
    * Applies scaling to the given AsciiArt image.
    *
    * @param image The AsciiArt image to scale.
-   * @return Scaled AsciiArt image.
-   * @throws IllegalArgumentException if scale is not positive.
+   * @return Scaled AsciiArt image, at least one character wide and tall.
+   * @throws IllegalArgumentException if scale is not a finite positive number, or the output
+   *                                  would not fit in an array.
    */
   override def apply(image: AsciiArt): AsciiArt = {
-    if (scale <= 0) throw new IllegalArgumentException("Scale must be positive")
+    if (!(scale > 0) || scale.isInfinite) throw new IllegalArgumentException("Scale must be a finite positive number")
 
-    if (scale >= 1) {
-      scaleDown(image)
+    val width = image.getWidth()
+    val height = image.getHeight()
+    val newWidth = math.max(1, (width * scale).toInt)
+    val newHeight = math.max(1, (height * scale).toInt)
+    if (newWidth.toLong * newHeight > Int.MaxValue) throw new IllegalArgumentException("Scale is too large")
+    val data = image.getData()
+
+    val newData = Array.tabulate(newWidth * newHeight) { i =>
+      val x = sourceCoord(i % newWidth, width, newWidth)
+      val y = sourceCoord(i / newWidth, height, newHeight)
+      data(y * width + x)
     }
-
-    else {
-      scaleUp(image)
-    }
-  }
-
-  //Scales down the image
-  private def scaleDown(image: AsciiArt): AsciiArt = {
-
-    val newWidth = (image.getWidth() / scale).toInt
-    val newHeight = (image.getHeight() / scale).toInt
-
-    val newData = (0 until newHeight).flatMap { y =>
-      (0 until newWidth).map { x =>
-        val originalX = x * scale.toInt
-        val originalY = y * scale.toInt
-        image.getData()(originalY * image.getWidth() + originalX)
-      }
-    }.toArray
 
     new AsciiArt(newWidth, newHeight, newData)
   }
 
-  // Scales up the image
-  private def scaleUp(image: AsciiArt): AsciiArt = {
-    val pixelRatio = (1 / scale).toInt
-    val newWidth = (image.getWidth() / scale).toInt
-    val newHeight = (image.getHeight() / scale).toInt
-    val newData = Array.ofDim[Int](newWidth * newHeight)
-
-    for {
-      y <- 0 until image.getHeight()
-      x <- 0 until image.getWidth()
-      dy <- 0 until pixelRatio
-      dx <- 0 until pixelRatio
-    } {
-      val newIndex = ((y * pixelRatio + dy)* newWidth) + (x * pixelRatio + dx)
-      newData(newIndex) = image.getData()(y * image.getWidth() + x)
-    }
-
-
-    new AsciiArt(newWidth, newHeight, newData)
-  }
+  // The source coordinate under the centre of output coordinate `out`.
+  private def sourceCoord(out: Int, size: Int, newSize: Int): Int =
+    ((2L * out + 1) * size / (2L * newSize)).toInt
 }

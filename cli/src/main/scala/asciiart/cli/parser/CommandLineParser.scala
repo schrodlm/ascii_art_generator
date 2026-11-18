@@ -33,7 +33,7 @@ class CommandLineParser(val args: Array[String]) extends Parser {
       |  --table [name]                 Specify the name of the predefined character table ('default', 'mathematical', 'nonlinear-default').
       |  --custom-table [chars]         Define a custom character table.
       |  --rotate [degrees]             Apply rotation to the image (degrees must be an integer). ! NOT IMPLEMENTED YET !
-      |  --scale [value]                Scale the image by a specified factor (value must be an integer).
+      |  --scale [factor]               Scale the output by a factor (2 doubles it, 0.5 halves it).
       |  --invert                       Apply an inversion filter to the image. ! NOT IMPLEMENTED YET !
       |  --flip [axis]                  Flip the image along a specified axis ('horizontal' or 'vertical').! NOT IMPLEMENTED YET !
       |  --brightness [value]           Adjust the brightness of the image (value must be an integer).

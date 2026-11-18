@@ -18,26 +18,11 @@ class ScaleFilterTest extends AnyFlatSpec with Matchers {
 
   val asciiArt = new AsciiArt(width, height, data)
 
-  "ScaleFilter" should "correctly scale down an AsciiArt image" in {
+  "ScaleFilter" should "double the size for a factor of 2" in {
+    val scaledArt = new ScaleFilter(2).apply(asciiArt)
 
-
-    val scale = 2.0
-    val scaleFilter = new ScaleFilter(scale)
-    val scaledArt = scaleFilter.apply(asciiArt)
-
-    // Assertions for scale down
-    scaledArt.getWidth() shouldBe (width / scale).toInt
-    scaledArt.getHeight() shouldBe (height / scale).toInt
-    scaledArt.getData() shouldBe Array('a', 'c', 'i', 'k')
-  }
-
-  it should "correctly scale up an AsciiArt image" in {
-    val scale = 0.5
-    val scaleFilter = new ScaleFilter(scale)
-    val scaledArt = scaleFilter.apply(asciiArt)
-
-    scaledArt.getWidth() shouldBe (width / scale).toInt
-    scaledArt.getHeight() shouldBe (height / scale).toInt
+    scaledArt.getWidth() shouldBe 8
+    scaledArt.getHeight() shouldBe 8
     scaledArt.getData() shouldBe Array(
       'a', 'a', 'b', 'b', 'c', 'c', 'd', 'd',
       'a', 'a', 'b', 'b', 'c', 'c', 'd', 'd',
@@ -48,6 +33,14 @@ class ScaleFilterTest extends AnyFlatSpec with Matchers {
       'm', 'm', 'n', 'n', 'o', 'o', 'p', 'p',
       'm', 'm', 'n', 'n', 'o', 'o', 'p', 'p'
     ).map(c => c.toInt)
+  }
+
+  it should "halve the size for a factor of 0.5" in {
+    val scaledArt = new ScaleFilter(0.5).apply(asciiArt)
+
+    scaledArt.getWidth() shouldBe 2
+    scaledArt.getHeight() shouldBe 2
+    scaledArt.getData() shouldBe Array('f', 'h', 'n', 'p')
   }
 
   it should "throw IllegalArgumentException for non-positive scale values" in {
