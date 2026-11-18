@@ -29,10 +29,10 @@ class SourceToRgbImage(input: ImageSource, var loadingStrategy: Option[ImageLoad
         case PathImageSource(path) =>
           val fileFormat = path.split("\\.").last
           fileFormat match {
-            case "jpg" => Some(new JPEGImageLoadingStrategy(path, bufferedImage => {
+            case "jpg" => Some(new ImageIOLoadingStrategy(path, bufferedImage => {
               new BufferedToRgbConverter(bufferedImage).convert()
             }))
-            case "png" => Some(new PNGImageLoadingStrategy(path, bufferedImage => {
+            case "png" => Some(new ImageIOLoadingStrategy(path, bufferedImage => {
               new BufferedToRgbConverter(bufferedImage).convert()
             }))
             case _ => throw new IllegalArgumentException("Provided file with unsupported format")
