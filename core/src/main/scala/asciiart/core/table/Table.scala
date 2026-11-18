@@ -13,6 +13,9 @@ abstract class Table(){
 }
 
 class LinearTable(val chars: Array[Char]) extends Table{
+  if (chars.isEmpty) {
+    throw new IllegalArgumentException("A character table needs at least one character")
+  }
 
   override def getChar(value : Int): Char = {
     val doubleIndex = (this.chars.length - 1) * (value / 255.0)
