@@ -2,7 +2,7 @@ package asciiart.cli.parser
 
 import asciiart.core.table.CustomTable
 import asciiart.cli.config.{ConsoleImageOutput, PathImageOutput, PathImageSource, RandomImageSource}
-import asciiart.core.filter.{BrightnessFilter, ContrastFilter, FlipFilter, InvertFilter, ScaleFilter}
+import asciiart.core.filter.{BrightnessFilter, ContrastFilter, FlipFilter, InvertFilter, RotationFilter, ScaleFilter}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -82,6 +82,18 @@ class CommandLineParserTest extends AnyFlatSpec with Matchers {
 
   it should "throw when contrast filter option is not a number" in {
     an[IllegalArgumentException] should be thrownBy new CommandLineParser(Array("--contrast", "xyz")).parse()
+  }
+
+  it should "parse rotate option into the RGB stage" in {
+    val args = Array("--rotate", "90", "--image-random", "--output-console")
+    val config = new CommandLineParser(args).parse().get
+
+    config.render.rgbFilters should have size 1
+    config.render.rgbFilters(0) shouldBe a[RotationFilter]
+  }
+
+  it should "throw when rotate option is not a whole number" in {
+    an[IllegalArgumentException] should be thrownBy new CommandLineParser(Array("--rotate", "xyz")).parse()
   }
 
   it should "parse invert filter option" in {
