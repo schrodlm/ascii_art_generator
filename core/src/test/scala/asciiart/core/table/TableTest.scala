@@ -14,6 +14,16 @@ class LinearTableTest extends AnyFlatSpec with Matchers {
     table.getChar(127) shouldBe 'b'       // Test middle value
     table.getChar(255) shouldBe 'd'       // Test upper boundary
   }
+
+  it should "reject an empty character set" in {
+    val error = the[IllegalArgumentException] thrownBy new LinearTable(Array.empty[Char])
+
+    error.getMessage shouldBe "A character table needs at least one character"
+  }
+
+  "CustomTable" should "reject an empty character set" in {
+    an[IllegalArgumentException] should be thrownBy new CustomTable(Array.empty[Char])
+  }
 }
 
 class NonLinearTableTest extends AnyFlatSpec with Matchers {
