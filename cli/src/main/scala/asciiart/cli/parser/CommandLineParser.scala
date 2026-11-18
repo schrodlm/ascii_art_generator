@@ -1,7 +1,7 @@
 package asciiart.cli.parser
 
 import asciiart.cli.config.{CliConfig, ConsoleImageOutput, PathImageOutput, PathImageSource, RandomImageSource}
-import asciiart.core.filter.{BrightnessFilter, FlipFilter, FontAspectRatioFilter, InvertFilter, RotationFilter, ScaleFilter}
+import asciiart.core.filter.{BrightnessFilter, ContrastFilter, FlipFilter, FontAspectRatioFilter, InvertFilter, RotationFilter, ScaleFilter}
 
 import scala.util.Try
 
@@ -37,6 +37,7 @@ class CommandLineParser(val args: Array[String]) extends Parser {
       |  --invert                       Invert brightness, so black becomes white (for dark terminals).
       |  --flip [axis]                  Flip the image along a specified axis ('horizontal' or 'vertical').! NOT IMPLEMENTED YET !
       |  --brightness [value]           Adjust the brightness of the image (value must be an integer).
+      |  --contrast [factor]            Stretch brightness away from mid-grey (2 doubles the contrast, 0.5 halves it).
       |  --font-aspect-ratio [x:y]      Set the font aspect ratio with two integers (e.g., '1:2'). ! NOT IMPLEMENTED YET !
       |
       |Examples:
@@ -104,6 +105,10 @@ class CommandLineParser(val args: Array[String]) extends Parser {
         val brightnessValue = Try(value.toInt).getOrElse(throw new IllegalArgumentException("Brightness value must be a valid number"))
         val brightnessFilter: BrightnessFilter = new BrightnessFilter(brightnessValue)
         nextArg(configBuilder.addGrayscaleFilter(brightnessFilter), tail)
+      case "--contrast" :: value :: tail =>
+        val contrastValue = Try(value.toDouble).getOrElse(throw new IllegalArgumentException("Contrast value must be a valid number"))
+        val contrastFilter: ContrastFilter = new ContrastFilter(contrastValue)
+        nextArg(configBuilder.addGrayscaleFilter(contrastFilter), tail)
       case "--font-aspect-ratio" :: ratio :: tail =>
         throw new NotImplementedError("Font aspect ratio is not yet implemented.")
         parseFontAspectRatio(ratio) match {
