@@ -2,7 +2,7 @@ package asciiart.cli.parser
 
 import asciiart.core.table.CustomTable
 import asciiart.cli.config.{ConsoleImageOutput, PathImageOutput, PathImageSource, RandomImageSource}
-import asciiart.core.filter.{BrightnessFilter, FlipFilter, InvertFilter, ScaleFilter}
+import asciiart.core.filter.{BrightnessFilter, ContrastFilter, FlipFilter, InvertFilter, ScaleFilter}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -70,6 +70,18 @@ class CommandLineParserTest extends AnyFlatSpec with Matchers {
     val config = parser.parse().get
 
     config.render.grayscaleFilters(0) shouldBe a[BrightnessFilter]
+  }
+
+  it should "parse contrast filter option" in {
+    val args = Array("--contrast", "1.5", "--image-random", "--output-console")
+    val config = new CommandLineParser(args).parse().get
+
+    config.render.grayscaleFilters should have size 1
+    config.render.grayscaleFilters(0) shouldBe a[ContrastFilter]
+  }
+
+  it should "throw when contrast filter option is not a number" in {
+    an[IllegalArgumentException] should be thrownBy new CommandLineParser(Array("--contrast", "xyz")).parse()
   }
 
   it should "parse invert filter option" in {
