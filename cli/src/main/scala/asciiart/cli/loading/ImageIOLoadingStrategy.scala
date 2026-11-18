@@ -29,10 +29,13 @@ class ImageIOLoadingStrategy(path: String, converter: BufferedImage => RGBImage)
    *
    * @param path Path to the image file.
    * @return BufferedImage read from the file.
-   * @throws IllegalArgumentException if the file is not a supported image.
+   * @throws IllegalArgumentException if the file cannot be read or is not a supported image.
    */
   protected def readImage(path: String): BufferedImage = {
     val file = new File(path)
+    if (!file.isFile || !file.canRead) {
+      throw new IllegalArgumentException(s"Cannot read the file '$path'")
+    }
     val image = ImageIO.read(file)
     if (image == null) {
       throw new IllegalArgumentException(s"'$path' is not an image in a supported format (PNG, JPEG, GIF, BMP or TIFF)")

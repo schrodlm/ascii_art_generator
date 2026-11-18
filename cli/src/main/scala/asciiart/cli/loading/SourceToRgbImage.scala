@@ -21,7 +21,7 @@ class SourceToRgbImage(input: ImageSource, var loadingStrategy: Option[ImageLoad
    * Automatically selects a loading strategy based on the input type if not provided.
    *
    * @return The converted RGBImage.
-   * @throws IllegalArgumentException if the file is not a supported image.
+   * @throws IllegalArgumentException if the file cannot be read or is not a supported image.
    */
   def convert(): RGBImage = {
     if (loadingStrategy.isEmpty) {
