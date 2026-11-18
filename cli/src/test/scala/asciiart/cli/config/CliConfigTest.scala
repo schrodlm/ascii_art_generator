@@ -79,22 +79,24 @@ class CliConfigTest extends AnyFlatSpec with Matchers {
 
     val output = ConsoleImageOutput()
 
-    an[IllegalStateException] should be thrownBy {
+    val error = the[IllegalArgumentException] thrownBy {
       new CliConfig.Builder()
         .withImageOutput(output)
         .build()
     }
+    error.getMessage shouldBe "Missing an image source: use --image [path] or --image-random"
   }
 
   it should "throw an exception when image output is not set" in {
 
     val source = PathImageSource("x.png")
 
-    an[IllegalStateException] should be thrownBy {
+    val error = the[IllegalArgumentException] thrownBy {
       new CliConfig.Builder()
         .withImageSource(source)
         .build()
     }
+    error.getMessage shouldBe "Missing an output: use --output-console or --output-file [path]"
   }
 
   it should "build correctly with only image source and image output " in {

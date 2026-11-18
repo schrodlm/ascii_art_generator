@@ -57,10 +57,11 @@ object CliConfig {
     }
 
     def build(): CliConfig = {
-      if (imageSource.isEmpty || imageOutput.isEmpty) {
-        throw new IllegalStateException("Missing required fields")
-      }
-      CliConfig(imageSource.get, imageOutput.get, render)
+      val source = imageSource.getOrElse(
+        throw new IllegalArgumentException("Missing an image source: use --image [path] or --image-random"))
+      val output = imageOutput.getOrElse(
+        throw new IllegalArgumentException("Missing an output: use --output-console or --output-file [path]"))
+      CliConfig(source, output, render)
     }
   }
 }
