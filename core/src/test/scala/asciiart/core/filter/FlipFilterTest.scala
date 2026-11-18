@@ -21,7 +21,7 @@ class FlipFilterTest extends AnyFlatSpec with Matchers{
     // Assertions
     flippedArt.getWidth() shouldBe width
     flippedArt.getHeight() shouldBe height
-    flippedArt.getData() shouldBe Array('f', 'e', 'd', 'c', 'b', 'a')
+    flippedArt.getData() shouldBe Array('e', 'f', 'c', 'd', 'a', 'b')
   }
 
   it should "correctly flip an AsciiArt image horizontally" in {

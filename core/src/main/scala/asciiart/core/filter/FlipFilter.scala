@@ -27,7 +27,7 @@ class FlipFilter(val axis: String) extends AsciiArtFilter {
 
   // Flips the image vertically.
   private def flipVertically(image: AsciiArt): AsciiArt = {
-    val newData = image.getData().reverse
+    val newData = image.getData().grouped(image.getWidth()).toArray.reverse.flatten
     new AsciiArt(image.getWidth(), image.getHeight(), newData)
   }
 
