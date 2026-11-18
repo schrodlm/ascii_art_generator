@@ -25,9 +25,10 @@ object Main {
     val settings = tables.map { table =>
       RenderSettings(
         table = table,
+        rgbFilters = Seq(new RotationFilter(90)),
         grayscaleFilters = Seq(new BrightnessFilter(10), new InvertFilter()),
         asciiFilters = Seq(new FlipFilter("x"), new FlipFilter("y"), new ScaleFilter(0.5),
-          new ScaleFilter(2), new RotationFilter(90))
+          new ScaleFilter(2))
       )
     }
     val text = settings.map { s =>

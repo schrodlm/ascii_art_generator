@@ -90,7 +90,7 @@ class CommandLineParser(val args: Array[String]) extends Parser {
         throw new NotImplementedError("Rotate is not yet implemented.")
 
         val rotationFilter: RotationFilter = new RotationFilter(degrees.toInt)
-        nextArg(configBuilder.addAsciiFilter(rotationFilter), tail)
+        nextArg(configBuilder.addRgbFilter(rotationFilter), tail)
       case "--scale" :: value :: tail =>
         val scaleValue = Try(value.toDouble).getOrElse(throw new IllegalArgumentException("Scale value must be a valid number"))
         val scaleFilter: ScaleFilter = new ScaleFilter(scaleValue)
