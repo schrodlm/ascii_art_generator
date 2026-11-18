@@ -55,4 +55,12 @@ class SourceToRgbImageTest extends AnyFlatSpec with Matchers with BeforeAndAfter
       }
     }
   }
+
+  it should "throw IllegalArgumentException naming a file that does not exist" in {
+    val path = dir.resolve("missing.png").toString
+
+    val error = the[IllegalArgumentException] thrownBy new SourceToRgbImage(PathImageSource(path)).convert()
+
+    error.getMessage shouldBe s"Cannot read the file '$path'"
+  }
 }
