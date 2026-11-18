@@ -30,9 +30,9 @@ class CliConfigTest extends AnyFlatSpec with Matchers {
       .withImageSource(source)
       .withImageOutput(output)
       .withTable(chars)
-      .addFilter(asciiFilter)
-      .addFilter(grayscaleFilter)
-      .addFilter(rgbFilter)
+      .addAsciiFilter(asciiFilter)
+      .addGrayscaleFilter(grayscaleFilter)
+      .addRgbFilter(rgbFilter)
       .build()
 
     config.imageSource shouldBe source
@@ -116,24 +116,6 @@ class CliConfigTest extends AnyFlatSpec with Matchers {
     config.render.grayscaleFilters shouldBe empty
     config.render.rgbFilters shouldBe empty
 
-  }
-
-  it should "correctly categorize filters" in {
-    val asciiFilter = newAsciiFilter()
-    val grayscaleFilter = newGrayscaleFilter()
-    val rgbFilter = newRgbFilter()
-
-    val config = new CliConfig.Builder()
-      .withImageSource(PathImageSource("x.png"))
-      .withImageOutput(ConsoleImageOutput())
-      .addFilter(asciiFilter)
-      .addFilter(grayscaleFilter)
-      .addFilter(rgbFilter)
-      .build()
-
-    config.render.asciiFilters should contain only asciiFilter
-    config.render.grayscaleFilters should contain only grayscaleFilter
-    config.render.rgbFilters should contain only rgbFilter
   }
 
   it should "throw an exception when provided with two image sources" in {

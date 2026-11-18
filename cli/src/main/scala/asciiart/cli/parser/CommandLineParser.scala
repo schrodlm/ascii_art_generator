@@ -89,28 +89,28 @@ class CommandLineParser(val args: Array[String]) extends Parser {
         throw new NotImplementedError("Rotate is not yet implemented.")
 
         val rotationFilter: RotationFilter = new RotationFilter(degrees.toInt)
-        nextArg(configBuilder.addFilter(rotationFilter), tail)
+        nextArg(configBuilder.addAsciiFilter(rotationFilter), tail)
       case "--scale" :: value :: tail =>
         val scaleValue = Try(value.toDouble).getOrElse(throw new IllegalArgumentException("Scale value must be a valid number"))
         val scaleFilter: ScaleFilter = new ScaleFilter(scaleValue)
-        nextArg(configBuilder.addFilter(scaleFilter), tail)
+        nextArg(configBuilder.addAsciiFilter(scaleFilter), tail)
       case "--invert" :: tail =>
         throw new NotImplementedError("Invert is not yet implemented.")
         val invertFilter: InvertFilter = new InvertFilter()
-        nextArg(configBuilder.addFilter(invertFilter), tail)
+        nextArg(configBuilder.addGrayscaleFilter(invertFilter), tail)
       case "--flip" :: axis :: tail =>
         val flipFilter: FlipFilter = new FlipFilter(axis)
-        nextArg(configBuilder.addFilter(flipFilter), tail)
+        nextArg(configBuilder.addAsciiFilter(flipFilter), tail)
       case "--brightness" :: value :: tail =>
         val brightnessValue = Try(value.toInt).getOrElse(throw new IllegalArgumentException("Brightness value must be a valid number"))
         val brightnessFilter: BrightnessFilter = new BrightnessFilter(brightnessValue)
-        nextArg(configBuilder.addFilter(brightnessFilter), tail)
+        nextArg(configBuilder.addGrayscaleFilter(brightnessFilter), tail)
       case "--font-aspect-ratio" :: ratio :: tail =>
         throw new NotImplementedError("Font aspect ratio is not yet implemented.")
         parseFontAspectRatio(ratio) match {
           case Some((x, y)) =>
             val fontAspectRatioFilter: FontAspectRatioFilter = new FontAspectRatioFilter(x, y)
-            nextArg(configBuilder.addFilter(fontAspectRatioFilter), tail)
+            nextArg(configBuilder.addAsciiFilter(fontAspectRatioFilter), tail)
           case _ =>
             throw new IllegalArgumentException("Font aspect ration must be in the format 'x:y'.")
         }

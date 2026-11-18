@@ -1,7 +1,6 @@
 package asciiart.cli.config
 
-import asciiart.core.filter.{AsciiArtFilter, Filter, GrayscaleImageFilter, RGBImageFilter}
-import asciiart.core.image.Image
+import asciiart.core.filter.{AsciiArtFilter, GrayscaleImageFilter, RGBImageFilter}
 import asciiart.core.pipeline.RenderSettings
 import asciiart.core.table.{CustomTable, TableNameMapper}
 
@@ -46,13 +45,18 @@ object CliConfig {
       this
     }
 
-    def addFilter(filter: Filter[_ <: Image]): Builder = {
-      render = filter match {
-        case f: AsciiArtFilter => render.copy(asciiFilters = render.asciiFilters :+ f)
-        case f: GrayscaleImageFilter => render.copy(grayscaleFilters = render.grayscaleFilters :+ f)
-        case f: RGBImageFilter => render.copy(rgbFilters = render.rgbFilters :+ f)
-        case _ => render
-      }
+    def addRgbFilter(filter: RGBImageFilter): Builder = {
+      render = render.copy(rgbFilters = render.rgbFilters :+ filter)
+      this
+    }
+
+    def addGrayscaleFilter(filter: GrayscaleImageFilter): Builder = {
+      render = render.copy(grayscaleFilters = render.grayscaleFilters :+ filter)
+      this
+    }
+
+    def addAsciiFilter(filter: AsciiArtFilter): Builder = {
+      render = render.copy(asciiFilters = render.asciiFilters :+ filter)
       this
     }
 
