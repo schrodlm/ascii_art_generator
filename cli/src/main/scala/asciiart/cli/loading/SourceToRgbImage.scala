@@ -21,22 +21,15 @@ class SourceToRgbImage(input: ImageSource, var loadingStrategy: Option[ImageLoad
    * Automatically selects a loading strategy based on the input type if not provided.
    *
    * @return The converted RGBImage.
-   * @throws IllegalArgumentException if the file format is unsupported.
+   * @throws IllegalArgumentException if the file is not a supported image.
    */
   def convert(): RGBImage = {
     if (loadingStrategy.isEmpty) {
       loadingStrategy = input match {
         case PathImageSource(path) =>
-          val fileFormat = path.split("\\.").last
-          fileFormat match {
-            case "jpg" => Some(new ImageIOLoadingStrategy(path, bufferedImage => {
-              new BufferedToRgbConverter(bufferedImage).convert()
-            }))
-            case "png" => Some(new ImageIOLoadingStrategy(path, bufferedImage => {
-              new BufferedToRgbConverter(bufferedImage).convert()
-            }))
-            case _ => throw new IllegalArgumentException("Provided file with unsupported format")
-          }
+          Some(new ImageIOLoadingStrategy(path, bufferedImage => {
+            new BufferedToRgbConverter(bufferedImage).convert()
+          }))
 
         case RandomImageSource() =>
           Some(new RandomImageLoadingStrategy(bufferedImage => {
