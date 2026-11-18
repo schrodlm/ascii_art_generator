@@ -7,7 +7,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 import java.awt.image.BufferedImage
-import java.nio.file.Files
+import java.nio.file.{Files, Paths}
 import javax.imageio.ImageIO
 
 class SourceToRgbImageTest extends AnyFlatSpec with Matchers with BeforeAndAfterAll {
@@ -42,6 +42,16 @@ class SourceToRgbImageTest extends AnyFlatSpec with Matchers with BeforeAndAfter
     val error = the[IllegalArgumentException] thrownBy new SourceToRgbImage(PathImageSource(path.toString)).convert()
 
     error.getMessage shouldBe s"'$path' is not an image in a supported format (PNG, JPEG, GIF, BMP or TIFF)"
+  }
+
+  it should "throw IllegalArgumentException for a damaged image" in {
+    val full = Files.readAllBytes(Paths.get(writeImage("whole.png", "png")))
+    val path = dir.resolve("damaged.png")
+    Files.write(path, full.take(full.length / 2))
+
+    val error = the[IllegalArgumentException] thrownBy new SourceToRgbImage(PathImageSource(path.toString)).convert()
+
+    error.getMessage should startWith(s"'$path' is not a valid image: ")
   }
 
   it should "recognise the format from the contents, whatever the extension says" in {
