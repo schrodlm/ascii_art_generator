@@ -3,7 +3,7 @@ package asciiart.cli.loading
 import asciiart.core.image.RGBImage
 
 import java.awt.image.BufferedImage
-import java.io.File
+import java.io.{File, IOException}
 import javax.imageio.ImageIO
 /**
  * Loads images using ImageIO and converts them.
@@ -36,7 +36,9 @@ class ImageIOLoadingStrategy(path: String, converter: BufferedImage => RGBImage)
     if (!file.isFile || !file.canRead) {
       throw new IllegalArgumentException(s"Cannot read the file '$path'")
     }
-    val image = ImageIO.read(file)
+    val image = try ImageIO.read(file) catch {
+      case e: IOException => throw new IllegalArgumentException(s"'$path' is not a valid image: ${e.getMessage}")
+    }
     if (image == null) {
       throw new IllegalArgumentException(s"'$path' is not an image in a supported format (PNG, JPEG, GIF, BMP or TIFF)")
     }
