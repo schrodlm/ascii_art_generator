@@ -32,7 +32,7 @@ class CommandLineParser(val args: Array[String]) extends Parser {
       |Optional Options:
       |  --table [name]                 Specify the name of the predefined character table ('default', 'mathematical', 'nonlinear-default').
       |  --custom-table [chars]         Define a custom character table.
-      |  --rotate [degrees]             Apply rotation to the image (degrees must be an integer). ! NOT IMPLEMENTED YET !
+      |  --rotate [degrees]             Rotate clockwise by a multiple of 90 degrees (negative turns anticlockwise).
       |  --scale [factor]               Scale the output by a factor (2 doubles it, 0.5 halves it).
       |  --invert                       Invert brightness, so black becomes white (for dark terminals).
       |  --flip [axis]                  Flip the image along a specified axis ('horizontal' or 'vertical').! NOT IMPLEMENTED YET !
@@ -87,9 +87,8 @@ class CommandLineParser(val args: Array[String]) extends Parser {
         val table_chars: Array[Char] = chars.toCharArray
         nextArg(configBuilder.withTable(table_chars), tail)
       case "--rotate" :: degrees :: tail =>
-        throw new NotImplementedError("Rotate is not yet implemented.")
-
-        val rotationFilter: RotationFilter = new RotationFilter(degrees.toInt)
+        val rotationValue = Try(degrees.toInt).getOrElse(throw new IllegalArgumentException("Rotation value must be a whole number"))
+        val rotationFilter: RotationFilter = new RotationFilter(rotationValue)
         nextArg(configBuilder.addRgbFilter(rotationFilter), tail)
       case "--scale" :: value :: tail =>
         val scaleValue = Try(value.toDouble).getOrElse(throw new IllegalArgumentException("Scale value must be a valid number"))
