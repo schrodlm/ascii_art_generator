@@ -34,7 +34,7 @@ class CommandLineParser(val args: Array[String]) extends Parser {
       |  --custom-table [chars]         Define a custom character table.
       |  --rotate [degrees]             Apply rotation to the image (degrees must be an integer). ! NOT IMPLEMENTED YET !
       |  --scale [factor]               Scale the output by a factor (2 doubles it, 0.5 halves it).
-      |  --invert                       Apply an inversion filter to the image. ! NOT IMPLEMENTED YET !
+      |  --invert                       Invert brightness, so black becomes white (for dark terminals).
       |  --flip [axis]                  Flip the image along a specified axis ('horizontal' or 'vertical').! NOT IMPLEMENTED YET !
       |  --brightness [value]           Adjust the brightness of the image (value must be an integer).
       |  --font-aspect-ratio [x:y]      Set the font aspect ratio with two integers (e.g., '1:2'). ! NOT IMPLEMENTED YET !
@@ -95,7 +95,6 @@ class CommandLineParser(val args: Array[String]) extends Parser {
         val scaleFilter: ScaleFilter = new ScaleFilter(scaleValue)
         nextArg(configBuilder.addAsciiFilter(scaleFilter), tail)
       case "--invert" :: tail =>
-        throw new NotImplementedError("Invert is not yet implemented.")
         val invertFilter: InvertFilter = new InvertFilter()
         nextArg(configBuilder.addGrayscaleFilter(invertFilter), tail)
       case "--flip" :: axis :: tail =>
