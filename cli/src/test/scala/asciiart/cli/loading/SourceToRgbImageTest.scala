@@ -6,7 +6,9 @@ import org.scalatest.BeforeAndAfterAll
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
+import java.awt.image.BufferedImage
 import java.nio.file.Files
+import javax.imageio.ImageIO
 
 class SourceToRgbImageTest extends AnyFlatSpec with Matchers with BeforeAndAfterAll {
 
@@ -15,6 +17,12 @@ class SourceToRgbImageTest extends AnyFlatSpec with Matchers with BeforeAndAfter
   override def afterAll(): Unit = {
     dir.toFile.listFiles().foreach(_.delete())
     Files.delete(dir)
+  }
+
+  private def writeImage(name: String, format: String): String = {
+    val file = dir.resolve(name).toFile
+    ImageIO.write(new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB), format, file)
+    file.getPath
   }
 
   "SourceToRgbImage" should "load the image through the injected loading strategy" in {
@@ -34,5 +42,17 @@ class SourceToRgbImageTest extends AnyFlatSpec with Matchers with BeforeAndAfter
     val error = the[IllegalArgumentException] thrownBy new SourceToRgbImage(PathImageSource(path.toString)).convert()
 
     error.getMessage shouldBe s"'$path' is not an image in a supported format (PNG, JPEG, GIF, BMP or TIFF)"
+  }
+
+  it should "recognise the format from the contents, whatever the extension says" in {
+    val files = Seq("x.PNG" -> "png", "x.jpeg" -> "jpeg", "x.JPG" -> "jpeg", "x.gif" -> "gif", "png-named.jpg" -> "png")
+
+    for ((name, format) <- files) {
+      val image = new SourceToRgbImage(PathImageSource(writeImage(name, format))).convert()
+
+      withClue(name) {
+        (image.getWidth(), image.getHeight()) shouldBe ((1, 1))
+      }
+    }
   }
 }
