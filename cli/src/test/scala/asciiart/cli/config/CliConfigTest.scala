@@ -1,7 +1,7 @@
 package asciiart.cli.config
 
 import asciiart.core.table.{CustomTable, DefaultTable, PaulBorkesTable}
-import asciiart.core.filter.{AsciiArtFilter, GrayscaleImageFilter, RGBImageFilter}
+import asciiart.core.filter.{AsciiArtFilter, BrightnessFilter, FlipFilter, GrayscaleImageFilter, RGBImageFilter}
 import asciiart.core.image.{AsciiArt, GrayscaleImage, RGBImage}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -116,6 +116,27 @@ class CliConfigTest extends AnyFlatSpec with Matchers {
     config.render.grayscaleFilters shouldBe empty
     config.render.rgbFilters shouldBe empty
 
+  }
+
+  it should "keep the order of filters within a stage" in {
+    val first = newAsciiFilter()
+    val second = newAsciiFilter()
+
+    val config = new CliConfig.Builder()
+      .withImageSource(PathImageSource("x.png"))
+      .withImageOutput(ConsoleImageOutput())
+      .addAsciiFilter(first)
+      .addAsciiFilter(second)
+      .build()
+
+    config.render.asciiFilters shouldBe Seq(first, second)
+  }
+
+  it should "not compile when a filter is added to another stage" in {
+    "new CliConfig.Builder().addGrayscaleFilter(new BrightnessFilter(1))" should compile
+    "new CliConfig.Builder().addAsciiFilter(new FlipFilter(\"x\"))" should compile
+    "new CliConfig.Builder().addAsciiFilter(new BrightnessFilter(1))" shouldNot typeCheck
+    "new CliConfig.Builder().addGrayscaleFilter(new FlipFilter(\"x\"))" shouldNot typeCheck
   }
 
   it should "throw an exception when provided with two image sources" in {
