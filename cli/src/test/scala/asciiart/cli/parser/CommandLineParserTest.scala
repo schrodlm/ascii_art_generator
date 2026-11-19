@@ -8,6 +8,13 @@ import org.scalatest.matchers.should.Matchers
 
 class CommandLineParserTest extends AnyFlatSpec with Matchers {
 
+  // A complete command line, so parsing fails on the option under test and not
+  // on the missing image source or output.
+  private def parseError(option: String*): String = {
+    val args = (option ++ Seq("--image-random", "--output-console")).toArray
+    (the[IllegalArgumentException] thrownBy new CommandLineParser(args).parse()).getMessage
+  }
+
   "CommandLineParser" should "correctly parse image source and output options" in {
 
     val args = Array("--image", "/path/to/image.jpg", "--output-console")
@@ -56,12 +63,7 @@ class CommandLineParserTest extends AnyFlatSpec with Matchers {
   }
 
   it should "throw when scale filter option is not a double" in {
-
-    val args = Array("--scale", "xyz")
-
-    an[IllegalArgumentException] should be thrownBy {
-      new CommandLineParser(args).parse()
-    }
+    parseError("--scale", "xyz") shouldBe "Scale value must be a valid number"
   }
 
   it should "parse brightness filter option" in {
@@ -81,7 +83,7 @@ class CommandLineParserTest extends AnyFlatSpec with Matchers {
   }
 
   it should "throw when contrast filter option is not a number" in {
-    an[IllegalArgumentException] should be thrownBy new CommandLineParser(Array("--contrast", "xyz")).parse()
+    parseError("--contrast", "xyz") shouldBe "Contrast value must be a valid number"
   }
 
   it should "parse rotate option into the RGB stage" in {
@@ -93,7 +95,7 @@ class CommandLineParserTest extends AnyFlatSpec with Matchers {
   }
 
   it should "throw when rotate option is not a whole number" in {
-    an[IllegalArgumentException] should be thrownBy new CommandLineParser(Array("--rotate", "xyz")).parse()
+    parseError("--rotate", "xyz") shouldBe "Rotation value must be a whole number"
   }
 
   it should "parse width option as the maximum number of columns" in {
@@ -104,10 +106,7 @@ class CommandLineParserTest extends AnyFlatSpec with Matchers {
 
   it should "throw when width option is not a whole number of at least 1" in {
     for (value <- Seq("abc", "0", "-5")) {
-      val error = the[IllegalArgumentException] thrownBy
-        new CommandLineParser(Array("--width", value, "--image-random", "--output-console")).parse()
-
-      error.getMessage shouldBe "Width must be a whole number of at least 1"
+      parseError("--width", value) shouldBe "Width must be a whole number of at least 1"
     }
   }
 
@@ -125,11 +124,9 @@ class CommandLineParserTest extends AnyFlatSpec with Matchers {
 
   it should "throw when font aspect ratio option is not two positive whole numbers between 1:10 and 10:1" in {
     for (ratio <- Seq("abc", "1", "0:2", "1:0", "-1:2", "1:2:3", "1:2:", "11:1", "1:11", "2147483647:1")) {
-      val error = the[IllegalArgumentException] thrownBy
-        new CommandLineParser(Array("--font-aspect-ratio", ratio, "--image-random", "--output-console")).parse()
-
       withClue(ratio) {
-        error.getMessage shouldBe "Font aspect ratio must be two positive whole numbers between 1:10 and 10:1, like 1:2"
+        parseError("--font-aspect-ratio", ratio) shouldBe
+          "Font aspect ratio must be two positive whole numbers between 1:10 and 10:1, like 1:2"
       }
     }
   }
@@ -143,12 +140,7 @@ class CommandLineParserTest extends AnyFlatSpec with Matchers {
   }
 
   it should "throw when brightness filter option is not a valid integer" in {
-
-    val args = Array("--brightness", "xyz")
-
-    an[IllegalArgumentException] should be thrownBy {
-      new CommandLineParser(args).parse()
-    }
+    parseError("--brightness", "xyz") shouldBe "Brightness value must be a valid number"
   }
 
   it should "parse flip filter option" in {
@@ -162,12 +154,7 @@ class CommandLineParserTest extends AnyFlatSpec with Matchers {
   // Additional tests for other options like --custom-table, --rotate, --invert, etc.
 
   it should "throw when provided with invalid argument" in {
-    val args = Array("--invalid-option")
-    val parser = new CommandLineParser(args)
-
-    an[IllegalArgumentException] shouldBe thrownBy {
-      parser.parse()
-    }
+    parseError("--invalid-option") shouldBe "Unknown option --invalid-option"
   }
 
 }
