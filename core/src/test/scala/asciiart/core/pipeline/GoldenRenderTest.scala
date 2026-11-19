@@ -2,7 +2,7 @@ package asciiart.core.pipeline
 
 import asciiart.core.filter.BrightnessFilter
 import asciiart.core.image.RGBImage
-import asciiart.core.table.{DefaultTable, PaulBorkesTable}
+import asciiart.core.table.PaulBorkesTable
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -26,8 +26,8 @@ class GoldenRenderTest extends AnyFlatSpec with Matchers {
     new RGBImage(w, h, pixels)
   }
 
-  "The pipeline" should "render the fixture with the default table" in {
-    val art = AsciiArtPipeline.render(fixture, RenderSettings(table = new DefaultTable()))
+  "The pipeline" should "render the fixture with square cells" in {
+    val art = AsciiArtPipeline.render(fixture, RenderSettings(cellAspect = 1))
 
     art.toText shouldBe
       """@@@@@%%%%%####**
@@ -40,9 +40,10 @@ class GoldenRenderTest extends AnyFlatSpec with Matchers {
         |===----:::::....""".stripMargin
   }
 
-  it should "render the fixture with the Paul Borkes table and a brightness filter" in {
+  it should "render the fixture with the Paul Borkes table, square cells and a brightness filter" in {
     val settings = RenderSettings(
       table = new PaulBorkesTable(),
+      cellAspect = 1,
       grayscaleFilters = Seq(new BrightnessFilter(30))
     )
 

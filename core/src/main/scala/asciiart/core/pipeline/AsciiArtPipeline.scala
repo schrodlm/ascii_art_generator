@@ -1,7 +1,7 @@
 package asciiart.core.pipeline
 
 import asciiart.core.conversion.{GrayscaleToAsciiConverter, RgbToGrayscaleConverter}
-import asciiart.core.filter.Filter
+import asciiart.core.filter.{Filter, ResizeFilter}
 import asciiart.core.image.{AsciiArt, Image, RGBImage}
 
 /**
@@ -13,12 +13,20 @@ object AsciiArtPipeline {
 
   def render(image: RGBImage, settings: RenderSettings): AsciiArt = {
     val rgb = applyFilters(image, settings.rgbFilters)
+    val columns = fitColumns(rgb.getWidth(), rgb.getHeight(), settings)
+    val resized = new ResizeFilter(columns, settings.cellAspect).apply(rgb)
     val grayscale = applyFilters(
-      new RgbToGrayscaleConverter(rgb).convert(),
+      new RgbToGrayscaleConverter(resized).convert(),
       settings.grayscaleFilters
     )
     val asciiArt = new GrayscaleToAsciiConverter(grayscale, settings.table).convert()
     applyFilters(asciiArt, settings.asciiFilters)
+  }
+
+  // rows = height / width * columns * cellAspect, solved for the columns that fit maxRows.
+  private def fitColumns(width: Int, height: Int, settings: RenderSettings): Int = {
+    val fitsRows = (settings.maxRows.toDouble * width / (height * settings.cellAspect)).toInt
+    width min settings.maxColumns min (fitsRows max 1)
   }
 
   private def applyFilters[T <: Image](image: T, filters: Seq[Filter[T]]): T =
