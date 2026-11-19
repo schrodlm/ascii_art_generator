@@ -139,6 +139,37 @@ class CliConfigTest extends AnyFlatSpec with Matchers {
     "new CliConfig.Builder().addGrayscaleFilter(new FlipFilter(\"x\"))" shouldNot typeCheck
   }
 
+  "CliConfig render settings" should "use the requested width over the terminal's" in {
+    val config = new CliConfig.Builder()
+      .withImageSource(PathImageSource("x.png"))
+      .withImageOutput(ConsoleImageOutput())
+      .withWidth(80)
+      .build()
+
+    config.renderSettings(Some(120)).maxColumns shouldBe 80
+  }
+
+  it should "fit the terminal when printing to it" in {
+    val config = new CliConfig.Builder()
+      .withImageSource(PathImageSource("x.png"))
+      .withImageOutput(ConsoleImageOutput())
+      .build()
+
+    config.renderSettings(Some(120)).maxColumns shouldBe 120
+    config.renderSettings(None).maxColumns shouldBe 100
+  }
+
+  it should "use 100 columns for a file without asking the terminal" in {
+    val config = new CliConfig.Builder()
+      .withImageSource(PathImageSource("x.png"))
+      .withImageOutput(PathImageOutput("out.txt"))
+      .build()
+    var asked = false
+
+    config.renderSettings({ asked = true; Some(120) }).maxColumns shouldBe 100
+    asked shouldBe false
+  }
+
   it should "throw an exception when provided with two image sources" in {
 
     val source1 = PathImageSource("x.png")
