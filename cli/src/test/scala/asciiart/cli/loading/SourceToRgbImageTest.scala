@@ -74,6 +74,13 @@ class SourceToRgbImageTest extends AnyFlatSpec with Matchers with BeforeAndAfter
     first.getData() should not be second.getData()
   }
 
+  it should "draw the same random picture for the same seed" in {
+    val first = new SourceToRgbImage(RandomImageSource(Some(7))).convert()
+    val second = new SourceToRgbImage(RandomImageSource(Some(7))).convert()
+
+    first.getData() shouldBe second.getData()
+  }
+
   it should "throw IllegalArgumentException naming a file that does not exist" in {
     val path = dir.resolve("missing.png").toString
 

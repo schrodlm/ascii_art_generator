@@ -153,6 +153,19 @@ class CommandLineParserTest extends AnyFlatSpec with Matchers {
 
   // Additional tests for other options like --custom-table, --rotate, --invert, etc.
 
+  it should "parse seed option into the random image source, before or after it" in {
+    for (args <- Seq(Array("--image-random", "--seed", "7"), Array("--seed", "7", "--image-random"))) {
+      new CommandLineParser(args :+ "--output-console").parse().get.imageSource shouldBe RandomImageSource(Some(7))
+    }
+  }
+
+  it should "throw when seed option is not a whole number or there is no random image" in {
+    parseError("--seed", "abc") shouldBe "Seed must be a whole number"
+
+    val withFile = new CommandLineParser(Array("--image", "x.png", "--seed", "7", "--output-console"))
+    (the[IllegalArgumentException] thrownBy withFile.parse()).getMessage shouldBe "--seed only works with --image-random"
+  }
+
   it should "throw when provided with invalid argument" in {
     parseError("--invalid-option") shouldBe "Unknown option --invalid-option"
   }
