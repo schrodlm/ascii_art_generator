@@ -26,7 +26,15 @@ class GoldenRenderTest extends AnyFlatSpec with Matchers {
     new RGBImage(w, h, pixels)
   }
 
-  "The pipeline" should "render the fixture with square cells" in {
+  "The pipeline" should "render the fixture with the default settings" in {
+    AsciiArtPipeline.render(fixture, RenderSettings()).toText shouldBe
+      """@@@%%%%%####****
+        |%####*****++++==
+        |***++++====-----
+        |====-----::::...""".stripMargin
+  }
+
+  it should "render the fixture with square cells" in {
     val art = AsciiArtPipeline.render(fixture, RenderSettings(cellAspect = 1))
 
     art.toText shouldBe
