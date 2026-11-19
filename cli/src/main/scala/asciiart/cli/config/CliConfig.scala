@@ -45,6 +45,16 @@ object CliConfig {
       this
     }
 
+    def withMaxColumns(maxColumns: Int): Builder = {
+      render = render.copy(maxColumns = maxColumns)
+      this
+    }
+
+    def withCellAspect(cellAspect: Double): Builder = {
+      render = render.copy(cellAspect = cellAspect)
+      this
+    }
+
     def addRgbFilter(filter: RGBImageFilter): Builder = {
       render = render.copy(rgbFilters = render.rgbFilters :+ filter)
       this

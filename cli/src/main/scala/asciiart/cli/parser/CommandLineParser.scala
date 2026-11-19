@@ -1,7 +1,7 @@
 package asciiart.cli.parser
 
 import asciiart.cli.config.{CliConfig, ConsoleImageOutput, PathImageOutput, PathImageSource, RandomImageSource}
-import asciiart.core.filter.{BrightnessFilter, ContrastFilter, FlipFilter, FontAspectRatioFilter, InvertFilter, RotationFilter, ScaleFilter}
+import asciiart.core.filter.{BrightnessFilter, ContrastFilter, FlipFilter, InvertFilter, RotationFilter, ScaleFilter}
 
 import scala.util.Try
 
@@ -38,7 +38,8 @@ class CommandLineParser(val args: Array[String]) extends Parser {
       |  --flip [axis]                  Flip the image along a specified axis ('horizontal' or 'vertical').! NOT IMPLEMENTED YET !
       |  --brightness [value]           Adjust the brightness of the image (value must be an integer).
       |  --contrast [factor]            Stretch brightness away from mid-grey (2 doubles the contrast, 0.5 halves it).
-      |  --font-aspect-ratio [x:y]      Set the font aspect ratio with two integers (e.g., '1:2'). ! NOT IMPLEMENTED YET !
+      |  --width [columns]              Fit the image into at most this many columns before --scale (a smaller image is not enlarged).
+      |  --font-aspect-ratio [x:y]      Width to height of one character on screen (default 1:2; 1:1 turns the correction off).
       |
       |Examples:
       |  asciiart --image /path/to/image.jpg --rotate 90 --output-console
@@ -108,14 +109,16 @@ class CommandLineParser(val args: Array[String]) extends Parser {
         val contrastValue = Try(value.toDouble).getOrElse(throw new IllegalArgumentException("Contrast value must be a valid number"))
         val contrastFilter: ContrastFilter = new ContrastFilter(contrastValue)
         nextArg(configBuilder.addGrayscaleFilter(contrastFilter), tail)
+      case "--width" :: value :: tail =>
+        val columns = Try(value.toInt).filter(_ >= 1)
+          .getOrElse(throw new IllegalArgumentException("Width must be a whole number of at least 1"))
+        nextArg(configBuilder.withMaxColumns(columns), tail)
       case "--font-aspect-ratio" :: ratio :: tail =>
-        throw new NotImplementedError("Font aspect ratio is not yet implemented.")
         parseFontAspectRatio(ratio) match {
-          case Some((x, y)) =>
-            val fontAspectRatioFilter: FontAspectRatioFilter = new FontAspectRatioFilter(x, y)
-            nextArg(configBuilder.addAsciiFilter(fontAspectRatioFilter), tail)
+          case Some((x, y)) if x > 0 && y > 0 && x <= 10L * y && y <= 10L * x =>
+            nextArg(configBuilder.withCellAspect(x.toDouble / y), tail)
           case _ =>
-            throw new IllegalArgumentException("Font aspect ration must be in the format 'x:y'.")
+            throw new IllegalArgumentException("Font aspect ratio must be two positive whole numbers between 1:10 and 10:1, like 1:2")
         }
       case "--output-console" :: tail =>
         nextArg(configBuilder.withImageOutput(ConsoleImageOutput()), tail)
@@ -134,7 +137,7 @@ class CommandLineParser(val args: Array[String]) extends Parser {
    * @return an Option containing a tuple (Int, Int) if parsing is successful, None otherwise
    */
   def parseFontAspectRatio(input: String): Option[(Int, Int)] = {
-    input.split(":") match {
+    input.split(":", -1) match {
       case Array(a, b) =>
         try {
           Some((a.toInt, b.toInt))
