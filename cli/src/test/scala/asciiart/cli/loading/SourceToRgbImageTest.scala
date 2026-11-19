@@ -1,6 +1,6 @@
 package asciiart.cli.loading
 
-import asciiart.cli.config.PathImageSource
+import asciiart.cli.config.{PathImageSource, RandomImageSource}
 import asciiart.core.image.RGBImage
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.flatspec.AnyFlatSpec
@@ -64,6 +64,14 @@ class SourceToRgbImageTest extends AnyFlatSpec with Matchers with BeforeAndAfter
         (image.getWidth(), image.getHeight()) shouldBe ((1, 1))
       }
     }
+  }
+
+  it should "draw a 640 by 480 picture for a random source, different each time" in {
+    val first = new SourceToRgbImage(RandomImageSource()).convert()
+    val second = new SourceToRgbImage(RandomImageSource()).convert()
+
+    (first.getWidth(), first.getHeight()) shouldBe ((640, 480))
+    first.getData() should not be second.getData()
   }
 
   it should "throw IllegalArgumentException naming a file that does not exist" in {
