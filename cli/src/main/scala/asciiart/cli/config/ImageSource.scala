@@ -19,9 +19,6 @@ sealed trait ImageSource
 case class PathImageSource(path: String) extends ImageSource
 
 /**
- * Represents an image source that generates a random image.
- *
- * This case class is used when the source of the ASCII art is a randomly generated image,
- * potentially from an external service or an internal generator.
+ * A generated picture (a plasma) instead of a file. Each run draws a new one.
  */
 case class RandomImageSource() extends ImageSource

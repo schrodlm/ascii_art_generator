@@ -35,7 +35,7 @@ sbt "cli/run [command line arguments]"
 ### Command Line Arguments
 
     --image [path]: Specify the path of the image file to use as the source.
-    --image-random: Use a random image as the source.
+    --image-random: Use a generated random picture (a plasma) as the source.
     --output-console: Output the ASCII art to the console.
     --output-file [path]: Output the ASCII art to a file at the specified path.
 

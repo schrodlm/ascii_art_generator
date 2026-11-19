@@ -22,7 +22,7 @@ class CommandLineParser(val args: Array[String]) extends Parser {
       |
       |Mandatory Options:
       |  One of the following image source options must be specified:
-      |    --image-random                 Use a random image as the source.
+      |    --image-random                 Use a generated random picture (a plasma) as the source.
       |    --image [path]                 Specify the path of the image file to use as the source.
       |
       |  One of the following output options must be specified:

@@ -2,7 +2,9 @@ package asciiart.cli.loading
 
 import asciiart.cli.config.{ImageSource, PathImageSource, RandomImageSource}
 import asciiart.core.conversion.ImageConvertor
-import asciiart.core.image.RGBImage
+import asciiart.core.image.{Plasma, RGBImage}
+
+import scala.util.Random
 
 
 /**
@@ -32,9 +34,9 @@ class SourceToRgbImage(input: ImageSource, var loadingStrategy: Option[ImageLoad
           }))
 
         case RandomImageSource() =>
-          Some(new RandomImageLoadingStrategy(bufferedImage => {
-            new BufferedToRgbConverter(bufferedImage).convert()
-          }))
+          Some(new ImageLoadingStrategy {
+            override def load(): RGBImage = Plasma.generate(Random.nextLong())
+          })
       }
     }
     loadingStrategy.get.load()
