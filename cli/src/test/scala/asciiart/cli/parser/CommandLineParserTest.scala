@@ -1,6 +1,6 @@
 package asciiart.cli.parser
 
-import asciiart.core.table.CustomTable
+import asciiart.core.table.{CustomTable, TableNameMapper}
 import asciiart.cli.config.{ConsoleImageOutput, PathImageOutput, PathImageSource, RandomImageSource}
 import asciiart.core.filter.{BrightnessFilter, ContrastFilter, FlipFilter, InvertFilter, RotationFilter, ScaleFilter}
 import org.scalatest.flatspec.AnyFlatSpec
@@ -164,6 +164,21 @@ class CommandLineParserTest extends AnyFlatSpec with Matchers {
 
     val withFile = new CommandLineParser(Array("--image", "x.png", "--seed", "7", "--output-console"))
     (the[IllegalArgumentException] thrownBy withFile.parse()).getMessage shouldBe "--seed only works with --image-random"
+  }
+
+  it should "describe every option it accepts, only real table names, within 80 columns" in {
+    val usage = new CommandLineParser(Array.empty).usage
+    val options = Seq("--image", "--image-random", "--seed", "--output-console", "--output-file", "--width",
+      "--font-aspect-ratio", "--rotate", "--brightness", "--contrast", "--invert", "--table", "--custom-table",
+      "--flip", "--scale", "--help")
+    val tables = Seq("default", "nonlinear-default", "paulborkes")
+
+    for (option <- options) usage should include(s"  $option ")
+    // Compared without line breaks, so wrapping the help does not matter.
+    usage.split("\\s+").mkString(" ") should include("A built-in table: default, nonlinear-default or paulborkes.")
+    for (table <- tables) noException should be thrownBy TableNameMapper(table)
+    usage should not include "NOT IMPLEMENTED"
+    all(usage.linesIterator.map(_.length).toSeq) should be <= 80
   }
 
   it should "throw when provided with invalid argument" in {
