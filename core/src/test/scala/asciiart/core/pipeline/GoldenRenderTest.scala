@@ -1,7 +1,7 @@
 package asciiart.core.pipeline
 
 import asciiart.core.filter.BrightnessFilter
-import asciiart.core.image.RGBImage
+import asciiart.core.image.{Plasma, RGBImage}
 import asciiart.core.table.PaulBorkesTable
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -64,5 +64,24 @@ class GoldenRenderTest extends AnyFlatSpec with Matchers {
         |jt\|){[]-+~>il;:
         |(1}[?_+<i!I:"^'.
         |]-+~>!I;,"`.....""".stripMargin
+  }
+
+  it should "render the seed 7 plasma at 40 columns" in {
+    AsciiArtPipeline.render(Plasma.generate(7), RenderSettings(maxColumns = 40)).toText shouldBe
+      """-=++****+=--::::-=+*#%%%%##*++++++**####
+        |=+*##**+=--::-=+*#%%@@%%#*++===++*******
+        |*####*+==---=+*#%@@@@%#*+======++****++=
+        |%%%#*+==-==+*#%%@@%%#*+=-----=++++++==--
+        |%%#*+====+**#%%%%#*+=-::::--=++++++==---
+        |#*+=---=+*##%%#**=-::..::-=++***++======
+        |==----=+**###*+=-:....:-=+**##**++===+++
+        |::::-=+*****+=-::..::-+**##%##**+++++**#
+        |.::-=+*****+=-::::-=+*#%%%%%#*++++++**##
+        |:-=+*###*++=----=+*#%%@@@%#*++====++****
+        |=*##%%#*++=---=+*#%@@@@%#*+==--==+++***+
+        |#%%%%#*+=====+*#%%@@%%#*=--::--==++++++=
+        |@@@%#*+=====+*#%%%%#*+=-:::::-=+++*+++==
+        |@%#*+=---==+*####**=-::...:-=++****++===
+        |#*=--::-==+*###*+=-:....:-=+*####**++==+""".stripMargin
   }
 }
