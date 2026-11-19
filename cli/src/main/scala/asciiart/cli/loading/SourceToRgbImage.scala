@@ -33,9 +33,9 @@ class SourceToRgbImage(input: ImageSource, var loadingStrategy: Option[ImageLoad
             new BufferedToRgbConverter(bufferedImage).convert()
           }))
 
-        case RandomImageSource() =>
+        case RandomImageSource(seed) =>
           Some(new ImageLoadingStrategy {
-            override def load(): RGBImage = Plasma.generate(Random.nextLong())
+            override def load(): RGBImage = Plasma.generate(seed.getOrElse(Random.nextLong()))
           })
       }
     }

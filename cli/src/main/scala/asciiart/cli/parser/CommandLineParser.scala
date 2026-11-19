@@ -38,6 +38,7 @@ class CommandLineParser(val args: Array[String]) extends Parser {
       |  --flip [axis]                  Flip the image along a specified axis ('horizontal' or 'vertical').! NOT IMPLEMENTED YET !
       |  --brightness [value]           Adjust the brightness of the image (value must be an integer).
       |  --contrast [factor]            Stretch brightness away from mid-grey (2 doubles the contrast, 0.5 halves it).
+      |  --seed [number]                Draw the same picture every time with --image-random.
       |  --width [columns]              Fit the image into at most this many columns before --scale (a smaller image is not
       |                                 enlarged). Default: the terminal's width with --output-console, else 100.
       |  --font-aspect-ratio [x:y]      Width to height of one character on screen (default 1:2; 1:1 turns the correction off).
@@ -81,6 +82,9 @@ class CommandLineParser(val args: Array[String]) extends Parser {
 
       case "--image-random" :: tail =>
         nextArg(configBuilder.withImageSource(RandomImageSource()), tail)
+      case "--seed" :: value :: tail =>
+        val seed = Try(value.toLong).getOrElse(throw new IllegalArgumentException("Seed must be a whole number"))
+        nextArg(configBuilder.withSeed(seed), tail)
       case "--image" :: path :: tail =>
         nextArg(configBuilder.withImageSource(PathImageSource(path)), tail)
       case "--table" :: name :: tail =>

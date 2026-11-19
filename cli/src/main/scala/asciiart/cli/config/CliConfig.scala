@@ -40,6 +40,7 @@ object CliConfig {
     private var imageSource: Option[ImageSource] = None
     private var imageOutput: Option[ImageOutput] = None
     private var width: Option[Int] = None
+    private var seed: Option[Long] = None
     private var render: RenderSettings = RenderSettings()
 
     def withImageSource(source: ImageSource): Builder = {
@@ -62,6 +63,11 @@ object CliConfig {
 
     def withTable(chars: Array[Char]): Builder = {
       render = render.copy(table = new CustomTable(chars))
+      this
+    }
+
+    def withSeed(seed: Long): Builder = {
+      this.seed = Some(seed)
       this
     }
 
@@ -95,7 +101,12 @@ object CliConfig {
         throw new IllegalArgumentException("Missing an image source: use --image [path] or --image-random"))
       val output = imageOutput.getOrElse(
         throw new IllegalArgumentException("Missing an output: use --output-console or --output-file [path]"))
-      CliConfig(source, output, width, render)
+      val seededSource = (source, seed) match {
+        case (_, None) => source
+        case (_: RandomImageSource, Some(_)) => RandomImageSource(seed)
+        case _ => throw new IllegalArgumentException("--seed only works with --image-random")
+      }
+      CliConfig(seededSource, output, width, render)
     }
   }
 }

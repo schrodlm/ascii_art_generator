@@ -19,6 +19,8 @@ sealed trait ImageSource
 case class PathImageSource(path: String) extends ImageSource
 
 /**
- * A generated picture (a plasma) instead of a file. Each run draws a new one.
+ * A generated picture (a plasma) instead of a file.
+ *
+ * @param seed Draws the same picture every time; without it each run draws a new one.
  */
-case class RandomImageSource() extends ImageSource
+case class RandomImageSource(seed: Option[Long] = None) extends ImageSource
