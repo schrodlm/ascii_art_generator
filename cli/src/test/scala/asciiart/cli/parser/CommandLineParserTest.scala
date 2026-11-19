@@ -96,6 +96,44 @@ class CommandLineParserTest extends AnyFlatSpec with Matchers {
     an[IllegalArgumentException] should be thrownBy new CommandLineParser(Array("--rotate", "xyz")).parse()
   }
 
+  it should "parse width option as the maximum number of columns" in {
+    val args = Array("--width", "80", "--image-random", "--output-console")
+
+    new CommandLineParser(args).parse().get.render.maxColumns shouldBe 80
+  }
+
+  it should "throw when width option is not a whole number of at least 1" in {
+    for (value <- Seq("abc", "0", "-5")) {
+      val error = the[IllegalArgumentException] thrownBy
+        new CommandLineParser(Array("--width", value, "--image-random", "--output-console")).parse()
+
+      error.getMessage shouldBe "Width must be a whole number of at least 1"
+    }
+  }
+
+  it should "parse font aspect ratio option as the cell aspect" in {
+    def cellAspect(ratio: String): Double =
+      new CommandLineParser(Array("--font-aspect-ratio", ratio, "--image-random", "--output-console")).parse().get.render.cellAspect
+
+    cellAspect("1:2") shouldBe 0.5
+    cellAspect("3:5") shouldBe 0.6
+    cellAspect("1:1") shouldBe 1.0
+    cellAspect("10:1") shouldBe 10.0
+    cellAspect("1:10") shouldBe 0.1
+    cellAspect("2000000000:1000000000") shouldBe 2.0
+  }
+
+  it should "throw when font aspect ratio option is not two positive whole numbers between 1:10 and 10:1" in {
+    for (ratio <- Seq("abc", "1", "0:2", "1:0", "-1:2", "1:2:3", "1:2:", "11:1", "1:11", "2147483647:1")) {
+      val error = the[IllegalArgumentException] thrownBy
+        new CommandLineParser(Array("--font-aspect-ratio", ratio, "--image-random", "--output-console")).parse()
+
+      withClue(ratio) {
+        error.getMessage shouldBe "Font aspect ratio must be two positive whole numbers between 1:10 and 10:1, like 1:2"
+      }
+    }
+  }
+
   it should "parse invert filter option" in {
     val args = Array("--invert", "--image-random", "--output-console")
     val config = new CommandLineParser(args).parse().get
