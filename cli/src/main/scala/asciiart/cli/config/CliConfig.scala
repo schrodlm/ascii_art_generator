@@ -7,12 +7,31 @@ import asciiart.core.table.{CustomTable, TableNameMapper}
 /**
  * What the CLI was asked to do: where the image comes from, where the art
  * goes, and how to render it.
+ *
+ * @param width The --width the user asked for, if any.
+ * @param render Everything but the width, which renderSettings decides.
  */
 final case class CliConfig(
   imageSource: ImageSource,
   imageOutput: ImageOutput,
+  width: Option[Int],
   render: RenderSettings
-)
+) {
+
+  /**
+   * The render settings with the output width decided: the requested width,
+   * else the terminal's width when printing to it, else 100 columns.
+   *
+   * @param terminalColumns The terminal's width; only asked for when it is needed.
+   */
+  def renderSettings(terminalColumns: => Option[Int]): RenderSettings = {
+    val fromTerminal = imageOutput match {
+      case ConsoleImageOutput() => terminalColumns
+      case _ => None
+    }
+    render.copy(maxColumns = width.orElse(fromTerminal).getOrElse(100))
+  }
+}
 
 object CliConfig {
 
@@ -20,6 +39,7 @@ object CliConfig {
   class Builder {
     private var imageSource: Option[ImageSource] = None
     private var imageOutput: Option[ImageOutput] = None
+    private var width: Option[Int] = None
     private var render: RenderSettings = RenderSettings()
 
     def withImageSource(source: ImageSource): Builder = {
@@ -45,8 +65,8 @@ object CliConfig {
       this
     }
 
-    def withMaxColumns(maxColumns: Int): Builder = {
-      render = render.copy(maxColumns = maxColumns)
+    def withWidth(columns: Int): Builder = {
+      width = Some(columns)
       this
     }
 
@@ -75,7 +95,7 @@ object CliConfig {
         throw new IllegalArgumentException("Missing an image source: use --image [path] or --image-random"))
       val output = imageOutput.getOrElse(
         throw new IllegalArgumentException("Missing an output: use --output-console or --output-file [path]"))
-      CliConfig(source, output, render)
+      CliConfig(source, output, width, render)
     }
   }
 }

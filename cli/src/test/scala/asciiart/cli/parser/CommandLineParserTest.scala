@@ -101,7 +101,7 @@ class CommandLineParserTest extends AnyFlatSpec with Matchers {
   it should "parse width option as the maximum number of columns" in {
     val args = Array("--width", "80", "--image-random", "--output-console")
 
-    new CommandLineParser(args).parse().get.render.maxColumns shouldBe 80
+    new CommandLineParser(args).parse().get.width shouldBe Some(80)
   }
 
   it should "throw when width option is not a whole number of at least 1" in {

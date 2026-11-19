@@ -38,7 +38,8 @@ class CommandLineParser(val args: Array[String]) extends Parser {
       |  --flip [axis]                  Flip the image along a specified axis ('horizontal' or 'vertical').! NOT IMPLEMENTED YET !
       |  --brightness [value]           Adjust the brightness of the image (value must be an integer).
       |  --contrast [factor]            Stretch brightness away from mid-grey (2 doubles the contrast, 0.5 halves it).
-      |  --width [columns]              Fit the image into at most this many columns before --scale (a smaller image is not enlarged).
+      |  --width [columns]              Fit the image into at most this many columns before --scale (a smaller image is not
+      |                                 enlarged). Default: the terminal's width with --output-console, else 100.
       |  --font-aspect-ratio [x:y]      Width to height of one character on screen (default 1:2; 1:1 turns the correction off).
       |
       |Examples:
@@ -112,7 +113,7 @@ class CommandLineParser(val args: Array[String]) extends Parser {
       case "--width" :: value :: tail =>
         val columns = Try(value.toInt).filter(_ >= 1)
           .getOrElse(throw new IllegalArgumentException("Width must be a whole number of at least 1"))
-        nextArg(configBuilder.withMaxColumns(columns), tail)
+        nextArg(configBuilder.withWidth(columns), tail)
       case "--font-aspect-ratio" :: ratio :: tail =>
         parseFontAspectRatio(ratio) match {
           case Some((x, y)) if x > 0 && y > 0 && x <= 10L * y && y <= 10L * x =>

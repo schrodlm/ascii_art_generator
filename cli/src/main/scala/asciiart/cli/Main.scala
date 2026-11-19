@@ -17,7 +17,7 @@ object Main {
         case None => 0 // usage was printed
         case Some(config) =>
           val image = new SourceToRgbImage(config.imageSource).convert()
-          val asciiArt = AsciiArtPipeline.render(image, config.render)
+          val asciiArt = AsciiArtPipeline.render(image, config.renderSettings(Terminal.columns()))
           config.imageOutput.save(asciiArt)
           0
       }
