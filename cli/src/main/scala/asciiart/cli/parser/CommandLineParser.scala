@@ -18,37 +18,58 @@ class CommandLineParser(val args: Array[String]) extends Parser {
 
   val usage: String =
     """
-      |Usage: asciiart [options] [source]
+      |Usage: asciiart (--image <path> | --image-random)
+      |                (--output-console | --output-file <path>) [options]
       |
-      |Mandatory Options:
-      |  One of the following image source options must be specified:
-      |    --image-random                 Use a generated random picture (a plasma) as the source.
-      |    --image [path]                 Specify the path of the image file to use as the source.
+      |Turns an image into ASCII art.
       |
-      |  One of the following output options must be specified:
-      |    --output-console               Output the ASCII art to the console.
-      |    --output-file [path]           Output the ASCII art to a file at the specified path.
+      |Source, pick --image or --image-random:
+      |  --image <path>               A PNG, JPEG, GIF, BMP or TIFF file.
+      |  --image-random               A generated picture (a plasma), different every
+      |                               run.
+      |  --seed <number>              With --image-random: draw the same picture every
+      |                               time.
       |
-      |Optional Options:
-      |  --table [name]                 Specify the name of the predefined character table ('default', 'mathematical', 'nonlinear-default').
-      |  --custom-table [chars]         Define a custom character table.
-      |  --rotate [degrees]             Rotate clockwise by a multiple of 90 degrees (negative turns anticlockwise).
-      |  --scale [factor]               Scale the output by a factor (2 doubles it, 0.5 halves it).
-      |  --invert                       Invert brightness, so black becomes white (for dark terminals).
-      |  --flip [axis]                  Flip the image along a specified axis ('horizontal' or 'vertical').! NOT IMPLEMENTED YET !
-      |  --brightness [value]           Adjust the brightness of the image (value must be an integer).
-      |  --contrast [factor]            Stretch brightness away from mid-grey (2 doubles the contrast, 0.5 halves it).
-      |  --seed [number]                Draw the same picture every time with --image-random.
-      |  --width [columns]              Fit the image into at most this many columns before --scale (a smaller image is not
-      |                                 enlarged). Default: the terminal's width with --output-console, else 100.
-      |  --font-aspect-ratio [x:y]      Width to height of one character on screen (default 1:2; 1:1 turns the correction off).
+      |Output, pick one:
+      |  --output-console             Print the art.
+      |  --output-file <path>         Write the art to a file.
+      |
+      |Size:
+      |  --width <columns>            Fit the image into at most this many columns (a
+      |                               smaller image is not enlarged). Default: the
+      |                               terminal's width with --output-console, else 100.
+      |  --font-aspect-ratio <x:y>    Width to height of one character, so the art
+      |                               keeps its proportions (default 1:2; 1:1 turns
+      |                               this off).
+      |  --rotate <degrees>           Rotate clockwise by a multiple of 90 degrees
+      |                               (negative turns anticlockwise).
+      |
+      |Brightness, on a scale of 0 (black) to 255 (white):
+      |  --brightness <amount>        Add this to every value (negative darkens).
+      |  --contrast <factor>          Stretch values away from mid-grey (2 doubles the
+      |                               contrast, 0.5 halves it).
+      |  --invert                     Swap black and white (for dark terminals).
+      |
+      |Characters:
+      |  --table <name>               A built-in table: default, nonlinear-default or
+      |                               paulborkes.
+      |  --custom-table <chars>       Your own characters, darkest first, for example
+      |                               "@#+-. ".
+      |  --flip <axis>                vertical (or x) turns the art upside down;
+      |                               horizontal (or y) mirrors it.
+      |  --scale <factor>             Scale the finished art (2 doubles it, 0.5 halves
+      |                               it).
+      |
+      |  --help                       Show this text.
+      |
+      |The options apply in this order: --rotate, --width, the brightness options,
+      |--table or --custom-table, --flip, --scale. Options in the same step apply in
+      |the order you give them.
       |
       |Examples:
-      |  asciiart --image /path/to/image.jpg --rotate 90 --output-console
-      |  asciiart --image-random --brightness 5 --output-file /path/to/output.txt
-      |
-      |Note:
-      |  Some options might require additional arguments.
+      |  asciiart --image photo.jpg --output-console
+      |  asciiart --image photo.jpg --width 60 --invert --output-console
+      |  asciiart --image-random --seed 7 --contrast 1.5 --output-file art.txt
    """.stripMargin
 
   /**
