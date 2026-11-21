@@ -42,4 +42,11 @@ class BrightnessFilterTest extends AnyFlatSpec with Matchers{
     lowAdjustedImage.getData()(0) shouldBe 0   // Clamped to 0
     lowAdjustedImage.getData()(1) shouldBe 145
   }
+
+  it should "not overflow with the largest and smallest amounts" in {
+    val image = new GrayscaleImage(2, 1, Array(0, 255))
+
+    new BrightnessFilter(Int.MaxValue).apply(image).getData() shouldBe Array(255, 255)
+    new BrightnessFilter(Int.MinValue).apply(image).getData() shouldBe Array(0, 0)
+  }
 }
