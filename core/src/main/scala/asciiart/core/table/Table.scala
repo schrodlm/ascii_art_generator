@@ -22,6 +22,19 @@ class LinearTable(val chars: Array[Char]) extends Table{
 }
 
 class NonLinearTable(val chars: Array[(Int,Char)]) extends Table {
+  if (chars.isEmpty) {
+    throw new IllegalArgumentException("A character table needs at least one character")
+  }
+  if (chars.exists { case (limit, _) => limit < 0 || limit > 255 }) {
+    throw new IllegalArgumentException("Grey limits must be between 0 and 255")
+  }
+  if (chars.zip(chars.tail).exists { case ((limit, _), (next, _)) => next <= limit }) {
+    throw new IllegalArgumentException("Grey limits must rise from one character to the next")
+  }
+  if (chars.last._1 != 255) {
+    throw new IllegalArgumentException("The last grey limit must be 255, so every grey has a character")
+  }
+
   override def getChar(value: Int): Char = {
     chars.find { case (border, _) =>
 
