@@ -25,15 +25,7 @@ class ScaleFilter(val scale: Double) extends AsciiArtFilter {
     val newWidth = math.max(1, (width * scale).toInt)
     val newHeight = math.max(1, (height * scale).toInt)
     if (newWidth.toLong * newHeight > Int.MaxValue) throw new IllegalArgumentException("Scale is too large")
-    val data = image.getData()
-
-    val newData = Array.tabulate(newWidth * newHeight) { i =>
-      val x = sourceCoord(i % newWidth, width, newWidth)
-      val y = sourceCoord(i / newWidth, height, newHeight)
-      data(y * width + x)
-    }
-
-    new AsciiArt(newWidth, newHeight, newData)
+    image.rearrange(newWidth, newHeight)((x, y) => (sourceCoord(x, width, newWidth), sourceCoord(y, height, newHeight)))
   }
 
   // The source coordinate under the centre of output coordinate `out`.

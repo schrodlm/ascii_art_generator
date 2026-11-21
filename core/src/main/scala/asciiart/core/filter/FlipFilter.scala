@@ -21,15 +21,13 @@ class FlipFilter(val flip: Flip) extends AsciiArtFilter {
     case Flip.Horizontal => flipHorizontally(image)
   }
 
-  // Flips the image vertically.
   private def flipVertically(image: AsciiArt): AsciiArt = {
-    val newData = image.getData().grouped(image.getWidth()).toArray.reverse.flatten
-    new AsciiArt(image.getWidth(), image.getHeight(), newData)
+    val height = image.getHeight()
+    image.rearrange(image.getWidth(), height)((x, y) => (x, height - 1 - y))
   }
 
-  // Flips the image horizontally.
   private def flipHorizontally(image: AsciiArt): AsciiArt = {
-    val newData = image.getData().grouped(image.getWidth()).flatMap(_.reverse).toArray
-    new AsciiArt(image.getWidth(), image.getHeight(), newData)
+    val width = image.getWidth()
+    image.rearrange(width, image.getHeight())((x, y) => (width - 1 - x, y))
   }
 }
