@@ -15,6 +15,6 @@ object TableNameMapper {
   def apply(tableName : String): Table = {
     val name = tableName.toLowerCase
     tables.collectFirst { case (`name`, table) => table() }
-      .getOrElse(throw new IllegalArgumentException("Unknown table type"))
+      .getOrElse(throw new IllegalArgumentException(s"Unknown table '$tableName': use ${names.mkString(", ")}"))
   }
 }
