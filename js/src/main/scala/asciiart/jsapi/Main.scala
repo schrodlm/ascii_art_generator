@@ -1,4 +1,4 @@
-package asciiart.web
+package asciiart.jsapi
 
 import asciiart.core.filter.{BrightnessFilter, Flip, FlipFilter, InvertFilter, RotationFilter, ScaleFilter}
 import asciiart.core.image.RGBImage
