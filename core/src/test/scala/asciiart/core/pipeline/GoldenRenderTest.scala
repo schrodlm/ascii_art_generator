@@ -2,7 +2,7 @@ package asciiart.core.pipeline
 
 import asciiart.core.filter.BrightnessFilter
 import asciiart.core.image.{Plasma, RGBImage}
-import asciiart.core.table.PaulBorkesTable
+import asciiart.core.table.PaulBourkeTable
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -48,9 +48,9 @@ class GoldenRenderTest extends AnyFlatSpec with Matchers {
         |===----:::::....""".stripMargin
   }
 
-  it should "render the fixture with the Paul Borkes table, square cells and a brightness filter" in {
+  it should "render the fixture with the Paul Bourke table, square cells and a brightness filter" in {
     val settings = RenderSettings(
-      table = new PaulBorkesTable(),
+      table = new PaulBourkeTable(),
       cellAspect = 1,
       grayscaleFilters = Seq(new BrightnessFilter(30))
     )

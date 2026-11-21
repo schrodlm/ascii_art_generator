@@ -1,6 +1,6 @@
 package asciiart.cli.config
 
-import asciiart.core.table.{CustomTable, DefaultTable, PaulBorkesTable}
+import asciiart.core.table.{CustomTable, DefaultTable, PaulBourkeTable}
 import asciiart.core.filter.{AsciiArtFilter, BrightnessFilter, FlipFilter, GrayscaleImageFilter, RGBImageFilter}
 import asciiart.core.image.{AsciiArt, GrayscaleImage, RGBImage}
 import org.scalatest.flatspec.AnyFlatSpec
@@ -56,7 +56,7 @@ class CliConfigTest extends AnyFlatSpec with Matchers {
       .withTable(PaulBorkeTable)
       .build()
 
-    config.render.table shouldBe a[PaulBorkesTable]
+    config.render.table shouldBe a[PaulBourkeTable]
 
   }
 

@@ -50,7 +50,7 @@ class DefaultNonLinearTable() extends NonLinearTable(Array((10,'@'),(40,'%'),(10
  * and nuanced ASCII art representation. This character set is often used in ASCII art
  * rendering algorithms for its ability to closely mimic grayscale images.
  */
-class PaulBorkesTable() extends LinearTable(Array(
+class PaulBourkeTable() extends LinearTable(Array(
   '$', '@', 'B', '%', '8', '&', 'W', 'M', '#', '*', 'o', 'a', 'h', 'k', 'b', 'd', 'p', 'q',
   'w', 'm', 'Z', 'O', '0', 'Q', 'L', 'C', 'J', 'U', 'Y', 'X', 'z', 'c', 'v', 'u', 'n', 'x',
   'r', 'j', 'f', 't', '/', '\\', '|', '(', ')', '1', '{', '}', '[', ']', '?', '-', '_', '+',

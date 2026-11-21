@@ -5,9 +5,9 @@ import org.scalatest.matchers.should.Matchers
 
 class TableNameMapperTest extends AnyFlatSpec with Matchers {
 
-  "TableNameMapper" should "return a PaulBorkesTable for 'paulborkes'" in {
+  "TableNameMapper" should "return a PaulBourkeTable for 'paulborkes'" in {
     val table = TableNameMapper("paulborkes")
-    table shouldBe a[PaulBorkesTable]
+    table shouldBe a[PaulBourkeTable]
   }
 
   it should "return a DefaultTable for 'default'" in {
