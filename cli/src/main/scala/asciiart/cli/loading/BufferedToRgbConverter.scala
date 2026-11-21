@@ -1,6 +1,5 @@
 package asciiart.cli.loading
 
-import asciiart.core.conversion.ImageConvertor
 import asciiart.core.image.RGBImage
 
 import java.awt.image.BufferedImage
@@ -8,7 +7,7 @@ import java.awt.image.BufferedImage
 /**
  * Utility class for converting a BufferedImage to the custom Image class.
  */
-class BufferedToRgbConverter(val bufferedImage: BufferedImage) extends ImageConvertor[RGBImage] {
+class BufferedToRgbConverter(val bufferedImage: BufferedImage) {
 
   /**
    * Converts a BufferedImage to a custom Image class.
@@ -19,7 +18,7 @@ class BufferedToRgbConverter(val bufferedImage: BufferedImage) extends ImageConv
    * @param bufferedImage The BufferedImage to convert.
    * @return An instance of the custom Image class.
    */
-  override def convert(): RGBImage = {
+  def convert(): RGBImage = {
     val width = bufferedImage.getWidth
     val height = bufferedImage.getHeight
     val pixels = new Array[Int](width * height)

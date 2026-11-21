@@ -1,7 +1,6 @@
 package asciiart.cli.loading
 
 import asciiart.cli.config.{ImageSource, PathImageSource, RandomImageSource}
-import asciiart.core.conversion.ImageConvertor
 import asciiart.core.image.{Plasma, RGBImage}
 
 import scala.util.Random
@@ -15,7 +14,7 @@ import scala.util.Random
  * @param input           The source of the image.
  * @param loadingStrategy Optional custom strategy for loading the image.
  */
-class SourceToRgbImage(input: ImageSource, var loadingStrategy: Option[ImageLoadingStrategy] = None) extends ImageConvertor[RGBImage] {
+class SourceToRgbImage(input: ImageSource, var loadingStrategy: Option[ImageLoadingStrategy] = None) {
 
   /**
    * Converts the input source to an RGBImage.
