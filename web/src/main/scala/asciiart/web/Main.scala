@@ -20,7 +20,7 @@ object Main {
       (0xFF << 24) | ((x * 4) << 16) | ((y * 8) << 8) | ((x + y) * 2)
     }
     val image = new RGBImage(w, h, pixels)
-    val tables = Seq("default", "nonlinear-default", "paulborkes").map(TableNameMapper(_)) :+
+    val tables = TableNameMapper.names.map(TableNameMapper(_)) :+
       new CustomTable(" .:-=+*#%@".toCharArray)
     val settings = tables.map { table =>
       RenderSettings(
