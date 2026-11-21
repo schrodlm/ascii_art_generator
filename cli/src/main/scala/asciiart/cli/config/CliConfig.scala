@@ -76,6 +76,11 @@ object CliConfig {
       this
     }
 
+    def withColors(): Builder = {
+      render = render.copy(colors = true)
+      this
+    }
+
     def withCellAspect(cellAspect: Double): Builder = {
       render = render.copy(cellAspect = cellAspect)
       this

@@ -33,6 +33,8 @@ class CommandLineParser(val args: Array[String]) extends Parser {
       |Output, pick one:
       |  --output-console             Print the art.
       |  --output-file <path>         Write the art to a file.
+      |  --color                      Colour each character like the picture, with the
+      |                               24-bit colour codes most terminals understand.
       |
       |Size:
       |  --width <columns>            Fit the image into at most this many columns (a
@@ -69,6 +71,7 @@ class CommandLineParser(val args: Array[String]) extends Parser {
       |Examples:
       |  asciiart --image photo.jpg --output-console
       |  asciiart --image photo.jpg --width 60 --invert --output-console
+      |  asciiart --image photo.jpg --color --output-console
       |  asciiart --image-random --seed 7 --contrast 1.5 --output-file art.txt
    """.stripMargin
 
@@ -121,6 +124,8 @@ class CommandLineParser(val args: Array[String]) extends Parser {
         val scaleValue = Try(value.toDouble).getOrElse(throw new IllegalArgumentException("Scale value must be a valid number"))
         val scaleFilter: ScaleFilter = new ScaleFilter(scaleValue)
         nextArg(configBuilder.addAsciiFilter(scaleFilter), tail)
+      case "--color" :: tail =>
+        nextArg(configBuilder.withColors(), tail)
       case "--invert" :: tail =>
         val invertFilter: InvertFilter = new InvertFilter()
         nextArg(configBuilder.addGrayscaleFilter(invertFilter), tail)

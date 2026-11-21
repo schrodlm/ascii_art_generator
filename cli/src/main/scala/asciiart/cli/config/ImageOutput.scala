@@ -1,5 +1,6 @@
 package asciiart.cli.config
 
+import asciiart.cli.ColoredText
 import asciiart.core.image.AsciiArt
 
 import java.io.{BufferedWriter, FileWriter}
@@ -22,7 +23,7 @@ sealed trait ImageOutput {
 case class PathImageOutput(path: String) extends ImageOutput {
   def save(asciiArt: AsciiArt): Unit = {
 
-    val asciiString = asciiArt.toText
+    val asciiString = ColoredText.of(asciiArt)
 
     // Write the ASCII string to a file
     val file = new BufferedWriter(new FileWriter(path))
@@ -44,7 +45,7 @@ case class ConsoleImageOutput() extends ImageOutput {
 
   def save(asciiArt: AsciiArt): Unit = {
 
-    val asciiString = asciiArt.toText
+    val asciiString = ColoredText.of(asciiArt)
 
     // Print the ASCII string to the console
     println(asciiString)
