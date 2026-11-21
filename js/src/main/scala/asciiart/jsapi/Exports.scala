@@ -16,7 +16,8 @@ object Exports {
   val tables: js.Array[String] = js.Object.freeze(TableNameMapper.names.toJSArray)
 
   /**
-   * Turns pixels into ASCII art, returned as { columns, rows, lines, text }.
+   * Turns pixels into ASCII art, returned as { columns, rows, lines, text }. The time it takes grows
+   * with the pixels passed in, so video frames are best drawn at about 4 pixels per column first.
    *
    * @param pixels   { data, width, height }, data holding red, green, blue and alpha for every
    *                 pixel, row by row, such as a canvas's ImageData.

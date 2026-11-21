@@ -86,6 +86,10 @@ export interface Art {
 /**
  * Turns pixels into ASCII art.
  *
+ * The time it takes grows with the pixels passed in, not with the size of the art. For video, draw
+ * each frame onto a canvas at about 4 pixels per column of art first: the canvas shrinks it almost
+ * for free, and the art looks the same.
+ *
  * @throws Error if the pixels or settings are not valid, with a message saying which and why.
  */
 export declare function render(pixels: Pixels, settings?: Settings): Art;
