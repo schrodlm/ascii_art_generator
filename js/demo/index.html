@@ -58,6 +58,9 @@
     flex: 1; margin: 0; overflow: hidden; white-space: pre;
     font-family: "IBM Plex Mono", ui-monospace, monospace; line-height: 1.2;
   }
+  #colorArt { position: absolute; display: none; }
+  body.colored #art { color: transparent; }
+  body.colored #colorArt { display: block; }
   #drop {
     position: absolute; inset: 0; display: none; place-items: center;
     background: rgba(14, 23, 18, 0.85); border: 2px dashed var(--accent); color: var(--accent); font-size: 18px;
@@ -115,6 +118,12 @@
   </fieldset>
 
   <fieldset>
+    <legend>Colour</legend>
+    <label><span>colors</span><input type="checkbox" id="colors"></label>
+    <p class="hint" style="margin:4px 0 0">Each character in the average colour of its pixels, painted on a canvas.</p>
+  </fieldset>
+
+  <fieldset>
     <legend>Characters (asciiFilters)</legend>
     <label><span>flip ↕</span><input type="checkbox" id="flipVertical"></label>
     <label><span>flip ↔</span><input type="checkbox" id="flipHorizontal"></label>
@@ -124,6 +133,7 @@
 <section id="stage">
   <p id="status">loading…</p>
   <pre id="art"></pre>
+  <canvas id="colorArt"></canvas>
   <div id="drop">drop an image or a video</div>
   <span id="measure"></span>
 </section>
@@ -183,7 +193,40 @@ function settings() {
     rgbFilters: rotate ? [{ type: "rotate", degrees: rotate }] : [],
     greyFilters,
     asciiFilters,
+    colors: $("colors").checked,
   };
+}
+
+// ---- Painting coloured art -----------------------------------------------------------------
+
+// Draws every character in its own colour onto a canvas laid exactly over the <pre>, which keeps
+// the layout (its text is made transparent). colors holds red, green, blue, alpha per character.
+function paint({ lines, colors, columns }) {
+  const canvas = $("colorArt");
+  const { width, height } = cell();
+  const scale = window.devicePixelRatio || 1;
+  canvas.style.left = art.offsetLeft + "px";
+  canvas.style.top = art.offsetTop + "px";
+  canvas.style.width = art.clientWidth + "px";
+  canvas.style.height = art.clientHeight + "px";
+  canvas.width = Math.round(art.clientWidth * scale);
+  canvas.height = Math.round(art.clientHeight * scale);
+  const pen = canvas.getContext("2d");
+  const fontSize = parseFloat(art.style.fontSize);
+  pen.scale(scale, scale);
+  pen.font = `${fontSize}px "IBM Plex Mono", ui-monospace, monospace`;
+  pen.textBaseline = "top";
+  const offset = (height - fontSize) / 2; // centre the glyph in its line, as the <pre> does
+  let style = "";
+  lines.forEach((line, row) => {
+    for (let column = 0; column < line.length; column++) {
+      if (line[column] === " ") continue;
+      const i = (row * columns + column) * 4;
+      const next = `rgb(${colors[i]} ${colors[i + 1]} ${colors[i + 2]})`;
+      if (next !== style) pen.fillStyle = style = next; // changing the colour is the slow part
+      pen.fillText(line[column], column * width, row * height + offset);
+    }
+  });
 }
 
 // ---- Getting pixels ------------------------------------------------------------------------
@@ -206,7 +249,7 @@ function pixels(columns) {
 
 // ---- Rendering -----------------------------------------------------------------------------
 
-const timings = { grab: [], render: [] };
+const timings = { grab: [], render: [], paint: [] };
 const average = (xs) => xs.reduce((a, b) => a + b, 0) / Math.max(1, xs.length);
 const remember = (list, value) => { list.push(value); if (list.length > 30) list.shift(); };
 let lastFrame = performance.now(), fps = 0;
@@ -220,15 +263,20 @@ function draw() {
     const result = render(input, s);
     const t2 = performance.now();
     art.textContent = result.text;
+    document.body.classList.toggle("colored", s.colors);
+    if (s.colors) paint(result);
+    const t3 = performance.now();
     remember(timings.grab, t1 - t0);
     remember(timings.render, t2 - t1);
+    remember(timings.paint, t3 - t2);
     const now = performance.now();
     if (running) fps = 0.9 * fps + 0.1 * (1000 / (now - lastFrame));
     lastFrame = now;
     status.className = "";
     status.textContent =
       `${source} ${input.width}×${input.height} → ${result.columns}×${result.rows} characters · ` +
-      `grab ${average(timings.grab).toFixed(1)} ms · render ${average(timings.render).toFixed(1)} ms` +
+      `grab ${average(timings.grab).toFixed(1)} ms · render ${average(timings.render).toFixed(1)} ms · ` +
+      `${s.colors ? "paint" : "show"} ${average(timings.paint).toFixed(1)} ms` +
       (running ? ` · ${fps.toFixed(0)} fps` : "");
   } catch (error) {
     status.className = "error";
@@ -255,7 +303,7 @@ function choose(name) {
   source = name;
   document.querySelectorAll("[data-source]").forEach((b) => b.classList.toggle("active", b.dataset.source === name));
   $("plasmaRow").classList.toggle("hidden", name !== "plasma");
-  timings.grab.length = timings.render.length = 0;
+  timings.grab.length = timings.render.length = timings.paint.length = 0;
 }
 
 function showPlasma() {
