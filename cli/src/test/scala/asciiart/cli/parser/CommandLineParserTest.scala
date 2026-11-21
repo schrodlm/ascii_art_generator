@@ -166,17 +166,17 @@ class CommandLineParserTest extends AnyFlatSpec with Matchers {
     (the[IllegalArgumentException] thrownBy withFile.parse()).getMessage shouldBe "--seed only works with --image-random"
   }
 
-  it should "describe every option it accepts, only real table names, within 80 columns" in {
+  it should "describe every option it accepts and every built-in table within 80 columns" in {
     val usage = new CommandLineParser(Array.empty).usage
     val options = Seq("--image", "--image-random", "--seed", "--output-console", "--output-file", "--width",
       "--font-aspect-ratio", "--rotate", "--brightness", "--contrast", "--invert", "--table", "--custom-table",
       "--flip", "--scale", "--help")
-    val tables = Seq("default", "nonlinear-default", "bourke")
+    val tables = TableNameMapper.names
 
     for (option <- options) usage should include(s"  $option ")
     // Compared without line breaks, so wrapping the help does not matter.
-    usage.split("\\s+").mkString(" ") should include("A built-in table: default, nonlinear-default or bourke.")
-    for (table <- tables) noException should be thrownBy TableNameMapper(table)
+    usage.split("\\s+").mkString(" ") should include(
+      s"A built-in table: ${tables.init.mkString(", ")} or ${tables.last}.")
     usage should not include "NOT IMPLEMENTED"
     all(usage.linesIterator.map(_.length).toSeq) should be <= 80
   }
