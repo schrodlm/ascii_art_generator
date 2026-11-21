@@ -172,7 +172,7 @@ describe("render's mistakes", () => {
       "pixels is too large: at most 2147483647 values"],
     ["settings that are not an object", () => render(ramp, 40), "settings must be an object"],
     ["a misspelt setting", () => render(ramp, { maxColumn: 40 }),
-      "Unknown key 'maxColumn' in settings: use asciiFilters, cellAspect, greyFilters, maxColumns, maxRows, rgbFilters, table"],
+      "Unknown key 'maxColumn' in settings: use asciiFilters, cellAspect, colors, greyFilters, maxColumns, maxRows, rgbFilters, table"],
     ["zero columns", () => render(ramp, { maxColumns: 0 }), "maxColumns must be a whole number of at least 1"],
     ["an unknown table", () => render(ramp, { table: "nope" }), "Unknown table 'nope': use default, nonlinear-default, bourke"],
     ["both chars and limits", () => render(ramp, { table: { chars: "ab", limits: [] } }),

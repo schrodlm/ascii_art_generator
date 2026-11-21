@@ -69,6 +69,11 @@ export interface Settings {
   readonly greyFilters?: readonly GreyFilter[];
   /** Run in order on the finished characters. */
   readonly asciiFilters?: readonly AsciiFilter[];
+  /**
+   * True to get each character's colour too: the average colour of the pixels it covers.
+   * Grey filters change only the characters; every other filter moves both.
+   */
+  readonly colors?: boolean;
 }
 
 /** The finished art. */
@@ -81,6 +86,16 @@ export interface Art {
   readonly lines: string[];
   /** The lines joined with newlines. */
   readonly text: string;
+  /**
+   * Only with `colors: true`: red, green, blue and alpha for every character, row by row:
+   * columns × rows × 4 values, so `new ImageData(colors, columns, rows)` accepts it. Alpha is 255.
+   */
+  readonly colors?: Uint8ClampedArray<ArrayBuffer>;
+}
+
+/** Art rendered with `colors: true`, so its colours are always there. */
+export interface ColoredArt extends Art {
+  readonly colors: Uint8ClampedArray<ArrayBuffer>;
 }
 
 /**
@@ -92,6 +107,8 @@ export interface Art {
  *
  * @throws Error if the pixels or settings are not valid, with a message saying which and why.
  */
+export declare function render(pixels: Pixels, settings: Settings & { readonly colors: true }): ColoredArt;
+/** Turns pixels into ASCII art. */
 export declare function render(pixels: Pixels, settings?: Settings): Art;
 
 /**

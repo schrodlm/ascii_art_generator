@@ -44,7 +44,7 @@ private[jsapi] object FromJs {
     else {
       val fields = record(value, "settings must be an object")
       onlyKeys(fields, "settings",
-        Set("maxColumns", "maxRows", "cellAspect", "table", "rgbFilters", "greyFilters", "asciiFilters"))
+        Set("maxColumns", "maxRows", "cellAspect", "table", "rgbFilters", "greyFilters", "asciiFilters", "colors"))
       val defaults = RenderSettings()
       RenderSettings(
         table = orDefault(fields.table, defaults.table)(table),
@@ -53,7 +53,8 @@ private[jsapi] object FromJs {
         cellAspect = orDefault(fields.cellAspect, defaults.cellAspect)(number(_, "cellAspect")),
         rgbFilters = orDefault(fields.rgbFilters, defaults.rgbFilters)(filters(_, "rgbFilters", rgbTypes)),
         grayscaleFilters = orDefault(fields.greyFilters, defaults.grayscaleFilters)(filters(_, "greyFilters", greyTypes)),
-        asciiFilters = orDefault(fields.asciiFilters, defaults.asciiFilters)(filters(_, "asciiFilters", asciiTypes))
+        asciiFilters = orDefault(fields.asciiFilters, defaults.asciiFilters)(filters(_, "asciiFilters", asciiTypes)),
+        colors = orDefault(fields.colors, defaults.colors)(boolean(_, "colors"))
       )
     }
 
@@ -144,6 +145,11 @@ private[jsapi] object FromJs {
     case clamped: Uint8ClampedArray => clamped
     case plain: Uint8Array => new Uint8ClampedArray(plain.buffer, plain.byteOffset, plain.length)
     case _ => fail(s"$name must be a Uint8ClampedArray or a Uint8Array")
+  }
+
+  private def boolean(value: Any, name: String): Boolean = value match {
+    case b: Boolean => b
+    case _ => fail(s"$name must be true or false")
   }
 
   private def number(value: Any, name: String): Double = value match {
