@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ASCII Art Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ground: #0E1712;
+    --panel: #142019;
+    --ink: #ECE5D3;
+    --muted: #A3AE9F;
+    --accent: #8FD19E;
+    --frame: #4A5E50;
+    --error: #E07A5F;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font: 13px/1.4 "IBM Plex Mono", ui-monospace, monospace;
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    height: 100vh;
+  }
+  aside {
+    background: var(--panel);
+    border-right: 1px solid var(--frame);
+    padding: 16px;
+    overflow-y: auto;
+  }
+  h1 { font-size: 15px; margin: 0 0 4px; color: var(--accent); }
+  .hint { color: var(--muted); margin: 0 0 12px; }
+  fieldset { border: 1px solid var(--frame); margin: 0 0 12px; padding: 8px 10px 10px; }
+  legend { color: var(--accent); padding: 0 4px; }
+  label { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
+  label > span:first-child { flex: 0 0 92px; color: var(--muted); }
+  input[type=range] { flex: 1; accent-color: var(--accent); }
+  input[type=text], input[type=number], select {
+    flex: 1; min-width: 0; background: var(--ground); color: var(--ink);
+    border: 1px solid var(--frame); font: inherit; padding: 2px 4px;
+  }
+  output { flex: 0 0 40px; text-align: right; }
+  button {
+    background: var(--ground); color: var(--ink); border: 1px solid var(--frame);
+    font: inherit; padding: 3px 8px; cursor: pointer;
+  }
+  button:hover, button.active { border-color: var(--accent); color: var(--accent); }
+  .sources { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .row { display: flex; gap: 6px; margin-top: 6px; }
+  #stage { position: relative; overflow: hidden; padding: 12px; display: flex; flex-direction: column; }
+  #status { color: var(--muted); margin: 0 0 8px; min-height: 1.4em; }
+  #status.error { color: var(--error); }
+  #art {
+    flex: 1; margin: 0; overflow: hidden; white-space: pre;
+    font-family: "IBM Plex Mono", ui-monospace, monospace; line-height: 1.2;
+  }
+  #drop {
+    position: absolute; inset: 0; display: none; place-items: center;
+    background: rgba(14, 23, 18, 0.85); border: 2px dashed var(--accent); color: var(--accent); font-size: 18px;
+  }
+  body.dragging #drop { display: grid; }
+  #measure { position: absolute; visibility: hidden; white-space: pre; line-height: 1.2; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<aside>
+  <h1>ASCII art library demo</h1>
+  <p class="hint">Drop or paste an image or a video anywhere.</p>
+
+  <fieldset>
+    <legend>Source</legend>
+    <div class="sources">
+      <button data-source="plasma" class="active">plasma</button>
+      <button data-source="image">image…</button>
+      <button data-source="camera">camera</button>
+      <button data-source="video">video…</button>
+    </div>
+    <div class="row" id="plasmaRow">
+      <label style="flex:1"><span>seed</span><input type="number" id="seed" value="7"></label>
+      <button id="newSeed">new</button>
+    </div>
+    <input type="file" id="imageFile" accept="image/*" class="hidden">
+    <input type="file" id="videoFile" accept="video/*" class="hidden">
+  </fieldset>
+
+  <fieldset>
+    <legend>Size</legend>
+    <label><span>font size</span><input type="range" id="fontSize" min="4" max="24" value="10"><output id="fontSizeOut"></output></label>
+    <label><span>px / column</span><input type="range" id="shrink" min="1" max="16" value="4"><output id="shrinkOut"></output></label>
+    <p class="hint" style="margin:4px 0 0">Frames are drawn at this many pixels per column before render (option A).</p>
+  </fieldset>
+
+  <fieldset>
+    <legend>Characters</legend>
+    <label><span>table</span><select id="table"></select></label>
+    <label id="charsRow" class="hidden"><span>darkest first</span><input type="text" id="chars" value="@%#*+=-:. "></label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Picture (rgbFilters)</legend>
+    <label><span>rotate</span><select id="rotate"><option>0</option><option>90</option><option>180</option><option>270</option></select></label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Greys (greyFilters)</legend>
+    <label><span>brightness</span><input type="range" id="brightness" min="-128" max="128" value="0"><output id="brightnessOut"></output></label>
+    <label><span>contrast</span><input type="range" id="contrast" min="0" max="3" step="0.05" value="1"><output id="contrastOut"></output></label>
+    <label><span>invert</span><input type="checkbox" id="invert" checked></label>
+    <p class="hint" style="margin:4px 0 0">On a dark page light ink is "bright", so invert is on.</p>
+  </fieldset>
+
+  <fieldset>
+    <legend>Characters (asciiFilters)</legend>
+    <label><span>flip ↕</span><input type="checkbox" id="flipVertical"></label>
+    <label><span>flip ↔</span><input type="checkbox" id="flipHorizontal"></label>
+  </fieldset>
+</aside>
+
+<section id="stage">
+  <p id="status">loading…</p>
+  <pre id="art"></pre>
+  <div id="drop">drop an image or a video</div>
+  <span id="measure"></span>
+</section>
+
+<video id="video" playsinline muted loop class="hidden"></video>
+
+<script type="module">
+// The library, as built by sbt. Rebuild with: sbt js/fullLinkJS
+import { render, plasma, tables } from "../target/scala-2.13/js-opt/main.mjs";
+
+const $ = (id) => document.getElementById(id);
+const art = $("art"), status = $("status"), video = $("video");
+const canvas = document.createElement("canvas");
+const context = canvas.getContext("2d", { willReadFrequently: true });
+
+// What we are drawing: a still picture (plasma or image) or a moving one (camera or video).
+let source = "plasma";
+let still = null;          // Pixels for plasma, an ImageBitmap for an image
+let stream = null;         // the camera's MediaStream
+let running = false;       // whether the frame loop is on
+
+// Table choices: the built-in names, read from the library, plus your own characters.
+for (const name of tables) $("table").add(new Option(name, name));
+$("table").add(new Option("your own…", "custom"));
+
+// ---- Building the settings from the controls -------------------------------------------
+
+// A character cell's size in pixels, measured in the real font, so the art fits the stage
+// and cellAspect matches what is on screen.
+function cell() {
+  const measure = $("measure");
+  measure.style.fontSize = art.style.fontSize;
+  measure.textContent = "M".repeat(100);
+  const width = measure.getBoundingClientRect().width / 100;
+  const height = parseFloat(getComputedStyle(measure).lineHeight);
+  return { width, height };
+}
+
+function settings() {
+  const { width, height } = cell();
+  const greyFilters = [];
+  const brightness = +$("brightness").value, contrast = +$("contrast").value;
+  if (brightness !== 0) greyFilters.push({ type: "brightness", amount: brightness });
+  if (contrast !== 1) greyFilters.push({ type: "contrast", factor: contrast });
+  if ($("invert").checked) greyFilters.push({ type: "invert" });
+
+  const asciiFilters = [];
+  if ($("flipVertical").checked) asciiFilters.push({ type: "flip", direction: "vertical" });
+  if ($("flipHorizontal").checked) asciiFilters.push({ type: "flip", direction: "horizontal" });
+
+  const rotate = +$("rotate").value;
+  return {
+    maxColumns: Math.max(1, Math.floor(art.clientWidth / width)),
+    maxRows: Math.max(1, Math.floor(art.clientHeight / height)),
+    cellAspect: width / height,
+    table: $("table").value === "custom" ? { chars: $("chars").value } : $("table").value,
+    rgbFilters: rotate ? [{ type: "rotate", degrees: rotate }] : [],
+    greyFilters,
+    asciiFilters,
+  };
+}
+
+// ---- Getting pixels ------------------------------------------------------------------------
+
+// Draws a picture or a video frame onto the hidden canvas at a reduced size (the canvas scales
+// for free while drawing), then reads the pixels back: the Pixels that render takes.
+function grab(picture, width, height, columns) {
+  const scale = Math.min(1, (columns * +$("shrink").value) / width);
+  canvas.width = Math.max(1, Math.round(width * scale));
+  canvas.height = Math.max(1, Math.round(height * scale));
+  context.drawImage(picture, 0, 0, canvas.width, canvas.height);
+  return context.getImageData(0, 0, canvas.width, canvas.height);
+}
+
+function pixels(columns) {
+  if (source === "plasma") return still;
+  if (source === "image") return grab(still, still.width, still.height, columns);
+  return grab(video, video.videoWidth, video.videoHeight, columns);
+}
+
+// ---- Rendering -----------------------------------------------------------------------------
+
+const timings = { grab: [], render: [] };
+const average = (xs) => xs.reduce((a, b) => a + b, 0) / Math.max(1, xs.length);
+const remember = (list, value) => { list.push(value); if (list.length > 30) list.shift(); };
+let lastFrame = performance.now(), fps = 0;
+
+function draw() {
+  const s = settings();
+  try {
+    const t0 = performance.now();
+    const input = pixels(s.maxColumns);
+    const t1 = performance.now();
+    const result = render(input, s);
+    const t2 = performance.now();
+    art.textContent = result.text;
+    remember(timings.grab, t1 - t0);
+    remember(timings.render, t2 - t1);
+    const now = performance.now();
+    if (running) fps = 0.9 * fps + 0.1 * (1000 / (now - lastFrame));
+    lastFrame = now;
+    status.className = "";
+    status.textContent =
+      `${source} ${input.width}×${input.height} → ${result.columns}×${result.rows} characters · ` +
+      `grab ${average(timings.grab).toFixed(1)} ms · render ${average(timings.render).toFixed(1)} ms` +
+      (running ? ` · ${fps.toFixed(0)} fps` : "");
+  } catch (error) {
+    status.className = "error";
+    status.textContent = error.message;
+  }
+}
+
+function loop() {
+  if (!running) return;
+  if (video.readyState >= 2) draw();
+  requestAnimationFrame(loop);
+}
+
+// ---- Switching sources ---------------------------------------------------------------------
+
+function stopMoving() {
+  running = false;
+  video.pause();
+  if (stream) { stream.getTracks().forEach((track) => track.stop()); stream = null; }
+  video.srcObject = null;
+}
+
+function choose(name) {
+  source = name;
+  document.querySelectorAll("[data-source]").forEach((b) => b.classList.toggle("active", b.dataset.source === name));
+  $("plasmaRow").classList.toggle("hidden", name !== "plasma");
+  timings.grab.length = timings.render.length = 0;
+}
+
+function showPlasma() {
+  stopMoving();
+  choose("plasma");
+  still = plasma(+$("seed").value);
+  draw();
+}
+
+async function showImage(file) {
+  stopMoving();
+  choose("image");
+  still = await createImageBitmap(file);
+  draw();
+}
+
+function startMoving(name) {
+  choose(name);
+  running = true;
+  $("flipHorizontal").checked = name === "camera"; // a camera feels natural mirrored
+  video.play().then(loop);
+}
+
+async function showCamera() {
+  stopMoving();
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 720 } });
+  } catch (error) {
+    status.className = "error";
+    status.textContent = `No camera: ${error.message}`;
+    return;
+  }
+  video.srcObject = stream;
+  startMoving("camera");
+}
+
+function showVideo(file) {
+  stopMoving();
+  video.src = URL.createObjectURL(file);
+  startMoving("video");
+}
+
+function open(file) {
+  if (!file) return;
+  if (file.type.startsWith("image/")) showImage(file);
+  else if (file.type.startsWith("video/")) showVideo(file);
+  else { status.className = "error"; status.textContent = `${file.name} is not an image or a video`; }
+}
+
+// ---- Wiring the controls -------------------------------------------------------------------
+
+document.querySelectorAll("[data-source]").forEach((button) => button.addEventListener("click", () => {
+  const name = button.dataset.source;
+  if (name === "plasma") showPlasma();
+  if (name === "image") $("imageFile").click();
+  if (name === "video") $("videoFile").click();
+  if (name === "camera") showCamera();
+}));
+$("imageFile").addEventListener("change", (e) => open(e.target.files[0]));
+$("videoFile").addEventListener("change", (e) => open(e.target.files[0]));
+$("seed").addEventListener("change", showPlasma);
+$("newSeed").addEventListener("click", () => { $("seed").value = Math.floor(Math.random() * 1e6); showPlasma(); });
+
+$("table").addEventListener("change", () => $("charsRow").classList.toggle("hidden", $("table").value !== "custom"));
+
+function showValues() {
+  $("fontSizeOut").value = $("fontSize").value + "px";
+  $("shrinkOut").value = $("shrink").value;
+  $("brightnessOut").value = $("brightness").value;
+  $("contrastOut").value = (+$("contrast").value).toFixed(2);
+  art.style.fontSize = $("fontSize").value + "px";
+}
+document.querySelectorAll("aside input, aside select").forEach((control) => control.addEventListener("input", () => {
+  showValues();
+  if (!running && control.type !== "file") draw();
+}));
+window.addEventListener("resize", () => { if (!running) draw(); });
+
+// Drop or paste an image or a video anywhere.
+let dragDepth = 0;
+document.addEventListener("dragenter", (e) => { e.preventDefault(); dragDepth++; document.body.classList.add("dragging"); });
+document.addEventListener("dragleave", () => { if (--dragDepth === 0) document.body.classList.remove("dragging"); });
+document.addEventListener("dragover", (e) => e.preventDefault());
+document.addEventListener("drop", (e) => {
+  e.preventDefault();
+  dragDepth = 0;
+  document.body.classList.remove("dragging");
+  open(e.dataTransfer.files[0]);
+});
+document.addEventListener("paste", (e) => open([...e.clipboardData.files][0]));
+
+showValues();
+await document.fonts.ready;
+showPlasma();
+</script>
+</body>
+</html>
