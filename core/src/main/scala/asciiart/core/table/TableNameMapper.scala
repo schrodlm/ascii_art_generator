@@ -2,12 +2,19 @@ package asciiart.core.table
 
 object TableNameMapper {
 
-  def apply(tableName : String): Table ={
-    tableName.toLowerCase match {
-      case "paulborkes" => new PaulBourkeTable()
-      case "default" => new DefaultTable()
-      case "nonlinear-default" => new DefaultNonLinearTable()
-      case _ => throw new IllegalArgumentException("Unknown table type")
-    }
+  // A new table for every lookup, since a table's characters are a mutable array.
+  private val tables: Seq[(String, () => Table)] = Seq(
+    "default" -> (() => new DefaultTable()),
+    "nonlinear-default" -> (() => new DefaultNonLinearTable()),
+    "paulborkes" -> (() => new PaulBourkeTable())
+  )
+
+  /** The names of the built-in tables, in the order to offer them. */
+  val names: Seq[String] = tables.map(_._1)
+
+  def apply(tableName : String): Table = {
+    val name = tableName.toLowerCase
+    tables.collectFirst { case (`name`, table) => table() }
+      .getOrElse(throw new IllegalArgumentException("Unknown table type"))
   }
 }
