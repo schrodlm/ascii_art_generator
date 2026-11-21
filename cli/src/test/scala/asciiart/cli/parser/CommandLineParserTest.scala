@@ -161,6 +161,14 @@ class CommandLineParserTest extends AnyFlatSpec with Matchers {
     }
   }
 
+  it should "keep colours only with --color" in {
+    def colors(option: String*) =
+      new CommandLineParser((option ++ Seq("--image-random", "--output-console")).toArray).parse().get.render.colors
+
+    colors() shouldBe false
+    colors("--color") shouldBe true
+  }
+
   it should "reject an unknown --flip axis while reading the options" in {
     parseError("--flip", "z") shouldBe "Axis provided for the flip filter must be 'x' or 'y'"
   }
@@ -182,7 +190,7 @@ class CommandLineParserTest extends AnyFlatSpec with Matchers {
 
   it should "describe every option it accepts and every built-in table within 80 columns" in {
     val usage = new CommandLineParser(Array.empty).usage
-    val options = Seq("--image", "--image-random", "--seed", "--output-console", "--output-file", "--width",
+    val options = Seq("--image", "--image-random", "--seed", "--output-console", "--output-file", "--color", "--width",
       "--font-aspect-ratio", "--rotate", "--brightness", "--contrast", "--invert", "--table", "--custom-table",
       "--flip", "--scale", "--help")
     val tables = TableNameMapper.names
