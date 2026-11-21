@@ -6,7 +6,7 @@ import asciiart.core.image.{GrayscaleImage, RGBImage}
  *
  * @param image The RGBImage to convert.
  */
-class RgbToGrayscaleConverter(image : RGBImage) extends ImageConvertor[GrayscaleImage]{
+class RgbToGrayscaleConverter(image : RGBImage) {
 
   /**
    * Converts the RGBImage to a GrayscaleImage.
@@ -15,7 +15,7 @@ class RgbToGrayscaleConverter(image : RGBImage) extends ImageConvertor[Grayscale
    *
    * @return The converted GrayscaleImage.
    */
-  override def convert() : GrayscaleImage = {
+  def convert() : GrayscaleImage = {
 
     val width = image.getWidth()
     val height = image.getHeight()
