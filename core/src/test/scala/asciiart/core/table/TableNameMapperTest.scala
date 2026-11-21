@@ -23,4 +23,8 @@ class TableNameMapperTest extends AnyFlatSpec with Matchers {
   it should "throw IllegalArgumentException for unknown table names" in {
     an[IllegalArgumentException] should be thrownBy TableNameMapper("unknown")
   }
+
+  it should "list the built-in tables in the order to offer them" in {
+    TableNameMapper.names shouldBe Seq("default", "nonlinear-default", "paulborkes")
+  }
 }
