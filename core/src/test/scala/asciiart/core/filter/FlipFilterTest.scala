@@ -34,4 +34,11 @@ class FlipFilterTest extends AnyFlatSpec with Matchers{
   it should "only accept a direction from Flip" in {
     """new FlipFilter("x")""" shouldNot typeCheck
   }
+
+  it should "move each colour with its character" in {
+    val colored = new AsciiArt(2, 2, Array('a', 'b', 'c', 'd'), Some(Array(1, 2, 3, 4)))
+
+    new FlipFilter(Flip.Vertical).apply(colored).colors.get shouldBe Array(3, 4, 1, 2)
+    new FlipFilter(Flip.Horizontal).apply(colored).colors.get shouldBe Array(2, 1, 4, 3)
+  }
 }

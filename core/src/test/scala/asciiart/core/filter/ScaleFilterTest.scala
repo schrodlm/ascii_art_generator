@@ -87,4 +87,13 @@ class ScaleFilterTest extends AnyFlatSpec with Matchers {
 
     new ScaleFilter(1).apply(wide).getData() shouldBe wide.getData()
   }
+
+  it should "copy each colour with its character" in {
+    val colored = new AsciiArt(2, 1, Array('a', 'b'), Some(Array(1, 2)))
+
+    val doubled = new ScaleFilter(2).apply(colored)
+
+    doubled.getData().map(_.toChar) shouldBe Array('a', 'a', 'b', 'b', 'a', 'a', 'b', 'b')
+    doubled.colors.get shouldBe Array(1, 1, 2, 2, 1, 1, 2, 2)
+  }
 }
