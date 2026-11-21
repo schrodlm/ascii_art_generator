@@ -17,12 +17,8 @@ class LinearTable(val chars: Array[Char]) extends Table{
     throw new IllegalArgumentException("A character table needs at least one character")
   }
 
-  override def getChar(value : Int): Char = {
-    val doubleIndex = (this.chars.length - 1) * (value / 255.0)
-    val index = doubleIndex.toInt
-
-    chars(index)
-  }
+  // Splits the 256 grey values into equal runs, one per character.
+  override def getChar(value : Int): Char = chars(value * chars.length / 256)
 }
 
 class NonLinearTable(val chars: Array[(Int,Char)]) extends Table {
