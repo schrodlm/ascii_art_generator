@@ -1,5 +1,6 @@
 package asciiart.jsapi
 
+import asciiart.core.filter._
 import asciiart.core.image.RGBImage
 import asciiart.core.pipeline.RenderSettings
 import asciiart.core.table.{CustomTable, NonLinearTable, Table, TableNameMapper}
@@ -41,13 +42,17 @@ private[jsapi] object FromJs {
     if (js.isUndefined(value)) RenderSettings()
     else {
       val fields = record(value, "settings must be an object")
-      onlyKeys(fields, "settings", Set("maxColumns", "maxRows", "cellAspect", "table"))
+      onlyKeys(fields, "settings",
+        Set("maxColumns", "maxRows", "cellAspect", "table", "rgbFilters", "greyFilters", "asciiFilters"))
       val defaults = RenderSettings()
       RenderSettings(
         table = orDefault(fields.table, defaults.table)(table),
         maxColumns = orDefault(fields.maxColumns, defaults.maxColumns)(positiveWholeNumber(_, "maxColumns")),
         maxRows = orDefault(fields.maxRows, defaults.maxRows)(positiveWholeNumber(_, "maxRows")),
-        cellAspect = orDefault(fields.cellAspect, defaults.cellAspect)(number(_, "cellAspect"))
+        cellAspect = orDefault(fields.cellAspect, defaults.cellAspect)(number(_, "cellAspect")),
+        rgbFilters = orDefault(fields.rgbFilters, defaults.rgbFilters)(filters(_, "rgbFilters", rgbTypes)),
+        grayscaleFilters = orDefault(fields.greyFilters, defaults.grayscaleFilters)(filters(_, "greyFilters", greyTypes)),
+        asciiFilters = orDefault(fields.asciiFilters, defaults.asciiFilters)(filters(_, "asciiFilters", asciiTypes))
       )
     }
 
@@ -73,6 +78,41 @@ private[jsapi] object FromJs {
         case _ => fail(s"$at must be [limit, character]")
       }
     }.toArray
+
+  // One type of filter: its `type` name, its other fields, and how to build it from them.
+  private final case class FilterType[F](name: String, fields: Set[String], build: (js.Dynamic, String) => F)
+
+  private val rgbTypes: Seq[FilterType[RGBImageFilter]] = Seq(
+    FilterType("rotate", Set("degrees"), (f, at) => new RotationFilter(wholeNumber(f.degrees, s"$at.degrees")))
+  )
+
+  private val greyTypes: Seq[FilterType[GrayscaleImageFilter]] = Seq(
+    FilterType("brightness", Set("amount"), (f, at) => new BrightnessFilter(wholeNumber(f.amount, s"$at.amount"))),
+    FilterType("contrast", Set("factor"), (f, at) => new ContrastFilter(number(f.factor, s"$at.factor"))),
+    FilterType("invert", Set(), (_, _) => new InvertFilter())
+  )
+
+  private val asciiTypes: Seq[FilterType[AsciiArtFilter]] = Seq(
+    FilterType("flip", Set("direction"), (f, at) => new FlipFilter(direction(f.direction, s"$at.direction"))),
+    FilterType("scale", Set("factor"), (f, at) => new ScaleFilter(number(f.factor, s"$at.factor")))
+  )
+
+  private def filters[F](value: Any, name: String, types: Seq[FilterType[F]]): Seq[F] =
+    array(value, name).zipWithIndex.map { case (entry, i) =>
+      val at = s"$name[$i]"
+      val fields = record(entry, s"$at must be an object with a type")
+      val typeName: Any = fields.selectDynamic("type")
+      val filterType = types.find(_.name == typeName)
+        .getOrElse(fail(s"$at.type must be one of ${types.map(_.name).mkString(", ")}"))
+      onlyKeys(fields, at, filterType.fields + "type")
+      filterType.build(fields, at)
+    }
+
+  private def direction(value: Any, name: String): Flip = value match {
+    case "vertical" => Flip.Vertical
+    case "horizontal" => Flip.Horizontal
+    case _ => fail(s"""$name must be "vertical" or "horizontal"""")
+  }
 
   /** A plain object, as js.Dynamic so its fields can be read. */
   private def record(value: Any, problem: String): js.Dynamic =
