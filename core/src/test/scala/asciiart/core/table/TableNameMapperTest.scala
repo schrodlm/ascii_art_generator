@@ -20,8 +20,9 @@ class TableNameMapperTest extends AnyFlatSpec with Matchers {
     table shouldBe a[DefaultNonLinearTable]
   }
 
-  it should "throw IllegalArgumentException for unknown table names" in {
-    an[IllegalArgumentException] should be thrownBy TableNameMapper("unknown")
+  it should "name the built-in tables for an unknown name" in {
+    the[IllegalArgumentException] thrownBy TableNameMapper("unknown") should have message
+      "Unknown table 'unknown': use default, nonlinear-default, paulborkes"
   }
 
   it should "list the built-in tables in the order to offer them" in {
