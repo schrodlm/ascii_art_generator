@@ -15,6 +15,15 @@ class LinearTableTest extends AnyFlatSpec with Matchers {
     table.getChar(255) shouldBe 'd'       // Test upper boundary
   }
 
+  it should "give every character an equal run of grey values" in {
+    val table = new LinearTable(Array('a', 'b', 'c', 'd'))
+
+    (0 to 255).groupBy(table.getChar).map { case (char, values) => char -> values.size } shouldBe
+      Map('a' -> 64, 'b' -> 64, 'c' -> 64, 'd' -> 64)
+    table.getChar(191) shouldBe 'c'
+    table.getChar(192) shouldBe 'd'
+  }
+
   it should "reject an empty character set" in {
     val error = the[IllegalArgumentException] thrownBy new LinearTable(Array.empty[Char])
 
