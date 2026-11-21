@@ -10,7 +10,7 @@ import asciiart.core.image.RGBImage
  * @param columns    Width of the output, one character per column.
  * @param cellAspect Width of a character cell divided by its height; 1 means square cells.
  */
-class ResizeFilter(val columns: Int, val cellAspect: Double) extends RGBImageFilter {
+private[core] class ResizeFilter(val columns: Int, val cellAspect: Double) extends RGBImageFilter {
 
   /**
    * Applies the resize to an RGBImage.

@@ -9,7 +9,7 @@ import asciiart.core.image.{AsciiArt, GrayscaleImage}
  * @param image The GrayscaleImage to convert.
  * @param table The character table to use for conversion.
  */
-class GrayscaleToAsciiConverter(val image: GrayscaleImage,val table: Table) {
+private[core] class GrayscaleToAsciiConverter(val image: GrayscaleImage,val table: Table) {
 
   /**
    * Converts the GrayscaleImage to AsciiArt.

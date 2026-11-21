@@ -6,7 +6,7 @@ import asciiart.core.image.{GrayscaleImage, RGBImage}
  *
  * @param image The RGBImage to convert.
  */
-class RgbToGrayscaleConverter(image : RGBImage) {
+private[core] class RgbToGrayscaleConverter(image : RGBImage) {
 
   /**
    * Converts the RGBImage to a GrayscaleImage.
