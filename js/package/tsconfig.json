@@ -1,0 +1,13 @@
+{
+  // Checks test/usage.ts against index.d.ts. Nothing is emitted: the check is the point.
+  "compilerOptions": {
+    "strict": true,
+    "noEmit": true,
+    "target": "es2022",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "lib": ["es2022", "dom"],
+    "types": []
+  },
+  "include": ["test/**/*.ts"]
+}
