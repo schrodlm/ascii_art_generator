@@ -47,4 +47,16 @@ class NonLinearTableTest extends AnyFlatSpec with Matchers {
     table.getChar(170) shouldBe 'b'       // Test second border
     table.getChar(255) shouldBe 'c'       // Test upper boundary
   }
+
+  it should "reject tables that would leave a grey without a character or a character unreachable" in {
+    def error(chars: (Int, Char)*): String =
+      (the[IllegalArgumentException] thrownBy new NonLinearTable(chars.toArray)).getMessage
+
+    error() shouldBe "A character table needs at least one character"
+    error((-1, 'a'), (255, 'b')) shouldBe "Grey limits must be between 0 and 255"
+    error((100, 'a'), (256, 'b')) shouldBe "Grey limits must be between 0 and 255"
+    error((200, 'a'), (100, 'b'), (255, 'c')) shouldBe "Grey limits must rise from one character to the next"
+    error((100, 'a'), (100, 'b'), (255, 'c')) shouldBe "Grey limits must rise from one character to the next"
+    error((100, 'a'), (200, 'b')) shouldBe "The last grey limit must be 255, so every grey has a character"
+  }
 }
