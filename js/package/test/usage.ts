@@ -1,8 +1,9 @@
 // Checks index.d.ts by using the library as the site will. TypeScript compiles this file and never
 // runs it: the correct usage must type-check, and each line under @ts-expect-error must be rejected.
-import { plasma, render, tables, type Art, type Pixels, type Settings } from "@schrodlm/ascii-art";
+import { plasma, render, tables, type Art, type ColoredArt, type Pixels, type Settings } from "@schrodlm/ascii-art";
 
 declare const imageData: ImageData;
+declare const wanted: boolean;
 
 // Correct usage, which must be accepted.
 
@@ -24,6 +25,10 @@ const art: Art = render(imageData, {
 const lines: string[] = art.lines;
 const text: string = art.text;
 const cells: number = art.columns * art.rows;
+
+const colored: ColoredArt = render(imageData, { colors: true });
+const colorImage = new ImageData(colored.colors, colored.columns, colored.rows);
+const maybe: Uint8ClampedArray | undefined = render(imageData, { colors: wanted }).colors;
 
 render(plasma());
 render({ data: new Uint8Array(4), width: 1, height: 1 }, { table: { chars: " .:-=+*#%@" } });
@@ -53,5 +58,9 @@ render({ data: [0, 0, 0, 255], width: 1, height: 1 });
 art.text = "";
 // @ts-expect-error the list of tables cannot be changed
 tables.push("mine");
+// @ts-expect-error colours are only certain when asked for with colors: true
+const notAsked: Uint8ClampedArray = render(imageData).colors;
+// @ts-expect-error colors is true or false
+render(imageData, { colors: "yes" });
 // @ts-expect-error plasma's seed is a number
 plasma("7");

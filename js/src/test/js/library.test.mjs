@@ -159,6 +159,40 @@ describe("render's filters", () => {
   });
 });
 
+describe("render's colours", () => {
+  const red = [255, 0, 0, 255], green = [0, 255, 0, 255], blue = [0, 0, 255, 255], white = grey(255);
+  // One pixel each, so each becomes one character.
+  const colourful = picture(4, 1, (x) => [red, green, blue, white][x]);
+
+  test("are left out unless asked for", () => {
+    assert.equal("colors" in render(colourful, square), false);
+    assert.equal("colors" in render(colourful, { ...square, colors: false }), false);
+  });
+
+  test("give each character the colour of its pixels, laid out like the pixels", () => {
+    // deepEqual compares the kind of array too, so this also checks it is a Uint8ClampedArray.
+    assert.deepEqual(render(colourful, { ...square, colors: true }).colors, colourful.data);
+  });
+
+  test("average the pixels a character covers", () => {
+    const blackAndWhite = picture(2, 1, (x) => grey([0, 255][x]));
+
+    // Cells twice as wide as tall, so both pixels fall into one character.
+    assert.deepEqual([...render(blackAndWhite, { maxColumns: 1, cellAspect: 2, colors: true }).colors], [127, 127, 127, 255]);
+  });
+
+  test("stay through grey filters and move with flips", () => {
+    const art = render(colourful, {
+      ...square,
+      colors: true,
+      greyFilters: [{ type: "invert" }],
+      asciiFilters: [{ type: "flip", direction: "horizontal" }],
+    });
+
+    assert.deepEqual([...art.colors], [...white, ...blue, ...green, ...red]);
+  });
+});
+
 describe("render's mistakes", () => {
   const mistakes = [
     ["no pixels", () => render(), "pixels must be an object with data, width and height"],
@@ -174,6 +208,7 @@ describe("render's mistakes", () => {
     ["a misspelt setting", () => render(ramp, { maxColumn: 40 }),
       "Unknown key 'maxColumn' in settings: use asciiFilters, cellAspect, colors, greyFilters, maxColumns, maxRows, rgbFilters, table"],
     ["zero columns", () => render(ramp, { maxColumns: 0 }), "maxColumns must be a whole number of at least 1"],
+    ["colors given as text", () => render(ramp, { colors: "yes" }), "colors must be true or false"],
     ["an unknown table", () => render(ramp, { table: "nope" }), "Unknown table 'nope': use default, nonlinear-default, bourke"],
     ["both chars and limits", () => render(ramp, { table: { chars: "ab", limits: [] } }),
       "table must be a built-in table's name, { chars } or { limits }"],
