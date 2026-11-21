@@ -1,5 +1,6 @@
 package asciiart.jsapi
 
+import asciiart.core.image.Plasma
 import asciiart.core.pipeline.AsciiArtPipeline
 import asciiart.core.table.TableNameMapper
 
@@ -29,4 +30,8 @@ object Exports {
   def render(pixels: Any, settings: Any = js.undefined): js.Object =
     ToJs.art(AsciiArtPipeline.render(FromJs.image(pixels), FromJs.settings(settings)))
 
+  /** The generated test picture, 640 by 480; the same seed always draws the same one. */
+  @JSExportTopLevel("plasma")
+  def plasma(seed: Any = js.undefined): js.Object =
+    ToJs.pixels(Plasma.generate(FromJs.seed(seed)))
 }

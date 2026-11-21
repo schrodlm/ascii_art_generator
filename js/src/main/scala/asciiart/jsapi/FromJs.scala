@@ -7,6 +7,7 @@ import asciiart.core.table.{CustomTable, NonLinearTable, Table, TableNameMapper}
 
 import scala.scalajs.js
 import scala.scalajs.js.typedarray.{Uint8Array, Uint8ClampedArray}
+import scala.util.Random
 
 /**
  * Turns values from JavaScript into core's types. JavaScript can pass anything,
@@ -55,6 +56,13 @@ private[jsapi] object FromJs {
         asciiFilters = orDefault(fields.asciiFilters, defaults.asciiFilters)(filters(_, "asciiFilters", asciiTypes))
       )
     }
+
+  def seed(value: Any): Long = value match {
+    case _ if js.isUndefined(value) => Random.nextLong()
+    // Beyond 2^53 a JS number cannot hold every whole number, so larger seeds would not repeat.
+    case n: Double if n == math.floor(n) && math.abs(n) <= 9007199254740991.0 => n.toLong
+    case _ => fail("seed must be a whole number between -(2^53 - 1) and 2^53 - 1")
+  }
 
   private def table(value: Any): Table = value match {
     case name: String => TableNameMapper(name)
