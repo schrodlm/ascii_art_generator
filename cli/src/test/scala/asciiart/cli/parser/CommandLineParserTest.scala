@@ -2,7 +2,7 @@ package asciiart.cli.parser
 
 import asciiart.core.table.{CustomTable, TableNameMapper}
 import asciiart.cli.config.{ConsoleImageOutput, PathImageOutput, PathImageSource, RandomImageSource}
-import asciiart.core.filter.{BrightnessFilter, ContrastFilter, FlipFilter, InvertFilter, RotationFilter, ScaleFilter}
+import asciiart.core.filter.{BrightnessFilter, ContrastFilter, Flip, FlipFilter, InvertFilter, RotationFilter, ScaleFilter}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -149,6 +149,20 @@ class CommandLineParserTest extends AnyFlatSpec with Matchers {
     val config = parser.parse().get
 
     config.render.asciiFilters(0) shouldBe (a[FlipFilter])
+  }
+
+  it should "turn every --flip axis name into its direction" in {
+    val directions = Seq("x" -> Flip.Vertical, "vertical" -> Flip.Vertical, "Y" -> Flip.Horizontal,
+      "horizontal" -> Flip.Horizontal)
+    for ((axis, direction) <- directions) {
+      val config = new CommandLineParser(Array("--flip", axis, "--image-random", "--output-console")).parse().get
+
+      config.render.asciiFilters.collect { case filter: FlipFilter => filter.flip } shouldBe Seq(direction)
+    }
+  }
+
+  it should "reject an unknown --flip axis while reading the options" in {
+    parseError("--flip", "z") shouldBe "Axis provided for the flip filter must be 'x' or 'y'"
   }
 
   // Additional tests for other options like --custom-table, --rotate, --invert, etc.

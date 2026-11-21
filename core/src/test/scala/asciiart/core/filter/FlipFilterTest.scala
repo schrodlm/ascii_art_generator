@@ -30,4 +30,8 @@ class FlipFilterTest extends AnyFlatSpec with Matchers{
 
     flippedArt.getData() shouldBe Array('b', 'a', 'd', 'c', 'f', 'e')
   }
+
+  it should "only accept a direction from Flip" in {
+    """new FlipFilter("x")""" shouldNot typeCheck
+  }
 }
