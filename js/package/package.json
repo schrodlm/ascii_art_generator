@@ -1,0 +1,17 @@
+{
+  "name": "@schrodlm/ascii-art",
+  "version": "1.0.0",
+  "description": "Turns pictures into ASCII art. Compiled from Scala with Scala.js.",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./main.mjs"
+    }
+  },
+  "files": ["index.d.ts", "main.mjs"],
+  "devDependencies": {
+    "typescript": "7.0.2"
+  }
+}

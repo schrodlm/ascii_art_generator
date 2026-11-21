@@ -171,6 +171,9 @@ project/plugins/project/
 project/metals.sbt
 project/project/
 
+### Node ###
+node_modules/
+
 ### Scala ###
 *.class
 *.log
