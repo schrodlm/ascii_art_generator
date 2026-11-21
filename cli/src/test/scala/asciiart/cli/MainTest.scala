@@ -15,6 +15,6 @@ class MainTest extends AnyFlatSpec with Matchers {
     }
 
     status shouldBe 1
-    err.toString.trim shouldBe "Error: Unknown table 'nope': use default, nonlinear-default, paulborkes"
+    err.toString.trim shouldBe "Error: Unknown table 'nope': use default, nonlinear-default, bourke"
   }
 }

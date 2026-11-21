@@ -44,20 +44,14 @@ class CliConfigTest extends AnyFlatSpec with Matchers {
 
   }
 
-  it should "build when name of available tables are provided" in {
-    val source = PathImageSource("x.png")
-    val output = ConsoleImageOutput()
-    val PaulBorkeTable = "PaulBorkes"
-
-
+  it should "build with a built-in table chosen by name" in {
     val config = new CliConfig.Builder()
-      .withImageSource(source)
-      .withImageOutput(output)
-      .withTable(PaulBorkeTable)
+      .withImageSource(PathImageSource("x.png"))
+      .withImageOutput(ConsoleImageOutput())
+      .withTable("Bourke")
       .build()
 
     config.render.table shouldBe a[PaulBourkeTable]
-
   }
 
   it should "build when no custom table is provided (by using default table)" in {

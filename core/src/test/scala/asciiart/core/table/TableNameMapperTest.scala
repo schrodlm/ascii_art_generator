@@ -5,8 +5,8 @@ import org.scalatest.matchers.should.Matchers
 
 class TableNameMapperTest extends AnyFlatSpec with Matchers {
 
-  "TableNameMapper" should "return a PaulBourkeTable for 'paulborkes'" in {
-    val table = TableNameMapper("paulborkes")
+  "TableNameMapper" should "return a PaulBourkeTable for 'bourke'" in {
+    val table = TableNameMapper("bourke")
     table shouldBe a[PaulBourkeTable]
   }
 
@@ -22,10 +22,10 @@ class TableNameMapperTest extends AnyFlatSpec with Matchers {
 
   it should "name the built-in tables for an unknown name" in {
     the[IllegalArgumentException] thrownBy TableNameMapper("unknown") should have message
-      "Unknown table 'unknown': use default, nonlinear-default, paulborkes"
+      "Unknown table 'unknown': use default, nonlinear-default, bourke"
   }
 
   it should "list the built-in tables in the order to offer them" in {
-    TableNameMapper.names shouldBe Seq("default", "nonlinear-default", "paulborkes")
+    TableNameMapper.names shouldBe Seq("default", "nonlinear-default", "bourke")
   }
 }

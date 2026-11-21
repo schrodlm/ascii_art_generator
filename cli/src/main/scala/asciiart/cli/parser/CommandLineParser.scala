@@ -52,7 +52,7 @@ class CommandLineParser(val args: Array[String]) extends Parser {
       |
       |Characters:
       |  --table <name>               A built-in table: default, nonlinear-default or
-      |                               paulborkes.
+      |                               bourke.
       |  --custom-table <chars>       Your own characters, darkest first, for example
       |                               "@#+-. ".
       |  --flip <axis>                vertical (or x) turns the art upside down;

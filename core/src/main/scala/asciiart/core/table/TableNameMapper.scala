@@ -6,7 +6,7 @@ object TableNameMapper {
   private val tables: Seq[(String, () => Table)] = Seq(
     "default" -> (() => new DefaultTable()),
     "nonlinear-default" -> (() => new DefaultNonLinearTable()),
-    "paulborkes" -> (() => new PaulBourkeTable())
+    "bourke" -> (() => new PaulBourkeTable())
   )
 
   /** The names of the built-in tables, in the order to offer them. */
