@@ -13,6 +13,8 @@ import asciiart.core.table.{DefaultTable, Table}
  * @param maxRows    Most lines.
  * @param cellAspect Width of a character cell divided by its height. 0.5 suits
  *                   monospace fonts 0.6 em wide on lines 1.2 em tall.
+ * @param colors     Whether the art keeps each character's colour: the average colour of the
+ *                   pixels it covers. Grayscale filters change the characters, not the colours.
  */
 final case class RenderSettings(
   table: Table = new DefaultTable(),
@@ -21,5 +23,6 @@ final case class RenderSettings(
   cellAspect: Double = 0.5,
   rgbFilters: Seq[RGBImageFilter] = Nil,
   grayscaleFilters: Seq[GrayscaleImageFilter] = Nil,
-  asciiFilters: Seq[AsciiArtFilter] = Nil
+  asciiFilters: Seq[AsciiArtFilter] = Nil,
+  colors: Boolean = false
 )

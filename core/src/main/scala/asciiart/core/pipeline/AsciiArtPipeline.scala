@@ -19,7 +19,10 @@ object AsciiArtPipeline {
       new RgbToGrayscaleConverter(resized).convert(),
       settings.grayscaleFilters
     )
-    val asciiArt = new GrayscaleToAsciiConverter(grayscale, settings.table).convert()
+    val characters = new GrayscaleToAsciiConverter(grayscale, settings.table).convert()
+    // One colour per character: the resized image's pixels, which grayscale filters never touch.
+    val colors = Option.when(settings.colors)(resized.getData())
+    val asciiArt = new AsciiArt(characters.getWidth(), characters.getHeight(), characters.getData(), colors)
     applyFilters(asciiArt, settings.asciiFilters)
   }
 
