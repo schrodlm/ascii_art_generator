@@ -7,7 +7,8 @@ package asciiart.core.image
  *
  * @param width Width of the image.
  * @param height Height of the image.
- * @param data Array storing the image's pixel data.
+ * @param data Array storing the image's pixel data. The image uses this array directly,
+ *             without a copy, so don't change it afterwards.
  */
 abstract class BaseImage(width: Int, height: Int, data: Array[Int]) extends Image {
 
@@ -23,6 +24,7 @@ abstract class BaseImage(width: Int, height: Int, data: Array[Int]) extends Imag
     height
   }
 
+  /** The image's own array, not a copy, so don't change it. */
   def getData(): Array[Int] = {
     data
   }

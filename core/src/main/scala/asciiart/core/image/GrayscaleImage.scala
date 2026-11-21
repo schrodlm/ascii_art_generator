@@ -7,7 +7,8 @@ package asciiart.core.image
  *
  * @param width Width of the image.
  * @param height Height of the image.
- * @param data Array containing grayscale pixel data.
+ * @param data Array containing grayscale pixel data. The image uses this array directly,
+ *             without a copy, so don't change it afterwards.
  */
 class GrayscaleImage(width: Int, height: Int, data: Array[Int]) extends BaseImage(width, height, data) {
 

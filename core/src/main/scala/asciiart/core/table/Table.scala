@@ -12,6 +12,7 @@ abstract class Table(){
   def getChar(value : Int) : Char
 }
 
+// The table uses `chars` directly, without a copy, so don't change it afterwards.
 class LinearTable(val chars: Array[Char]) extends Table{
   if (chars.isEmpty) {
     throw new IllegalArgumentException("A character table needs at least one character")
@@ -21,6 +22,7 @@ class LinearTable(val chars: Array[Char]) extends Table{
   override def getChar(value : Int): Char = chars(value * chars.length / 256)
 }
 
+// The table uses `chars` directly, without a copy, so don't change it afterwards.
 class NonLinearTable(val chars: Array[(Int,Char)]) extends Table {
   if (chars.isEmpty) {
     throw new IllegalArgumentException("A character table needs at least one character")

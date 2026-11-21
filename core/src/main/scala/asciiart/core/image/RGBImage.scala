@@ -6,7 +6,8 @@ package asciiart.core.image
  *
  * @param width  The width of the image.
  * @param height The height of the image.
- * @param data   An array containing pixel data.
+ * @param data   An array containing pixel data. The image uses this array directly,
+ *               without a copy, so don't change it afterwards.
  */
 class RGBImage(width: Int, height: Int, data: Array[Int]) extends BaseImage(width,height,data) {
 

@@ -7,7 +7,8 @@ package asciiart.core.image
  *
  * @param width Width of the ASCII art in characters.
  * @param height Height of the ASCII art in characters.
- * @param data Array containing ASCII values representing the art.
+ * @param data Array containing ASCII values representing the art. The art uses this array
+ *             directly, without a copy, so don't change it afterwards.
  */
 class AsciiArt(width: Int, height: Int, data: Array[Int]) extends BaseImage(width,height,data){
   def toText: String =
