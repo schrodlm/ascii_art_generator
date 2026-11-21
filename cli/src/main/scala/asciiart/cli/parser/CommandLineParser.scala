@@ -1,7 +1,7 @@
 package asciiart.cli.parser
 
 import asciiart.cli.config.{CliConfig, ConsoleImageOutput, PathImageOutput, PathImageSource, RandomImageSource}
-import asciiart.core.filter.{BrightnessFilter, ContrastFilter, FlipFilter, InvertFilter, RotationFilter, ScaleFilter}
+import asciiart.core.filter.{BrightnessFilter, ContrastFilter, Flip, FlipFilter, InvertFilter, RotationFilter, ScaleFilter}
 
 import scala.util.Try
 
@@ -125,8 +125,12 @@ class CommandLineParser(val args: Array[String]) extends Parser {
         val invertFilter: InvertFilter = new InvertFilter()
         nextArg(configBuilder.addGrayscaleFilter(invertFilter), tail)
       case "--flip" :: axis :: tail =>
-        val flipFilter: FlipFilter = new FlipFilter(axis)
-        nextArg(configBuilder.addAsciiFilter(flipFilter), tail)
+        val flip = axis.toLowerCase match {
+          case "x" | "vertical" => Flip.Vertical
+          case "y" | "horizontal" => Flip.Horizontal
+          case _ => throw new IllegalArgumentException("Axis provided for the flip filter must be 'x' or 'y'")
+        }
+        nextArg(configBuilder.addAsciiFilter(new FlipFilter(flip)), tail)
       case "--brightness" :: value :: tail =>
         val brightnessValue = Try(value.toInt).getOrElse(throw new IllegalArgumentException("Brightness value must be a valid number"))
         val brightnessFilter: BrightnessFilter = new BrightnessFilter(brightnessValue)

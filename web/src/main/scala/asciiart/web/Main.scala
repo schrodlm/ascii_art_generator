@@ -1,6 +1,6 @@
 package asciiart.web
 
-import asciiart.core.filter.{BrightnessFilter, FlipFilter, InvertFilter, RotationFilter, ScaleFilter}
+import asciiart.core.filter.{BrightnessFilter, Flip, FlipFilter, InvertFilter, RotationFilter, ScaleFilter}
 import asciiart.core.image.RGBImage
 import asciiart.core.pipeline.{AsciiArtPipeline, RenderSettings}
 import asciiart.core.table.{CustomTable, TableNameMapper}
@@ -27,7 +27,7 @@ object Main {
         table = table,
         rgbFilters = Seq(new RotationFilter(90)),
         grayscaleFilters = Seq(new BrightnessFilter(10), new InvertFilter()),
-        asciiFilters = Seq(new FlipFilter("x"), new FlipFilter("y"), new ScaleFilter(0.5),
+        asciiFilters = Seq(new FlipFilter(Flip.Vertical), new FlipFilter(Flip.Horizontal), new ScaleFilter(0.5),
           new ScaleFilter(2))
       )
     }

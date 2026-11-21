@@ -1,7 +1,7 @@
 package asciiart.cli.config
 
 import asciiart.core.table.{CustomTable, DefaultTable, PaulBourkeTable}
-import asciiart.core.filter.{AsciiArtFilter, BrightnessFilter, FlipFilter, GrayscaleImageFilter, RGBImageFilter}
+import asciiart.core.filter.{AsciiArtFilter, BrightnessFilter, Flip, FlipFilter, GrayscaleImageFilter, RGBImageFilter}
 import asciiart.core.image.{AsciiArt, GrayscaleImage, RGBImage}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -128,9 +128,9 @@ class CliConfigTest extends AnyFlatSpec with Matchers {
 
   it should "not compile when a filter is added to another stage" in {
     "new CliConfig.Builder().addGrayscaleFilter(new BrightnessFilter(1))" should compile
-    "new CliConfig.Builder().addAsciiFilter(new FlipFilter(\"x\"))" should compile
+    "new CliConfig.Builder().addAsciiFilter(new FlipFilter(Flip.Vertical))" should compile
     "new CliConfig.Builder().addAsciiFilter(new BrightnessFilter(1))" shouldNot typeCheck
-    "new CliConfig.Builder().addGrayscaleFilter(new FlipFilter(\"x\"))" shouldNot typeCheck
+    "new CliConfig.Builder().addGrayscaleFilter(new FlipFilter(Flip.Vertical))" shouldNot typeCheck
   }
 
   "CliConfig render settings" should "use the requested width over the terminal's" in {

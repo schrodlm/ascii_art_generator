@@ -1,28 +1,24 @@
 package asciiart.core.filter
 
-import asciiart.core.image.{AsciiArt}
+import asciiart.core.image.AsciiArt
 
 
 /**
- * Flips an AsciiArt image along a specified axis.
+ * Flips an AsciiArt image.
  *
- * @param axis The axis to flip the image ('x' for vertical, 'y' for horizontal).
+ * @param flip The direction to flip the image in.
  */
-class FlipFilter(val axis: String) extends AsciiArtFilter {
+class FlipFilter(val flip: Flip) extends AsciiArtFilter {
 
   /**
    * Applies the flip filter to an AsciiArt image.
    *
    * @param image The AsciiArt image to flip.
    * @return The flipped AsciiArt image.
-   * @throws IllegalArgumentException if an invalid axis is provided.
    */
-  override def apply(image: AsciiArt): AsciiArt = {
-    axis.toLowerCase match {
-      case "x" | "vertical" => flipVertically(image)
-      case "y" | "horizontal" => flipHorizontally(image)
-      case _ => throw new IllegalArgumentException("Axis provided for the flip filter must be 'x' or 'y'")
-    }
+  override def apply(image: AsciiArt): AsciiArt = flip match {
+    case Flip.Vertical => flipVertically(image)
+    case Flip.Horizontal => flipHorizontally(image)
   }
 
   // Flips the image vertically.

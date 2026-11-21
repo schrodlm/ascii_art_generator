@@ -15,7 +15,7 @@ class FlipFilterTest extends AnyFlatSpec with Matchers{
 
   "FlipFilter" should "correctly flip an AsciiArt image vertically" in {
 
-    val flipFilter = new FlipFilter("x")
+    val flipFilter = new FlipFilter(Flip.Vertical)
     val flippedArt = flipFilter.apply(asciiArt)
 
     // Assertions
@@ -25,15 +25,9 @@ class FlipFilterTest extends AnyFlatSpec with Matchers{
   }
 
   it should "correctly flip an AsciiArt image horizontally" in {
-    val flipFilter = new FlipFilter("y")
+    val flipFilter = new FlipFilter(Flip.Horizontal)
     val flippedArt = flipFilter.apply(asciiArt)
 
     flippedArt.getData() shouldBe Array('b', 'a', 'd', 'c', 'f', 'e')
-  }
-
-  it should "throw IllegalArgumentException for invalid axis" in {
-    val flipFilter = new FlipFilter("z")
-
-    an[IllegalArgumentException] should be thrownBy flipFilter.apply(asciiArt)
   }
 }
