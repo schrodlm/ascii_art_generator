@@ -29,7 +29,6 @@ lazy val js = project
   .dependsOn(core.js)
   .settings(
     commonSettings,
-    libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "2.8.1",
     scalaJSLinkerConfig ~= {
       _.withModuleKind(ModuleKind.ESModule)
         .withOutputPatterns(OutputPatterns.fromJSFile("%s.mjs"))
