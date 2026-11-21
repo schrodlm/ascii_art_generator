@@ -36,6 +36,7 @@ lazy val js = project
     },
     // The library is tested from JavaScript, as its users call it: node runs the tests in
     // src/test/js against both the development and the production build, linked first.
+    // Then TypeScript checks the hand-written type declarations.
     Test / test := {
       val _ = (Test / test).value  // the Scala tests first, should the module ever get any
       val log = streams.value.log
@@ -49,6 +50,15 @@ lazy val js = project
         log.info(s"Testing $library")
         val exit = Process("node" +: "--test" +: tests, None, "ASCII_ART_JS" -> library.getPath).!
         if (exit != 0) throw new MessageOnlyException(s"JavaScript tests failed against $library")
+      }
+
+      // TypeScript checks package/test/usage.ts against the hand-written package/index.d.ts.
+      val npmPackage = baseDirectory.value / "package"
+      val tsc = npmPackage / "node_modules" / ".bin" / "tsc"
+      if (!tsc.exists) throw new MessageOnlyException(s"TypeScript is not installed: run npm ci in $npmPackage")
+      log.info("Checking index.d.ts with TypeScript")
+      if (Process(Seq(tsc.getPath, "-p", npmPackage.getPath)).! != 0) {
+        throw new MessageOnlyException("index.d.ts does not match test/usage.ts")
       }
     }
   )
