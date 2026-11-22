@@ -3,6 +3,7 @@
 [![npm](https://img.shields.io/npm/v/clascii)](https://www.npmjs.com/package/clascii)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.schrodlm/clascii_2.13)](https://central.sonatype.com/artifact/io.github.schrodlm/clascii_2.13)
 [![GitHub release](https://img.shields.io/github/v/release/schrodlm/clascii)](https://github.com/schrodlm/clascii/releases)
+[![Tests](https://github.com/schrodlm/clascii/actions/workflows/ci.yml/badge.svg)](https://github.com/schrodlm/clascii/actions/workflows/ci.yml)
 [![Demo](https://github.com/schrodlm/clascii/actions/workflows/demo.yml/badge.svg)](https://github.com/schrodlm/clascii/actions/workflows/demo.yml)
 [![Licence: MIT](https://img.shields.io/github/license/schrodlm/clascii)](LICENSE)
 
@@ -152,7 +153,7 @@ that many: one pixel for a table, a block of 2 by 4 for braille. That is where b
 detail comes from.
 
 With colours on, each character also keeps the average colour of the pixels it covers. Grey
-filters change the characters, never the colours.
+filters change the characters not the colours.
 
 ## Architecture
 
