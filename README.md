@@ -8,7 +8,7 @@
 
 **Live demo: https://schrodlm.github.io/clascii/** (even with live camera, hell yeah)
 
-Clascii turns pictures into ASCII art.
+Clascii turns images, videos, really anything represented by bytes into ASCII art.
 
 - **Characters**: predefined tables, tables of your own, or braille with three ways of dithering.
 - **Colours**: optionally, each character carries the colour of the part of the picture it stands for.
