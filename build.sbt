@@ -2,7 +2,19 @@ import org.scalajs.linker.interface.OutputPatterns
 import scala.sys.process.Process
 
 ThisBuild / scalaVersion := "2.13.18"
-ThisBuild / version := "1.0.0"
+
+// What Maven Central shows about the library. The version comes from the git tag being released
+// (v0.1.0 publishes 0.1.0), which sbt-ci-release reads.
+ThisBuild / organization := "io.github.schrodlm"
+ThisBuild / homepage := Some(url("https://github.com/schrodlm/ascii_art_generator"))
+ThisBuild / licenses := List(License.MIT)
+ThisBuild / developers := List(
+  Developer("schrodlm", "Matěj Schrödl", "matej.schrodl@gmail.com", url("https://github.com/schrodlm"))
+)
+ThisBuild / scmInfo := Some(ScmInfo(
+  url("https://github.com/schrodlm/ascii_art_generator"),
+  "scm:git:https://github.com/schrodlm/ascii_art_generator.git"
+))
 
 lazy val commonSettings = Seq(
   scalacOptions ++= Seq("-deprecation", "-feature"),
@@ -12,17 +24,22 @@ lazy val commonSettings = Seq(
 lazy val root = project
   .in(file("."))
   .aggregate(core.jvm, core.js, cli, js)
-  .settings(name := "ascii-art")
+  .settings(name := "ascii-art", publish / skip := true)
 
-// The platform-free image pipeline, compiled for both the JVM and the browser.
+// The platform-free image pipeline, compiled for both the JVM and the browser. The one module
+// published to Maven Central, once for each.
 lazy val core = crossProject(JVMPlatform, JSPlatform)
   .crossType(CrossType.Pure)
   .in(file("core"))
-  .settings(commonSettings)
+  .settings(
+    commonSettings,
+    name := "ascii-art-core",
+    description := "Turns pictures into ASCII art, with tables of characters or braille."
+  )
 
 lazy val cli = project
   .dependsOn(core.jvm)
-  .settings(commonSettings)
+  .settings(commonSettings, publish / skip := true)
 
 lazy val npmPackage = taskKey[File]("Puts the minified release build and the licence into js/package, ready for npm")
 
@@ -32,6 +49,7 @@ lazy val js = project
   .dependsOn(core.js)
   .settings(
     commonSettings,
+    publish / skip := true,  // published to npm instead, by way of npmPackage
     scalaJSLinkerConfig ~= {
       _.withModuleKind(ModuleKind.ESModule)
         .withOutputPatterns(OutputPatterns.fromJSFile("%s.mjs"))
