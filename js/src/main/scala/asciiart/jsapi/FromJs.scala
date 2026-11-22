@@ -1,10 +1,11 @@
 package asciiart.jsapi
 
-import asciiart.core.conversion.TableConverter
+import asciiart.core.characters.Dither
+import asciiart.core.conversion.{BrailleConverter, CharacterConverter, TableConverter}
 import asciiart.core.filter._
 import asciiart.core.image.RGBImage
 import asciiart.core.pipeline.RenderSettings
-import asciiart.core.table.{CustomTable, NonLinearTable, Table, TableNameMapper}
+import asciiart.core.table.{CustomTable, NonLinearTable, TableNameMapper}
 
 import scala.scalajs.js
 import scala.scalajs.js.typedarray.{Uint8Array, Uint8ClampedArray}
@@ -48,7 +49,7 @@ private[jsapi] object FromJs {
         Set("maxColumns", "maxRows", "cellAspect", "characters", "rgbFilters", "greyFilters", "asciiFilters", "colors"))
       val defaults = RenderSettings()
       RenderSettings(
-        characterConverter = orDefault(fields.characters, defaults.characterConverter)(value => new TableConverter(table(value))),
+        characterConverter = orDefault(fields.characters, defaults.characterConverter)(characterConverter),
         maxColumns = orDefault(fields.maxColumns, defaults.maxColumns)(positiveWholeNumber(_, "maxColumns")),
         maxRows = orDefault(fields.maxRows, defaults.maxRows)(positiveWholeNumber(_, "maxRows")),
         cellAspect = orDefault(fields.cellAspect, defaults.cellAspect)(number(_, "cellAspect")),
@@ -66,18 +67,25 @@ private[jsapi] object FromJs {
     case _ => fail("seed must be a whole number between -(2^53 - 1) and 2^53 - 1")
   }
 
-  private def table(value: Any): Table = value match {
-    case name: String => TableNameMapper(name)
+  private def characterConverter(value: Any): CharacterConverter = value match {
+    case name: String => new TableConverter(TableNameMapper(name))
     case _ =>
-      val shape = "characters must be a built-in table's name, { chars } or { limits }"
+      val shape = "characters must be a built-in table's name, { chars }, { limits } or { braille }"
       val fields = record(value, shape)
-      onlyKeys(fields, "characters", Set("chars", "limits"))
-      // Exactly one of chars and limits.
-      (js.isUndefined(fields.chars), js.isUndefined(fields.limits)) match {
-        case (false, true) => new CustomTable(characters(fields.chars, "characters.chars"))
-        case (true, false) => new NonLinearTable(limits(fields.limits))
+      val kinds = Seq("chars", "limits", "braille")
+      onlyKeys(fields, "characters", kinds.toSet)
+      // Exactly one of them.
+      kinds.filterNot(kind => js.isUndefined(fields.selectDynamic(kind))) match {
+        case Seq("chars") => new TableConverter(new CustomTable(characters(fields.chars, "characters.chars")))
+        case Seq("limits") => new TableConverter(new NonLinearTable(limits(fields.limits)))
+        case Seq("braille") => new BrailleConverter(dither(fields.braille))
         case _ => fail(shape)
       }
+  }
+
+  private def dither(value: Any): Dither = value match {
+    case name: String if Dither.names.contains(name) => Dither.named(name).get
+    case _ => fail(s"characters.braille must be one of ${Dither.names.mkString(", ")}")
   }
 
   private def limits(value: Any): Array[(Int, Char)] =

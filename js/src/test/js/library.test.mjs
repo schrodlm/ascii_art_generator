@@ -210,7 +210,7 @@ describe("render's mistakes", () => {
     ["colors given as text", () => render(ramp, { colors: "yes" }), "colors must be true or false"],
     ["an unknown table", () => render(ramp, { characters: "nope" }), "Unknown table 'nope': use default, nonlinear-default, bourke"],
     ["both chars and limits", () => render(ramp, { characters: { chars: "ab", limits: [] } }),
-      "characters must be a built-in table's name, { chars } or { limits }"],
+      "characters must be a built-in table's name, { chars }, { limits } or { braille }"],
     ["an empty table", () => render(ramp, { characters: { chars: "" } }), "A character table needs at least one character"],
     ["emoji in a table", () => render(ramp, { characters: { chars: "🌿 ." } }),
       "characters.chars cannot hold emoji or other characters beyond U+FFFF"],
