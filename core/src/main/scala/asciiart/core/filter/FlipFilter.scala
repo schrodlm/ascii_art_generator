@@ -1,33 +1,32 @@
 package asciiart.core.filter
 
-import asciiart.core.image.AsciiArt
+import asciiart.core.image.RGBImage
 
 
 /**
- * Flips an AsciiArt image.
+ * Mirrors an RGB image. It runs before the image becomes characters, so the characters are drawn
+ * from the mirrored picture: even the dots inside braille characters face the right way.
  *
  * @param flip The direction to flip the image in.
  */
-class FlipFilter(val flip: Flip) extends AsciiArtFilter {
+class FlipFilter(val flip: Flip) extends RGBImageFilter {
 
   /**
-   * Applies the flip filter to an AsciiArt image.
+   * Applies the flip filter to an RGBImage.
    *
-   * @param image The AsciiArt image to flip.
-   * @return The flipped AsciiArt image.
+   * @param image The RGBImage to flip.
+   * @return The flipped RGBImage.
    */
-  override def apply(image: AsciiArt): AsciiArt = flip match {
-    case Flip.Vertical => flipVertically(image)
-    case Flip.Horizontal => flipHorizontally(image)
-  }
-
-  private def flipVertically(image: AsciiArt): AsciiArt = {
-    val height = image.getHeight()
-    image.rearrange(image.getWidth(), height)((x, y) => (x, height - 1 - y))
-  }
-
-  private def flipHorizontally(image: AsciiArt): AsciiArt = {
+  override def apply(image: RGBImage): RGBImage = {
     val width = image.getWidth()
-    image.rearrange(width, image.getHeight())((x, y) => (width - 1 - x, y))
+    val height = image.getHeight()
+    val data = image.getData()
+
+    // The source pixel that output pixel (x, y) reads.
+    val source: (Int, Int) => Int = flip match {
+      case Flip.Vertical => (x, y) => (height - 1 - y) * width + x
+      case Flip.Horizontal => (x, y) => y * width + (width - 1 - x)
+    }
+    new RGBImage(width, height, Array.tabulate(width * height)(i => data(source(i % width, i / width))))
   }
 }

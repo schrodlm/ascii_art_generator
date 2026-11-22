@@ -93,7 +93,8 @@ private[jsapi] object FromJs {
   private final case class FilterType[F](name: String, fields: Set[String], build: (js.Dynamic, String) => F)
 
   private val rgbTypes: Seq[FilterType[RGBImageFilter]] = Seq(
-    FilterType("rotate", Set("degrees"), (f, at) => new RotationFilter(wholeNumber(f.degrees, s"$at.degrees")))
+    FilterType("rotate", Set("degrees"), (f, at) => new RotationFilter(wholeNumber(f.degrees, s"$at.degrees"))),
+    FilterType("flip", Set("direction"), (f, at) => new FlipFilter(direction(f.direction, s"$at.direction")))
   )
 
   private val greyTypes: Seq[FilterType[GrayscaleImageFilter]] = Seq(
@@ -103,7 +104,6 @@ private[jsapi] object FromJs {
   )
 
   private val asciiTypes: Seq[FilterType[AsciiArtFilter]] = Seq(
-    FilterType("flip", Set("direction"), (f, at) => new FlipFilter(direction(f.direction, s"$at.direction"))),
     FilterType("scale", Set("factor"), (f, at) => new ScaleFilter(number(f.factor, s"$at.factor")))
   )
 

@@ -151,7 +151,7 @@ class CommandLineParserTest extends AnyFlatSpec with Matchers {
     val parser = new CommandLineParser(args)
     val config = parser.parse().get
 
-    config.render.asciiFilters(0) shouldBe (a[FlipFilter])
+    config.render.rgbFilters(0) shouldBe (a[FlipFilter])
   }
 
   it should "turn every --flip axis name into its direction" in {
@@ -160,7 +160,7 @@ class CommandLineParserTest extends AnyFlatSpec with Matchers {
     for ((axis, direction) <- directions) {
       val config = new CommandLineParser(Array("--flip", axis, "--image-random", "--output-console")).parse().get
 
-      config.render.asciiFilters.collect { case filter: FlipFilter => filter.flip } shouldBe Seq(direction)
+      config.render.rgbFilters.collect { case filter: FlipFilter => filter.flip } shouldBe Seq(direction)
     }
   }
 

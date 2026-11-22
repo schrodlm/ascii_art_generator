@@ -1,13 +1,13 @@
 package asciiart.core.filter
 
-/** The direction a FlipFilter mirrors the art in. */
+/** The direction a FlipFilter mirrors the picture in. */
 sealed trait Flip
 
 object Flip {
 
-  /** Turns the art upside down. */
+  /** Turns the picture upside down. */
   case object Vertical extends Flip
 
-  /** Mirrors the art left to right. */
+  /** Mirrors the picture left to right. */
   case object Horizontal extends Flip
 }

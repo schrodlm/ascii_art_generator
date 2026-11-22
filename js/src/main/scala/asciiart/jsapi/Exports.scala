@@ -25,9 +25,9 @@ object Exports {
    * @param settings Optional, every key too: maxColumns and maxRows (the art fits inside both);
    *                 cellAspect (a character cell's width divided by its height); table (a built-in
    *                 table's name, { chars } darkest first, or { limits: [[grey, char], …] });
-   *                 rgbFilters (rotate), greyFilters (brightness, contrast, invert) and asciiFilters
-   *                 (flip, scale), each a list of { type, … } run in order; colors (true to get
-   *                 each character's colour).
+   *                 rgbFilters (rotate, flip), greyFilters (brightness, contrast, invert) and
+   *                 asciiFilters (scale), each a list of { type, … } run in order; colors (true to
+   *                 get each character's colour).
    */
   @JSExportTopLevel("render")
   def render(pixels: Any, settings: Any = js.undefined): js.Object =

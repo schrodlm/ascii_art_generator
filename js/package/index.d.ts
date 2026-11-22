@@ -35,7 +35,9 @@ export type Table =
 /** A filter on the full picture, before it is shrunk to fit. */
 export type RgbFilter =
   /** Turns the picture clockwise; degrees must be a multiple of 90. */
-  { readonly type: "rotate"; readonly degrees: number };
+  | { readonly type: "rotate"; readonly degrees: number }
+  /** Turns the picture upside down (vertical) or mirrors it left to right (horizontal). */
+  | { readonly type: "flip"; readonly direction: "vertical" | "horizontal" };
 
 /** A filter on the grey values (0 black to 255 white), after the picture is shrunk. */
 export type GreyFilter =
@@ -48,10 +50,8 @@ export type GreyFilter =
 
 /** A filter on the finished characters. */
 export type AsciiFilter =
-  /** Turns the art upside down (vertical) or mirrors it left to right (horizontal). */
-  | { readonly type: "flip"; readonly direction: "vertical" | "horizontal" }
   /** Multiplies the art's size: 2 doubles it, 0.5 halves it. Must be positive. */
-  | { readonly type: "scale"; readonly factor: number };
+  { readonly type: "scale"; readonly factor: number };
 
 /** How to draw. Every setting is optional. */
 export interface Settings {

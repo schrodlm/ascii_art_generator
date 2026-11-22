@@ -46,6 +46,8 @@ class CommandLineParser(val args: Array[String]) extends Parser {
       |                               this off).
       |  --rotate <degrees>           Rotate clockwise by a multiple of 90 degrees
       |                               (negative turns anticlockwise).
+      |  --flip <axis>                vertical (or x) turns the picture upside down;
+      |                               horizontal (or y) mirrors it.
       |
       |Brightness, on a scale of 0 (black) to 255 (white):
       |  --brightness <amount>        Add this to every value (negative darkens).
@@ -62,15 +64,13 @@ class CommandLineParser(val args: Array[String]) extends Parser {
       |                               the detail. dither: ordered (the default, steady
       |                               on video), diffusion (the most natural) or
       |                               threshold (sharp outlines, no greys).
-      |  --flip <axis>                vertical (or x) turns the art upside down;
-      |                               horizontal (or y) mirrors it.
       |  --scale <factor>             Scale the finished art (2 doubles it, 0.5 halves
       |                               it).
       |
       |  --help                       Show this text.
       |
-      |The options apply in this order: --rotate, --width, the brightness options,
-      |--table, --custom-table or --braille, --flip, --scale. Options in the same
+      |The options apply in this order: --rotate and --flip, --width, the brightness
+      |options, --table, --custom-table or --braille, --scale. Options in the same
       |step apply in the order you give them.
       |
       |Examples:
@@ -144,7 +144,7 @@ class CommandLineParser(val args: Array[String]) extends Parser {
           case "y" | "horizontal" => Flip.Horizontal
           case _ => throw new IllegalArgumentException("Axis provided for the flip filter must be 'x' or 'y'")
         }
-        nextArg(configBuilder.addAsciiFilter(new FlipFilter(flip)), tail)
+        nextArg(configBuilder.addRgbFilter(new FlipFilter(flip)), tail)
       case "--brightness" :: value :: tail =>
         val brightnessValue = Try(value.toInt).getOrElse(throw new IllegalArgumentException("Brightness value must be a valid number"))
         val brightnessFilter: BrightnessFilter = new BrightnessFilter(brightnessValue)

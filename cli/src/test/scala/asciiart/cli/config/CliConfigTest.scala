@@ -129,7 +129,7 @@ class CliConfigTest extends AnyFlatSpec with Matchers {
 
   it should "not compile when a filter is added to another stage" in {
     "new CliConfig.Builder().addGrayscaleFilter(new BrightnessFilter(1))" should compile
-    "new CliConfig.Builder().addAsciiFilter(new FlipFilter(Flip.Vertical))" should compile
+    "new CliConfig.Builder().addRgbFilter(new FlipFilter(Flip.Vertical))" should compile
     "new CliConfig.Builder().addAsciiFilter(new BrightnessFilter(1))" shouldNot typeCheck
     "new CliConfig.Builder().addGrayscaleFilter(new FlipFilter(Flip.Vertical))" shouldNot typeCheck
   }

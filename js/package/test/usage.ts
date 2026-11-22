@@ -18,9 +18,9 @@ const art: Art = render(imageData, {
   maxRows: 40,
   cellAspect: 0.5,
   table: "bourke",
-  rgbFilters: [{ type: "rotate", degrees: 90 }],
+  rgbFilters: [{ type: "rotate", degrees: 90 }, { type: "flip", direction: "horizontal" }],
   greyFilters: [{ type: "brightness", amount: 20 }, { type: "contrast", factor: 1.5 }, { type: "invert" }],
-  asciiFilters: [{ type: "flip", direction: "horizontal" }, { type: "scale", factor: 2 }],
+  asciiFilters: [{ type: "scale", factor: 2 }],
 });
 const lines: string[] = art.lines;
 const text: string = art.text;
@@ -42,12 +42,14 @@ render(imageData, { maxColumn: 120 });
 render(imageData, { maxColumns: "120" });
 // @ts-expect-error a flip among the grey filters
 render(imageData, { greyFilters: [{ type: "flip", direction: "vertical" }] });
+// @ts-expect-error a flip among the ascii filters
+render(imageData, { asciiFilters: [{ type: "flip", direction: "vertical" }] });
 // @ts-expect-error brightness without its amount
 render(imageData, { greyFilters: [{ type: "brightness" }] });
 // @ts-expect-error a misspelt filter type
 render(imageData, { greyFilters: [{ type: "brightnes", amount: 20 }] });
 // @ts-expect-error an unknown flip direction
-render(imageData, { asciiFilters: [{ type: "flip", direction: "up" }] });
+render(imageData, { rgbFilters: [{ type: "flip", direction: "up" }] });
 // @ts-expect-error a limit that is not a [grey, character] pair
 render(imageData, { table: { limits: [[255]] } });
 // @ts-expect-error pixels without data

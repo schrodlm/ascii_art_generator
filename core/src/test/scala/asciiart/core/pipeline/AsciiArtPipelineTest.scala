@@ -66,8 +66,8 @@ class AsciiArtPipelineTest extends AnyFlatSpec with Matchers {
     val settings = RenderSettings(
       cellAspect = 1,
       colors = true,
-      grayscaleFilters = Seq(new InvertFilter()),
-      asciiFilters = Seq(new FlipFilter(Flip.Horizontal))
+      rgbFilters = Seq(new FlipFilter(Flip.Horizontal)),
+      grayscaleFilters = Seq(new InvertFilter())
     )
 
     AsciiArtPipeline.render(image, settings).colors.get shouldBe Array(blue, red)

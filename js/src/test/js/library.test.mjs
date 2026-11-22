@@ -144,12 +144,11 @@ describe("render's filters", () => {
     assert.equal(render(ramp, { ...square, greyFilters: invertFirst }).text[0], " ");
   });
 
-  test("flip and scale move the finished characters", () => {
-    const mirrored = render(ramp, { ...square, asciiFilters: [{ type: "flip", direction: "horizontal" }] });
+  test("flip mirrors the picture and scale resizes the finished characters", () => {
+    const mirrored = render(ramp, { ...square, rgbFilters: [{ type: "flip", direction: "horizontal" }] });
     const upsideDown = render(ramp, {
       ...square,
-      rgbFilters: [{ type: "rotate", degrees: 90 }],
-      asciiFilters: [{ type: "flip", direction: "vertical" }],
+      rgbFilters: [{ type: "rotate", degrees: 90 }, { type: "flip", direction: "vertical" }],
     });
     const doubled = render(ramp, { ...square, asciiFilters: [{ type: "scale", factor: 2 }] });
 
@@ -185,8 +184,8 @@ describe("render's colours", () => {
     const art = render(colourful, {
       ...square,
       colors: true,
+      rgbFilters: [{ type: "flip", direction: "horizontal" }],
       greyFilters: [{ type: "invert" }],
-      asciiFilters: [{ type: "flip", direction: "horizontal" }],
     });
 
     assert.deepEqual([...art.colors], [...white, ...blue, ...green, ...red]);
@@ -227,8 +226,8 @@ describe("render's mistakes", () => {
       "greyFilters[0].amount must be a whole number"],
     ["a misspelt filter key", () => render(ramp, { asciiFilters: [{ type: "scale", factor: 2, factr: 3 }] }),
       "Unknown key 'factr' in asciiFilters[0]: use factor, type"],
-    ["an unknown flip direction", () => render(ramp, { asciiFilters: [{ type: "flip", direction: "up" }] }),
-      'asciiFilters[0].direction must be "vertical" or "horizontal"'],
+    ["an unknown flip direction", () => render(ramp, { rgbFilters: [{ type: "flip", direction: "up" }] }),
+      'rgbFilters[0].direction must be "vertical" or "horizontal"'],
     ["a rotation that is not a quarter turn", () => render(ramp, { rgbFilters: [{ type: "rotate", degrees: 45 }] }),
       "Rotation must be a multiple of 90 degrees"],
   ];
