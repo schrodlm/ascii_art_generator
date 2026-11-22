@@ -17,7 +17,7 @@ const art: Art = render(imageData, {
   maxColumns: 120,
   maxRows: 40,
   cellAspect: 0.5,
-  table: "bourke",
+  characters: "bourke",
   rgbFilters: [{ type: "rotate", degrees: 90 }, { type: "flip", direction: "horizontal" }],
   greyFilters: [{ type: "brightness", amount: 20 }, { type: "contrast", factor: 1.5 }, { type: "invert" }],
   asciiFilters: [{ type: "scale", factor: 2 }],
@@ -31,8 +31,8 @@ const colorImage = new ImageData(colored.colors, colored.columns, colored.rows);
 const maybe: Uint8ClampedArray | undefined = render(imageData, { colors: wanted }).colors;
 
 render(plasma());
-render({ data: new Uint8Array(4), width: 1, height: 1 }, { table: { chars: " .:-=+*#%@" } });
-render(imageData, { table: { limits: [[127, "#"], [255, "."]] } });
+render({ data: new Uint8Array(4), width: 1, height: 1 }, { characters: { chars: " .:-=+*#%@" } });
+render(imageData, { characters: { limits: [[127, "#"], [255, "."]] } });
 
 // Mistakes, which must be rejected.
 
@@ -51,7 +51,7 @@ render(imageData, { greyFilters: [{ type: "brightnes", amount: 20 }] });
 // @ts-expect-error an unknown flip direction
 render(imageData, { rgbFilters: [{ type: "flip", direction: "up" }] });
 // @ts-expect-error a limit that is not a [grey, character] pair
-render(imageData, { table: { limits: [[255]] } });
+render(imageData, { characters: { limits: [[255]] } });
 // @ts-expect-error pixels without data
 render({ width: 1, height: 1 });
 // @ts-expect-error a plain array of numbers as data

@@ -106,15 +106,15 @@ describe("render", () => {
   });
 
   test("uses a built-in table chosen by name", () => {
-    assert.equal(render(ramp, { ...square, table: "bourke" }).text, "$01.");
+    assert.equal(render(ramp, { ...square, characters: "bourke" }).text, "$01.");
   });
 
   test("uses your own characters, darkest first", () => {
-    assert.equal(render(ramp, { ...square, table: { chars: "ab" } }).text, "aabb");
+    assert.equal(render(ramp, { ...square, characters: { chars: "ab" } }).text, "aabb");
   });
 
   test("uses your own grey limits", () => {
-    assert.equal(render(ramp, { ...square, table: { limits: [[100, "x"], [255, "o"]] } }).text, "xxoo");
+    assert.equal(render(ramp, { ...square, characters: { limits: [[100, "x"], [255, "o"]] } }).text, "xxoo");
   });
 });
 
@@ -205,20 +205,20 @@ describe("render's mistakes", () => {
       "pixels is too large: at most 2147483647 values"],
     ["settings that are not an object", () => render(ramp, 40), "settings must be an object"],
     ["a misspelt setting", () => render(ramp, { maxColumn: 40 }),
-      "Unknown key 'maxColumn' in settings: use asciiFilters, cellAspect, colors, greyFilters, maxColumns, maxRows, rgbFilters, table"],
+      "Unknown key 'maxColumn' in settings: use asciiFilters, cellAspect, characters, colors, greyFilters, maxColumns, maxRows, rgbFilters"],
     ["zero columns", () => render(ramp, { maxColumns: 0 }), "maxColumns must be a whole number of at least 1"],
     ["colors given as text", () => render(ramp, { colors: "yes" }), "colors must be true or false"],
-    ["an unknown table", () => render(ramp, { table: "nope" }), "Unknown table 'nope': use default, nonlinear-default, bourke"],
-    ["both chars and limits", () => render(ramp, { table: { chars: "ab", limits: [] } }),
-      "table must be a built-in table's name, { chars } or { limits }"],
-    ["an empty table", () => render(ramp, { table: { chars: "" } }), "A character table needs at least one character"],
-    ["emoji in a table", () => render(ramp, { table: { chars: "🌿 ." } }),
-      "table.chars cannot hold emoji or other characters beyond U+FFFF"],
-    ["a newline in a table", () => render(ramp, { table: { chars: "@\n." } }),
-      "table.chars cannot hold control characters such as a newline"],
-    ["limits that stop short of white", () => render(ramp, { table: { limits: [[100, "@"], [200, "+"]] } }),
+    ["an unknown table", () => render(ramp, { characters: "nope" }), "Unknown table 'nope': use default, nonlinear-default, bourke"],
+    ["both chars and limits", () => render(ramp, { characters: { chars: "ab", limits: [] } }),
+      "characters must be a built-in table's name, { chars } or { limits }"],
+    ["an empty table", () => render(ramp, { characters: { chars: "" } }), "A character table needs at least one character"],
+    ["emoji in a table", () => render(ramp, { characters: { chars: "🌿 ." } }),
+      "characters.chars cannot hold emoji or other characters beyond U+FFFF"],
+    ["a newline in a table", () => render(ramp, { characters: { chars: "@\n." } }),
+      "characters.chars cannot hold control characters such as a newline"],
+    ["limits that stop short of white", () => render(ramp, { characters: { limits: [[100, "@"], [200, "+"]] } }),
       "The last grey limit must be 255, so every grey has a character"],
-    ["a limit that is not a pair", () => render(ramp, { table: { limits: [[255]] } }), "table.limits[0] must be [limit, character]"],
+    ["a limit that is not a pair", () => render(ramp, { characters: { limits: [[255]] } }), "characters.limits[0] must be [limit, character]"],
     ["filters that are not a list", () => render(ramp, { greyFilters: { type: "invert" } }), "greyFilters must be an array"],
     ["a filter in the wrong list", () => render(ramp, { greyFilters: [{ type: "flip", direction: "vertical" }] }),
       "greyFilters[0].type must be one of brightness, contrast, invert"],

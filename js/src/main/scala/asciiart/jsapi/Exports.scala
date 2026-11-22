@@ -23,8 +23,8 @@ object Exports {
    * @param pixels   { data, width, height }, data holding red, green, blue and alpha for every
    *                 pixel, row by row, such as a canvas's ImageData.
    * @param settings Optional, every key too: maxColumns and maxRows (the art fits inside both);
-   *                 cellAspect (a character cell's width divided by its height); table (a built-in
-   *                 table's name, { chars } darkest first, or { limits: [[grey, char], …] });
+   *                 cellAspect (a character cell's width divided by its height); characters (a
+   *                 built-in table's name, { chars } darkest first, or { limits: [[grey, char], …] });
    *                 rgbFilters (rotate, flip), greyFilters (brightness, contrast, invert) and
    *                 asciiFilters (scale), each a list of { type, … } run in order; colors (true to
    *                 get each character's colour).

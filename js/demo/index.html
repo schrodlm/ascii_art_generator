@@ -186,7 +186,7 @@ function settings() {
     maxColumns: Math.max(1, Math.floor(art.clientWidth / width)),
     maxRows: Math.max(1, Math.floor(art.clientHeight / height)),
     cellAspect: width / height,
-    table: $("table").value === "custom" ? { chars: $("chars").value } : $("table").value,
+    characters: $("table").value === "custom" ? { chars: $("chars").value } : $("table").value,
     rgbFilters,
     greyFilters,
     colors: $("colors").checked,

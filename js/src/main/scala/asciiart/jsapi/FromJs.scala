@@ -45,10 +45,10 @@ private[jsapi] object FromJs {
     else {
       val fields = record(value, "settings must be an object")
       onlyKeys(fields, "settings",
-        Set("maxColumns", "maxRows", "cellAspect", "table", "rgbFilters", "greyFilters", "asciiFilters", "colors"))
+        Set("maxColumns", "maxRows", "cellAspect", "characters", "rgbFilters", "greyFilters", "asciiFilters", "colors"))
       val defaults = RenderSettings()
       RenderSettings(
-        characterConverter = orDefault(fields.table, defaults.characterConverter)(value => new TableConverter(table(value))),
+        characterConverter = orDefault(fields.characters, defaults.characterConverter)(value => new TableConverter(table(value))),
         maxColumns = orDefault(fields.maxColumns, defaults.maxColumns)(positiveWholeNumber(_, "maxColumns")),
         maxRows = orDefault(fields.maxRows, defaults.maxRows)(positiveWholeNumber(_, "maxRows")),
         cellAspect = orDefault(fields.cellAspect, defaults.cellAspect)(number(_, "cellAspect")),
@@ -69,20 +69,20 @@ private[jsapi] object FromJs {
   private def table(value: Any): Table = value match {
     case name: String => TableNameMapper(name)
     case _ =>
-      val shape = "table must be a built-in table's name, { chars } or { limits }"
+      val shape = "characters must be a built-in table's name, { chars } or { limits }"
       val fields = record(value, shape)
-      onlyKeys(fields, "table", Set("chars", "limits"))
+      onlyKeys(fields, "characters", Set("chars", "limits"))
       // Exactly one of chars and limits.
       (js.isUndefined(fields.chars), js.isUndefined(fields.limits)) match {
-        case (false, true) => new CustomTable(characters(fields.chars, "table.chars"))
+        case (false, true) => new CustomTable(characters(fields.chars, "characters.chars"))
         case (true, false) => new NonLinearTable(limits(fields.limits))
         case _ => fail(shape)
       }
   }
 
   private def limits(value: Any): Array[(Int, Char)] =
-    array(value, "table.limits").zipWithIndex.map { case (entry, i) =>
-      val at = s"table.limits[$i]"
+    array(value, "characters.limits").zipWithIndex.map { case (entry, i) =>
+      val at = s"characters.limits[$i]"
       array(entry, at) match {
         case Seq(limit, char) => (wholeNumber(limit, s"$at[0]"), character(char, s"$at[1]"))
         case _ => fail(s"$at must be [limit, character]")

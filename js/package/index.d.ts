@@ -27,7 +27,7 @@ export interface Pixels {
  * - `{ limits }`: your own grey limits, `[grey, character]` pairs whose greys rise and end at 255,
  *   each character drawn for the greys up to its limit.
  */
-export type Table =
+export type Characters =
   | string
   | { readonly chars: string }
   | { readonly limits: ReadonlyArray<readonly [number, string]> };
@@ -62,7 +62,7 @@ export interface Settings {
   /** A character cell's width divided by its height; 0.5 (the default) suits most monospace fonts. */
   readonly cellAspect?: number;
   /** The characters to draw with; "default" when left out. */
-  readonly table?: Table;
+  readonly characters?: Characters;
   /** Run in order on the full picture. */
   readonly rgbFilters?: readonly RgbFilter[];
   /** Run in order on the grey values. */
