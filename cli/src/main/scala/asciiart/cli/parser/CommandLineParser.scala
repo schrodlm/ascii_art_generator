@@ -1,6 +1,7 @@
 package asciiart.cli.parser
 
 import asciiart.cli.config.{CliConfig, ConsoleImageOutput, PathImageOutput, PathImageSource, RandomImageSource}
+import asciiart.core.characters.Dither
 import asciiart.core.filter.{BrightnessFilter, ContrastFilter, Flip, FlipFilter, InvertFilter, RotationFilter, ScaleFilter}
 
 import scala.util.Try
@@ -57,6 +58,10 @@ class CommandLineParser(val args: Array[String]) extends Parser {
       |                               bourke.
       |  --custom-table <chars>       Your own characters, darkest first, for example
       |                               "@#+-. ".
+      |  --braille [dither]           Braille, 2 by 4 dots per character: eight times
+      |                               the detail. dither: ordered (the default, steady
+      |                               on video), diffusion (the most natural) or
+      |                               threshold (sharp outlines, no greys).
       |  --flip <axis>                vertical (or x) turns the art upside down;
       |                               horizontal (or y) mirrors it.
       |  --scale <factor>             Scale the finished art (2 doubles it, 0.5 halves
@@ -65,8 +70,8 @@ class CommandLineParser(val args: Array[String]) extends Parser {
       |  --help                       Show this text.
       |
       |The options apply in this order: --rotate, --width, the brightness options,
-      |--table or --custom-table, --flip, --scale. Options in the same step apply in
-      |the order you give them.
+      |--table, --custom-table or --braille, --flip, --scale. Options in the same
+      |step apply in the order you give them.
       |
       |Examples:
       |  asciiart --image photo.jpg --output-console
@@ -113,6 +118,10 @@ class CommandLineParser(val args: Array[String]) extends Parser {
         nextArg(configBuilder.withImageSource(PathImageSource(path)), tail)
       case "--table" :: name :: tail =>
         nextArg(configBuilder.withTable(name), tail)
+      case "--braille" :: name :: tail if Dither.named(name).isDefined =>
+        nextArg(configBuilder.withBraille(Dither.named(name).get), tail)
+      case "--braille" :: tail =>
+        nextArg(configBuilder.withBraille(Dither.Ordered), tail)
       case "--custom-table" :: chars :: tail =>
         val table_chars: Array[Char] = chars.toCharArray
         nextArg(configBuilder.withTable(table_chars), tail)

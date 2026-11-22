@@ -1,6 +1,7 @@
 package asciiart.cli.config
 
-import asciiart.core.conversion.TableConverter
+import asciiart.core.characters.Dither
+import asciiart.core.conversion.{BrailleConverter, TableConverter}
 import asciiart.core.filter.{AsciiArtFilter, GrayscaleImageFilter, RGBImageFilter}
 import asciiart.core.pipeline.RenderSettings
 import asciiart.core.table.{CustomTable, TableNameMapper}
@@ -64,6 +65,11 @@ object CliConfig {
 
     def withTable(chars: Array[Char]): Builder = {
       render = render.copy(characterConverter = new TableConverter(new CustomTable(chars)))
+      this
+    }
+
+    def withBraille(dither: Dither): Builder = {
+      render = render.copy(characterConverter = new BrailleConverter(dither))
       this
     }
 
