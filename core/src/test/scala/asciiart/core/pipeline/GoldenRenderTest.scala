@@ -1,5 +1,6 @@
 package asciiart.core.pipeline
 
+import asciiart.core.conversion.TableConverter
 import asciiart.core.filter.BrightnessFilter
 import asciiart.core.image.{Plasma, RGBImage}
 import asciiart.core.table.PaulBourkeTable
@@ -50,7 +51,7 @@ class GoldenRenderTest extends AnyFlatSpec with Matchers {
 
   it should "render the fixture with the Paul Bourke table, square cells and a brightness filter" in {
     val settings = RenderSettings(
-      table = new PaulBourkeTable(),
+      characterConverter = new TableConverter(new PaulBourkeTable()),
       cellAspect = 1,
       grayscaleFilters = Seq(new BrightnessFilter(30))
     )

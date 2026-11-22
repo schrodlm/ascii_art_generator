@@ -1,5 +1,6 @@
 package asciiart.cli.config
 
+import asciiart.core.conversion.TableConverter
 import asciiart.core.filter.{AsciiArtFilter, GrayscaleImageFilter, RGBImageFilter}
 import asciiart.core.pipeline.RenderSettings
 import asciiart.core.table.{CustomTable, TableNameMapper}
@@ -57,12 +58,12 @@ object CliConfig {
     }
 
     def withTable(name: String): Builder = {
-      render = render.copy(table = TableNameMapper(name))
+      render = render.copy(characterConverter = new TableConverter(TableNameMapper(name)))
       this
     }
 
     def withTable(chars: Array[Char]): Builder = {
-      render = render.copy(table = new CustomTable(chars))
+      render = render.copy(characterConverter = new TableConverter(new CustomTable(chars)))
       this
     }
 

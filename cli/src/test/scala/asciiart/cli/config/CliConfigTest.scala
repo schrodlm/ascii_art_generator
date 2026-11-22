@@ -1,6 +1,7 @@
 package asciiart.cli.config
 
 import asciiart.core.table.{CustomTable, DefaultTable, PaulBourkeTable}
+import asciiart.core.conversion.TableConverter
 import asciiart.core.filter.{AsciiArtFilter, BrightnessFilter, Flip, FlipFilter, GrayscaleImageFilter, RGBImageFilter}
 import asciiart.core.image.{AsciiArt, GrayscaleImage, RGBImage}
 import org.scalatest.flatspec.AnyFlatSpec
@@ -37,7 +38,7 @@ class CliConfigTest extends AnyFlatSpec with Matchers {
 
     config.imageSource shouldBe source
     config.imageOutput shouldBe output
-    config.render.table shouldBe a[CustomTable]
+    config.render.characterConverter.asInstanceOf[TableConverter].table shouldBe a[CustomTable]
     config.render.asciiFilters should contain theSameElementsAs Array(asciiFilter)
     config.render.grayscaleFilters should contain theSameElementsAs Array(grayscaleFilter)
     config.render.rgbFilters should contain theSameElementsAs Array(rgbFilter)
@@ -51,7 +52,7 @@ class CliConfigTest extends AnyFlatSpec with Matchers {
       .withTable("Bourke")
       .build()
 
-    config.render.table shouldBe a[PaulBourkeTable]
+    config.render.characterConverter.asInstanceOf[TableConverter].table shouldBe a[PaulBourkeTable]
   }
 
   it should "build when no custom table is provided (by using default table)" in {
@@ -65,7 +66,7 @@ class CliConfigTest extends AnyFlatSpec with Matchers {
 
     config.imageSource shouldBe source
     config.imageOutput shouldBe output
-    config.render.table shouldBe a[DefaultTable]
+    config.render.characterConverter.asInstanceOf[TableConverter].table shouldBe a[DefaultTable]
   }
 
 
@@ -105,7 +106,7 @@ class CliConfigTest extends AnyFlatSpec with Matchers {
 
     config.imageSource shouldBe source
     config.imageOutput shouldBe output
-    config.render.table shouldBe a[DefaultTable]
+    config.render.characterConverter.asInstanceOf[TableConverter].table shouldBe a[DefaultTable]
     config.render.asciiFilters shouldBe empty
     config.render.grayscaleFilters shouldBe empty
     config.render.rgbFilters shouldBe empty

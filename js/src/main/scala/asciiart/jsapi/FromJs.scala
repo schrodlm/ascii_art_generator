@@ -1,5 +1,6 @@
 package asciiart.jsapi
 
+import asciiart.core.conversion.TableConverter
 import asciiart.core.filter._
 import asciiart.core.image.RGBImage
 import asciiart.core.pipeline.RenderSettings
@@ -47,7 +48,7 @@ private[jsapi] object FromJs {
         Set("maxColumns", "maxRows", "cellAspect", "table", "rgbFilters", "greyFilters", "asciiFilters", "colors"))
       val defaults = RenderSettings()
       RenderSettings(
-        table = orDefault(fields.table, defaults.table)(table),
+        characterConverter = orDefault(fields.table, defaults.characterConverter)(value => new TableConverter(table(value))),
         maxColumns = orDefault(fields.maxColumns, defaults.maxColumns)(positiveWholeNumber(_, "maxColumns")),
         maxRows = orDefault(fields.maxRows, defaults.maxRows)(positiveWholeNumber(_, "maxRows")),
         cellAspect = orDefault(fields.cellAspect, defaults.cellAspect)(number(_, "cellAspect")),

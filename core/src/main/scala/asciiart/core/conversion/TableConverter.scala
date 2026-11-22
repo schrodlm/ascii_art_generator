@@ -4,11 +4,11 @@ import asciiart.core.table.Table
 import asciiart.core.image.{AsciiArt, GrayscaleImage}
 
 /**
- * Converts a GrayscaleImage to AsciiArt.
+ * Converts a GrayscaleImage to AsciiArt, one character for every grey pixel.
  *
  * @param table The character table to use for conversion.
  */
-private[core] class GrayscaleToAsciiConverter(val table: Table) {
+class TableConverter(val table: Table) extends CharacterConverter {
 
   /**
    * Converts the GrayscaleImage to AsciiArt.

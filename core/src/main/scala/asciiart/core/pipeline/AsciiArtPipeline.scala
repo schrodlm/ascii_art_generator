@@ -1,6 +1,6 @@
 package asciiart.core.pipeline
 
-import asciiart.core.conversion.{GrayscaleToAsciiConverter, RgbToGrayscaleConverter}
+import asciiart.core.conversion.RgbToGrayscaleConverter
 import asciiart.core.filter.{Filter, ResizeFilter}
 import asciiart.core.image.{AsciiArt, Image, RGBImage}
 
@@ -19,10 +19,10 @@ object AsciiArtPipeline {
       new RgbToGrayscaleConverter().convert(resized),
       settings.grayscaleFilters
     )
-    val characters = new GrayscaleToAsciiConverter(settings.table).convert(grayscale)
+    val drawn = settings.characterConverter.convert(grayscale)
     // One colour per character: the resized image's pixels, which grayscale filters never touch.
     val colors = Option.when(settings.colors)(resized.getData())
-    val asciiArt = new AsciiArt(characters.getWidth(), characters.getHeight(), characters.getData(), colors)
+    val asciiArt = new AsciiArt(drawn.getWidth(), drawn.getHeight(), drawn.getData(), colors)
     applyFilters(asciiArt, settings.asciiFilters)
   }
 

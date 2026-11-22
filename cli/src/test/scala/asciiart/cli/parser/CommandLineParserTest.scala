@@ -1,6 +1,7 @@
 package asciiart.cli.parser
 
 import asciiart.core.table.{CustomTable, TableNameMapper}
+import asciiart.core.conversion.TableConverter
 import asciiart.cli.config.{ConsoleImageOutput, PathImageOutput, PathImageSource, RandomImageSource}
 import asciiart.core.filter.{BrightnessFilter, ContrastFilter, Flip, FlipFilter, InvertFilter, RotationFilter, ScaleFilter}
 import org.scalatest.flatspec.AnyFlatSpec
@@ -36,11 +37,12 @@ class CommandLineParserTest extends AnyFlatSpec with Matchers {
     val config = configOption.get
     config.imageSource shouldBe a[RandomImageSource]
     config.imageOutput shouldBe a[PathImageOutput]
-    config.render.table shouldBe a[CustomTable]
+    val table = config.render.characterConverter.asInstanceOf[TableConverter].table
+    table shouldBe a[CustomTable]
 
-    config.render.table.getChar(0) shouldEqual '.'
-    config.render.table.getChar(128) shouldEqual '*'
-    config.render.table.getChar(255) shouldEqual '+'
+    table.getChar(0) shouldEqual '.'
+    table.getChar(128) shouldEqual '*'
+    table.getChar(255) shouldEqual '+'
   }
 
   it should "parse console output option" in {

@@ -5,8 +5,8 @@ import asciiart.core.image.GrayscaleImage
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
-class GrayscaleToAsciiConverterTest extends AnyFlatSpec with Matchers {
-  "GrayscaleToAsciiConverter" should "correctly convert a GrayscaleImage to AsciiArt" in {
+class TableConverterTest extends AnyFlatSpec with Matchers {
+  "TableConverter" should "correctly convert a GrayscaleImage to AsciiArt" in {
     val width = 10
     val height = 10
     val grayscaleData = Array.fill(width * height)(128) // Example grayscale data
@@ -19,7 +19,7 @@ class GrayscaleToAsciiConverterTest extends AnyFlatSpec with Matchers {
       }
     }
 
-    val converter = new GrayscaleToAsciiConverter(mockTable)
+    val converter = new TableConverter(mockTable)
     val asciiArt = converter.convert(grayscaleImage)
 
     // Assertions
