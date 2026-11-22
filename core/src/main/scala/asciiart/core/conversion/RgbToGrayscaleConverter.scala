@@ -3,19 +3,18 @@ import asciiart.core.image.{GrayscaleImage, RGBImage}
 
 /**
  * Converts an RGBImage to a GrayscaleImage.
- *
- * @param image The RGBImage to convert.
  */
-private[core] class RgbToGrayscaleConverter(image : RGBImage) {
+private[core] class RgbToGrayscaleConverter() {
 
   /**
    * Converts the RGBImage to a GrayscaleImage.
    *
    * Uses a standard formula to calculate grayscale values from RGB.
    *
+   * @param image The RGBImage to convert.
    * @return The converted GrayscaleImage.
    */
-  def convert() : GrayscaleImage = {
+  def convert(image : RGBImage) : GrayscaleImage = {
 
     val width = image.getWidth()
     val height = image.getHeight()

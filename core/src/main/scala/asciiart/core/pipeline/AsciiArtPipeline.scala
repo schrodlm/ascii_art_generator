@@ -16,10 +16,10 @@ object AsciiArtPipeline {
     val columns = fitColumns(rgb.getWidth(), rgb.getHeight(), settings)
     val resized = new ResizeFilter(columns, settings.cellAspect).apply(rgb)
     val grayscale = applyFilters(
-      new RgbToGrayscaleConverter(resized).convert(),
+      new RgbToGrayscaleConverter().convert(resized),
       settings.grayscaleFilters
     )
-    val characters = new GrayscaleToAsciiConverter(grayscale, settings.table).convert()
+    val characters = new GrayscaleToAsciiConverter(settings.table).convert(grayscale)
     // One colour per character: the resized image's pixels, which grayscale filters never touch.
     val colors = Option.when(settings.colors)(resized.getData())
     val asciiArt = new AsciiArt(characters.getWidth(), characters.getHeight(), characters.getData(), colors)

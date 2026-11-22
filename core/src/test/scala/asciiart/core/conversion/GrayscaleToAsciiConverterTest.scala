@@ -19,8 +19,8 @@ class GrayscaleToAsciiConverterTest extends AnyFlatSpec with Matchers {
       }
     }
 
-    val converter = new GrayscaleToAsciiConverter(grayscaleImage, mockTable)
-    val asciiArt = converter.convert()
+    val converter = new GrayscaleToAsciiConverter(mockTable)
+    val asciiArt = converter.convert(grayscaleImage)
 
     // Assertions
     asciiArt.getWidth() shouldBe width
