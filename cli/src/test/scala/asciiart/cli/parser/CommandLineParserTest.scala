@@ -1,7 +1,8 @@
 package asciiart.cli.parser
 
 import asciiart.core.table.{CustomTable, TableNameMapper}
-import asciiart.core.conversion.TableConverter
+import asciiart.core.characters.Dither
+import asciiart.core.conversion.{BrailleConverter, TableConverter}
 import asciiart.cli.config.{ConsoleImageOutput, PathImageOutput, PathImageSource, RandomImageSource}
 import asciiart.core.filter.{BrightnessFilter, ContrastFilter, Flip, FlipFilter, InvertFilter, RotationFilter, ScaleFilter}
 import org.scalatest.flatspec.AnyFlatSpec
@@ -163,6 +164,16 @@ class CommandLineParserTest extends AnyFlatSpec with Matchers {
     }
   }
 
+  it should "draw braille with --braille, ordered unless another dithering is named" in {
+    def dither(option: String*) =
+      new CommandLineParser((option ++ Seq("--image-random", "--output-console")).toArray).parse().get
+        .render.characterConverter.asInstanceOf[BrailleConverter].dither
+
+    dither("--braille") shouldBe Dither.Ordered
+    dither("--braille", "diffusion") shouldBe Dither.Diffusion
+    dither("--braille", "Threshold") shouldBe Dither.Threshold
+  }
+
   it should "keep colours only with --color" in {
     def colors(option: String*) =
       new CommandLineParser((option ++ Seq("--image-random", "--output-console")).toArray).parse().get.render.colors
@@ -193,7 +204,7 @@ class CommandLineParserTest extends AnyFlatSpec with Matchers {
   it should "describe every option it accepts and every built-in table within 80 columns" in {
     val usage = new CommandLineParser(Array.empty).usage
     val options = Seq("--image", "--image-random", "--seed", "--output-console", "--output-file", "--color", "--width",
-      "--font-aspect-ratio", "--rotate", "--brightness", "--contrast", "--invert", "--table", "--custom-table",
+      "--font-aspect-ratio", "--rotate", "--brightness", "--contrast", "--invert", "--table", "--custom-table", "--braille",
       "--flip", "--scale", "--help")
     val tables = TableNameMapper.names
 
