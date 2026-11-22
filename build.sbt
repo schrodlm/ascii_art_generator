@@ -89,6 +89,13 @@ lazy val js = project
         if (exit != 0) throw new MessageOnlyException(s"JavaScript tests failed against $library")
       }
 
+      // The package as npm would install it: imported by name, and holding only what it should.
+      log.info(s"Testing the package in $packageDir")
+      val packageTests = (packageDir / "test" ** "*.test.mjs").get.map(_.getPath)
+      if (Process("node" +: "--test" +: packageTests, packageDir).! != 0) {
+        throw new MessageOnlyException(s"The package in $packageDir does not work as installed")
+      }
+
       // TypeScript checks package/test/usage.ts against the hand-written package/index.d.ts.
       val tsc = packageDir / "node_modules" / ".bin" / "tsc"
       if (!tsc.exists) throw new MessageOnlyException(s"TypeScript is not installed: run npm ci in $packageDir")
