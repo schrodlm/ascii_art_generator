@@ -107,6 +107,8 @@
   <fieldset>
     <legend>Picture (rgbFilters)</legend>
     <label><span>rotate</span><select id="rotate"><option>0</option><option>90</option><option>180</option><option>270</option></select></label>
+    <label><span>flip ↕</span><input type="checkbox" id="flipVertical"></label>
+    <label><span>flip ↔</span><input type="checkbox" id="flipHorizontal"></label>
   </fieldset>
 
   <fieldset>
@@ -121,12 +123,6 @@
     <legend>Colour</legend>
     <label><span>colors</span><input type="checkbox" id="colors"></label>
     <p class="hint" style="margin:4px 0 0">Each character in the average colour of its pixels, painted on a canvas.</p>
-  </fieldset>
-
-  <fieldset>
-    <legend>Characters (asciiFilters)</legend>
-    <label><span>flip ↕</span><input type="checkbox" id="flipVertical"></label>
-    <label><span>flip ↔</span><input type="checkbox" id="flipHorizontal"></label>
   </fieldset>
 </aside>
 
@@ -180,19 +176,19 @@ function settings() {
   if (contrast !== 1) greyFilters.push({ type: "contrast", factor: contrast });
   if ($("invert").checked) greyFilters.push({ type: "invert" });
 
-  const asciiFilters = [];
-  if ($("flipVertical").checked) asciiFilters.push({ type: "flip", direction: "vertical" });
-  if ($("flipHorizontal").checked) asciiFilters.push({ type: "flip", direction: "horizontal" });
-
+  const rgbFilters = [];
   const rotate = +$("rotate").value;
+  if (rotate) rgbFilters.push({ type: "rotate", degrees: rotate });
+  if ($("flipVertical").checked) rgbFilters.push({ type: "flip", direction: "vertical" });
+  if ($("flipHorizontal").checked) rgbFilters.push({ type: "flip", direction: "horizontal" });
+
   return {
     maxColumns: Math.max(1, Math.floor(art.clientWidth / width)),
     maxRows: Math.max(1, Math.floor(art.clientHeight / height)),
     cellAspect: width / height,
     table: $("table").value === "custom" ? { chars: $("chars").value } : $("table").value,
-    rgbFilters: rotate ? [{ type: "rotate", degrees: rotate }] : [],
+    rgbFilters,
     greyFilters,
-    asciiFilters,
     colors: $("colors").checked,
   };
 }
