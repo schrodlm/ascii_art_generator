@@ -1,5 +1,6 @@
 package asciiart.core.pipeline
 
+import asciiart.core.characters.Dither
 import asciiart.core.conversion.BrailleConverter
 import asciiart.core.filter.{Flip, FlipFilter, InvertFilter, RotationFilter}
 import asciiart.core.image.RGBImage
@@ -92,5 +93,18 @@ class AsciiArtPipelineTest extends AnyFlatSpec with Matchers {
     val settings = RenderSettings(characterConverter = new BrailleConverter(), colors = true)
 
     AsciiArtPipeline.render(image, settings).colors.get shouldBe Array(0xFF7F007F)
+  }
+
+  it should "mirror the dots inside braille characters when flipping" in {
+    // One cell whose top left pixel alone is dark: mirrored across it is the top right dot, upside
+    // down the bottom left.
+    val image = new RGBImage(2, 4, Array.tabulate(8)(i => if (i == 0) black else white))
+    def flipped(flip: Flip) = AsciiArtPipeline.render(image, RenderSettings(
+      characterConverter = new BrailleConverter(Dither.Threshold),
+      rgbFilters = Seq(new FlipFilter(flip))
+    )).getData()
+
+    flipped(Flip.Horizontal) shouldBe Array(0x2808)
+    flipped(Flip.Vertical) shouldBe Array(0x2840)
   }
 }
