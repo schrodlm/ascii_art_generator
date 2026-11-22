@@ -1,0 +1,24 @@
+// How render turns a picture into text. Regenerate with: dot -Tpng -Gdpi=150 pipeline.dot -o pipeline.png
+digraph pipeline {
+  rankdir=LR;
+  bgcolor=white;
+  node [shape=box, fontname="DejaVu Sans", fontsize=11, margin="0.15,0.08"];
+  edge [fontname="DejaVu Sans", fontsize=9, color="#444444", fontcolor="#444444"];
+
+  image  [label="picture\n(RGB pixels)", shape=plaintext];
+  rgb    [label="RGB filters\n\nrotate, flip"];
+  resize [label="resize\n\nmaxColumns, maxRows,\ncellAspect"];
+  grey   [label="to grey"];
+  greyf  [label="grey filters\n\nbrightness, contrast,\ninvert"];
+  conv   [label="character converter\n\ntable, braille,\nor your own"];
+  asciif [label="ASCII filters\n\nscale"];
+  art    [label="text\n(+ colours)", shape=plaintext];
+
+  image -> rgb -> resize -> grey -> greyf -> conv -> asciif -> art [weight=10];
+
+  // With colors: true, each character also keeps the average colour of its pixels. Grey filters
+  // never touch it; ASCII filters move it along with its character.
+  colours [label="average colour\nper character", shape=box, style=dashed];
+  resize -> colours [style=dashed];
+  colours -> asciif [style=dashed];
+}

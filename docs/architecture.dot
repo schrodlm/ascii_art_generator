@@ -1,0 +1,115 @@
+// UML class diagram of the three modules. Regenerate with: dot -Tpng -Gdpi=150 architecture.dot -o architecture.png
+digraph architecture {
+  rankdir=TB;
+  bgcolor=white;
+  newrank=true;
+  nodesep=0.35;
+  ranksep=0.55;
+  node [shape=plaintext, fontname="DejaVu Sans", fontsize=10];
+  edge [fontname="DejaVu Sans", fontsize=9, color="#444444", fontcolor="#444444", arrowsize=0.8];
+  graph [fontname="DejaVu Sans", fontsize=11, labeljust=l, style=solid, color="#888888"];
+
+  subgraph cluster_cli {
+    label="cli  (JVM)";
+    Main [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4">
+      <tr><td><i>«object»</i><br/><b>Main</b></td></tr></table>>];
+    CommandLineParser [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4">
+      <tr><td><b>CommandLineParser</b></td></tr>
+      <tr><td align="left" sides="t" border="1">parse(): Option[CliConfig]</td></tr></table>>];
+    CliConfig [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4">
+      <tr><td><b>CliConfig</b></td></tr>
+      <tr><td align="left" sides="t" border="1">imageSource: ImageSource<br align="left"/>imageOutput: ImageOutput<br align="left"/>width: Option[Int]<br align="left"/>render: RenderSettings<br align="left"/></td></tr></table>>];
+  }
+
+  subgraph cluster_js {
+    label="js  (Scala.js, npm)";
+    Exports [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4">
+      <tr><td><i>«object»</i><br/><b>Exports</b></td></tr>
+      <tr><td align="left" sides="t" border="1">render(pixels, settings)<br align="left"/>plasma(seed)<br align="left"/>tables, dithers<br align="left"/></td></tr></table>>];
+    FromJs [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4">
+      <tr><td><i>«object»</i><br/><b>FromJs</b></td></tr>
+      <tr><td align="left" sides="t" border="1">image(value): RGBImage<br align="left"/>settings(value): RenderSettings<br align="left"/></td></tr></table>>];
+    ToJs [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4">
+      <tr><td><i>«object»</i><br/><b>ToJs</b></td></tr>
+      <tr><td align="left" sides="t" border="1">art(art: AsciiArt)<br align="left"/>pixels(image: RGBImage)<br align="left"/></td></tr></table>>];
+  }
+
+  subgraph cluster_core {
+    label="core  (JVM and Scala.js, Maven Central)";
+
+    AsciiArtPipeline [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4">
+      <tr><td><i>«object»</i><br/><b>AsciiArtPipeline</b></td></tr>
+      <tr><td align="left" sides="t" border="1">render(image: RGBImage, settings: RenderSettings): AsciiArt<br align="left"/></td></tr></table>>];
+    RenderSettings [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4">
+      <tr><td><b>RenderSettings</b></td></tr>
+      <tr><td align="left" sides="t" border="1">characterConverter: CharacterConverter<br align="left"/>maxColumns, maxRows: Int<br align="left"/>cellAspect: Double<br align="left"/>rgbFilters: Seq[RGBImageFilter]<br align="left"/>grayscaleFilters: Seq[GrayscaleImageFilter]<br align="left"/>asciiFilters: Seq[AsciiArtFilter]<br align="left"/>colors: Boolean<br align="left"/></td></tr></table>>];
+
+    Filter [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4">
+      <tr><td><i>«trait»</i><br/><b>Filter[T &lt;: Image]</b></td></tr>
+      <tr><td align="left" sides="t" border="1">apply(image: T): T<br align="left"/></td></tr></table>>];
+    RGBImageFilter [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4">
+      <tr><td><i>«trait»</i><br/><b>RGBImageFilter</b></td></tr>
+      <tr><td align="left" sides="t" border="1">RotationFilter<br align="left"/>FlipFilter<br align="left"/></td></tr></table>>];
+    GrayscaleImageFilter [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4">
+      <tr><td><i>«trait»</i><br/><b>GrayscaleImageFilter</b></td></tr>
+      <tr><td align="left" sides="t" border="1">BrightnessFilter<br align="left"/>ContrastFilter<br align="left"/>InvertFilter<br align="left"/></td></tr></table>>];
+    AsciiArtFilter [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4">
+      <tr><td><i>«trait»</i><br/><b>AsciiArtFilter</b></td></tr>
+      <tr><td align="left" sides="t" border="1">ScaleFilter<br align="left"/></td></tr></table>>];
+
+    CharacterConverter [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4">
+      <tr><td><i>«trait»</i><br/><b>CharacterConverter</b></td></tr>
+      <tr><td align="left" sides="t" border="1">cellWidth, cellHeight: Int<br align="left"/>convert(image: GrayscaleImage): AsciiArt<br align="left"/></td></tr></table>>];
+    TableConverter [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4">
+      <tr><td><b>TableConverter</b></td></tr>
+      <tr><td align="left" sides="t" border="1">table: Table<br align="left"/></td></tr></table>>];
+    BrailleConverter [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4">
+      <tr><td><b>BrailleConverter</b></td></tr>
+      <tr><td align="left" sides="t" border="1">dither: Dither<br align="left"/></td></tr></table>>];
+    Table [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4">
+      <tr><td><i>«abstract»</i><br/><b>Table</b></td></tr>
+      <tr><td align="left" sides="t" border="1">getChar(value: Int): Char<br align="left"/></td></tr>
+      <tr><td align="left" sides="t" border="1">LinearTable, NonLinearTable<br align="left"/>DefaultTable, PaulBourkeTable,<br align="left"/>CustomTable, ...<br align="left"/></td></tr></table>>];
+    Dither [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4">
+      <tr><td><i>«enumeration»</i><br/><b>Dither</b></td></tr>
+      <tr><td align="left" sides="t" border="1">Ordered<br align="left"/>Diffusion<br align="left"/>Threshold<br align="left"/></td></tr></table>>];
+
+    Image [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4">
+      <tr><td><i>«trait»</i><br/><b>Image</b></td></tr>
+      <tr><td align="left" sides="t" border="1">getWidth(), getHeight(): Int<br align="left"/>getPixel(x, y): Int<br align="left"/></td></tr></table>>];
+    RGBImage [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4"><tr><td><b>RGBImage</b></td></tr></table>>];
+    GrayscaleImage [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4"><tr><td><b>GrayscaleImage</b></td></tr></table>>];
+    AsciiArt [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4">
+      <tr><td><b>AsciiArt</b></td></tr>
+      <tr><td align="left" sides="t" border="1">colors: Option[Array[Int]]<br align="left"/></td></tr></table>>];
+  }
+
+  // Dependencies between the modules.
+  Main -> CommandLineParser [style=dashed, arrowhead=open];
+  CommandLineParser -> CliConfig [style=dashed, arrowhead=open, label=" builds"];
+  Main -> AsciiArtPipeline [style=dashed, arrowhead=open, label=" render"];
+  CliConfig -> RenderSettings [arrowhead=open];
+  Exports -> FromJs [style=dashed, arrowhead=open];
+  Exports -> ToJs [style=dashed, arrowhead=open];
+  Exports -> AsciiArtPipeline [style=dashed, arrowhead=open, label=" render"];
+  FromJs -> RenderSettings [style=dashed, arrowhead=open, label=" builds"];
+
+  // Inside the core. Inheritance is drawn parent to child with the arrow reversed, so parents sit
+  // above their children and the UML triangle still points at the parent.
+  AsciiArtPipeline -> RenderSettings [style=dashed, arrowhead=open];
+  RenderSettings -> CharacterConverter [arrowhead=open, headlabel="1  ", labeldistance=1.8];
+  RenderSettings -> Filter [arrowhead=open, headlabel="*  ", labeldistance=1.8];
+  CharacterConverter -> TableConverter [dir=back, arrowtail=empty];
+  CharacterConverter -> BrailleConverter [dir=back, arrowtail=empty];
+  Filter -> RGBImageFilter [dir=back, arrowtail=empty];
+  Filter -> GrayscaleImageFilter [dir=back, arrowtail=empty];
+  Filter -> AsciiArtFilter [dir=back, arrowtail=empty];
+  TableConverter -> Table [arrowhead=open];
+  BrailleConverter -> Dither [arrowhead=open];
+  Image -> RGBImage [dir=back, arrowtail=empty];
+  Image -> GrayscaleImage [dir=back, arrowtail=empty];
+  Image -> AsciiArt [dir=back, arrowtail=empty];
+  // The images sit under the filters, beside the tables; filters and converters work on them.
+  RGBImageFilter -> Image [style=invis];
+  { rank=same; Image; Table; Dither; }
+}
