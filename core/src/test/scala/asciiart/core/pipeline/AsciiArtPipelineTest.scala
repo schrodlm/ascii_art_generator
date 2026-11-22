@@ -1,5 +1,6 @@
 package asciiart.core.pipeline
 
+import asciiart.core.conversion.BrailleConverter
 import asciiart.core.filter.{Flip, FlipFilter, InvertFilter, RotationFilter}
 import asciiart.core.image.RGBImage
 import org.scalatest.flatspec.AnyFlatSpec
@@ -70,5 +71,26 @@ class AsciiArtPipelineTest extends AnyFlatSpec with Matchers {
     )
 
     AsciiArtPipeline.render(image, settings).colors.get shouldBe Array(blue, red)
+  }
+
+  it should "draw braille in the same number of characters as a table" in {
+    val table = AsciiArtPipeline.render(blank(160, 120), RenderSettings(maxColumns = 40))
+    val braille = AsciiArtPipeline.render(blank(160, 120), RenderSettings(maxColumns = 40, characterConverter = new BrailleConverter()))
+
+    (braille.getWidth(), braille.getHeight()) shouldBe ((table.getWidth(), table.getHeight()))
+    all(braille.getData().toSeq) shouldBe 0x28FF
+  }
+
+  it should "give braille no more columns than the picture has pixel pairs for" in {
+    AsciiArtPipeline.render(blank(10, 8), RenderSettings(characterConverter = new BrailleConverter())).getWidth() shouldBe 5
+  }
+
+  it should "colour each braille character with the average of its 2 by 4 pixels" in {
+    // Left column red, right column blue, in cells half as wide as tall: one character, half of each
+    // (255 / 2 rounds down to 0x7F).
+    val image = new RGBImage(2, 4, Array.tabulate(8)(i => if (i % 2 == 0) red else blue))
+    val settings = RenderSettings(characterConverter = new BrailleConverter(), colors = true)
+
+    AsciiArtPipeline.render(image, settings).colors.get shouldBe Array(0xFF7F007F)
   }
 }
