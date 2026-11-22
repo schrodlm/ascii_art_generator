@@ -1,0 +1,43 @@
+package clascii.cli.loading
+
+import clascii.cli.config.{ImageSource, PathImageSource, RandomImageSource}
+import clascii.core.image.{Plasma, RGBImage}
+
+import scala.util.Random
+
+
+/**
+ * Converts an image source to an RGBImage.
+ *
+ * Determines and uses an appropriate loading strategy based on the input source.
+ *
+ * @param input           The source of the image.
+ * @param loadingStrategy Optional custom strategy for loading the image.
+ */
+class SourceToRgbImage(input: ImageSource, var loadingStrategy: Option[ImageLoadingStrategy] = None) {
+
+  /**
+   * Converts the input source to an RGBImage.
+   *
+   * Automatically selects a loading strategy based on the input type if not provided.
+   *
+   * @return The converted RGBImage.
+   * @throws IllegalArgumentException if the file cannot be read or is not a supported image.
+   */
+  def convert(): RGBImage = {
+    if (loadingStrategy.isEmpty) {
+      loadingStrategy = input match {
+        case PathImageSource(path) =>
+          Some(new ImageIOLoadingStrategy(path, bufferedImage => {
+            new BufferedToRgbConverter(bufferedImage).convert()
+          }))
+
+        case RandomImageSource(seed) =>
+          Some(new ImageLoadingStrategy {
+            override def load(): RGBImage = Plasma.generate(seed.getOrElse(Random.nextLong()))
+          })
+      }
+    }
+    loadingStrategy.get.load()
+  }
+}
