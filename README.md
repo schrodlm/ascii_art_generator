@@ -138,12 +138,21 @@ python3 -m http.server 8137 --directory js/demo
 
 ![The stages from a picture to text](docs/pipeline.png)
 
-The picture is filtered, then shrunk to the size of the art, turned grey, filtered again, and
-turned into characters; then the finished characters can be filtered too. The character converter
-decides how many grey pixels one character needs, and the shrink delivers exactly that many: one
-for a table, 2 by 4 for braille. That is where braille's extra detail comes from. With `colors`,
-each character also keeps the average colour of the pixels it covers; grey filters change the
-characters but never the colours.
+Every picture goes through the same steps, left to right:
+
+1. **RGB filters** change the picture: rotate, flip.
+2. **Resize** shrinks it to the size of the art.
+3. It is turned **grey**.
+4. **Grey filters** change the greys: brightness, contrast, invert.
+5. The **character converter** turns the greys into characters.
+6. **ASCII filters** change the finished characters: scale.
+
+The converter decides how many pixels one character stands for, and the resize delivers exactly
+that many: one pixel for a table, a block of 2 by 4 for braille. That is where braille's extra
+detail comes from.
+
+With colours on, each character also keeps the average colour of the pixels it covers. Grey
+filters change the characters, never the colours.
 
 ## Architecture
 
