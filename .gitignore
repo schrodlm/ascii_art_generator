@@ -173,6 +173,9 @@ project/project/
 
 ### Node ###
 node_modules/
+# Copied into the npm package by sbt js/npmPackage.
+js/package/main.mjs
+js/package/LICENSE
 
 ### Scala ###
 *.class

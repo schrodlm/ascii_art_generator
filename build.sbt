@@ -24,6 +24,8 @@ lazy val cli = project
   .dependsOn(core.jvm)
   .settings(commonSettings)
 
+lazy val npmPackage = taskKey[File]("Puts the minified release build and the licence into js/package, ready for npm")
+
 // The JS library: an ES module that other JavaScript imports.
 lazy val js = project
   .enablePlugins(ScalaJSPlugin)
@@ -34,17 +36,34 @@ lazy val js = project
       _.withModuleKind(ModuleKind.ESModule)
         .withOutputPatterns(OutputPatterns.fromJSFile("%s.mjs"))
     },
+    // The npm package is js/package: the hand-written index.d.ts and package.json, plus the
+    // release build, minified, and the licence, both copied in here.
+    npmPackage := {
+      val log = streams.value.log
+      val dir = baseDirectory.value / "package"
+      // Asking for the link's result links it first, and names the file it wrote.
+      val release = (Compile / fullLinkJSOutput).value / (Compile / fullLinkJS).value.data.publicModules.head.jsFileName
+      val esbuild = dir / "node_modules" / ".bin" / "esbuild"
+      if (!esbuild.exists) throw new MessageOnlyException(s"esbuild is not installed: run npm ci in $dir")
+      // Scala.js shortens only some names; esbuild shortens the rest and drops the whitespace.
+      val bundle = dir / "main.mjs"
+      val minify = Seq(esbuild.getPath, release.getPath, "--minify", "--format=esm", "--log-level=warning", s"--outfile=$bundle")
+      if (Process(minify).! != 0) throw new MessageOnlyException("esbuild could not minify the release build")
+      IO.copyFile((LocalRootProject / baseDirectory).value / "LICENSE", dir / "LICENSE")
+      log.info(s"Packaged $bundle, ${bundle.length / 1024} KB")
+      dir
+    },
     // The library is tested from JavaScript, as its users call it: node runs the tests in
-    // src/test/js against both the development and the production build, linked first.
+    // src/test/js against the development build and against the minified build npm would ship.
     // Then TypeScript checks the hand-written type declarations.
     Test / test := {
       val _ = (Test / test).value  // the Scala tests first, should the module ever get any
       val log = streams.value.log
       val tests = (baseDirectory.value / "src" / "test" / "js" ** "*.test.mjs").get.map(_.getPath)
-      // Asking for each link's result links it first, and names the file it wrote.
+      val packageDir = npmPackage.value
       val libraries = Seq(
         (Compile / fastLinkJSOutput).value / (Compile / fastLinkJS).value.data.publicModules.head.jsFileName,
-        (Compile / fullLinkJSOutput).value / (Compile / fullLinkJS).value.data.publicModules.head.jsFileName
+        packageDir / "main.mjs"
       )
       for (library <- libraries) {
         log.info(s"Testing $library")
@@ -53,11 +72,10 @@ lazy val js = project
       }
 
       // TypeScript checks package/test/usage.ts against the hand-written package/index.d.ts.
-      val npmPackage = baseDirectory.value / "package"
-      val tsc = npmPackage / "node_modules" / ".bin" / "tsc"
-      if (!tsc.exists) throw new MessageOnlyException(s"TypeScript is not installed: run npm ci in $npmPackage")
+      val tsc = packageDir / "node_modules" / ".bin" / "tsc"
+      if (!tsc.exists) throw new MessageOnlyException(s"TypeScript is not installed: run npm ci in $packageDir")
       log.info("Checking index.d.ts with TypeScript")
-      if (Process(Seq(tsc.getPath, "-p", npmPackage.getPath)).! != 0) {
+      if (Process(Seq(tsc.getPath, "-p", packageDir.getPath)).! != 0) {
         throw new MessageOnlyException("index.d.ts does not match test/usage.ts")
       }
     }

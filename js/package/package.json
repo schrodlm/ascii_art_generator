@@ -10,8 +10,12 @@
       "default": "./main.mjs"
     }
   },
-  "files": ["index.d.ts", "main.mjs"],
+  "files": [
+    "index.d.ts",
+    "main.mjs"
+  ],
   "devDependencies": {
+    "esbuild": "0.28.2",
     "typescript": "7.0.2"
   }
 }
