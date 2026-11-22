@@ -4,7 +4,7 @@ import { describe, test } from "node:test";
 import assert from "node:assert/strict";
 
 const library = process.env.ASCII_ART_JS ?? new URL("../../../target/scala-2.13/js-fastopt/main.mjs", import.meta.url);
-const { tables, render, plasma } = await import(library);
+const { tables, dithers, render, plasma } = await import(library);
 
 // A picture in the browser's layout; colour(x, y) gives [red, green, blue, alpha].
 function picture(width, height, colour) {
@@ -30,6 +30,16 @@ describe("tables", () => {
 
   test("cannot be changed", () => {
     assert.throws(() => tables.push("mine"), TypeError);
+  });
+});
+
+describe("dithers", () => {
+  test("lists the ways braille can dither, the default first", () => {
+    assert.deepEqual(dithers, ["ordered", "diffusion", "threshold"]);
+  });
+
+  test("cannot be changed", () => {
+    assert.throws(() => dithers.push("mine"), TypeError);
   });
 });
 
@@ -115,6 +125,17 @@ describe("render", () => {
 
   test("uses your own grey limits", () => {
     assert.equal(render(ramp, { ...square, characters: { limits: [[100, "x"], [255, "o"]] } }).text, "xxoo");
+  });
+
+  test("draws braille, one character for every 2 by 4 pixels, with any dither", () => {
+    // 8 by 8 pixels in the default cells, half as wide as tall: 4 columns of 2 pixels, 2 rows of 4.
+    const black = picture(8, 8, () => grey(0));
+    const white = picture(8, 8, () => grey(255));
+
+    for (const dither of dithers) {
+      assert.deepEqual(render(black, { characters: { braille: dither } }).lines, ["⣿⣿⣿⣿", "⣿⣿⣿⣿"]);
+      assert.deepEqual(render(white, { characters: { braille: dither } }).lines, ["⠀⠀⠀⠀", "⠀⠀⠀⠀"]);
+    }
   });
 });
 
@@ -211,6 +232,10 @@ describe("render's mistakes", () => {
     ["an unknown table", () => render(ramp, { characters: "nope" }), "Unknown table 'nope': use default, nonlinear-default, bourke"],
     ["both chars and limits", () => render(ramp, { characters: { chars: "ab", limits: [] } }),
       "characters must be a built-in table's name, { chars }, { limits } or { braille }"],
+    ["braille and chars together", () => render(ramp, { characters: { braille: "ordered", chars: "ab" } }),
+      "characters must be a built-in table's name, { chars }, { limits } or { braille }"],
+    ["an unknown dither", () => render(ramp, { characters: { braille: "floyd" } }),
+      "characters.braille must be one of ordered, diffusion, threshold"],
     ["an empty table", () => render(ramp, { characters: { chars: "" } }), "A character table needs at least one character"],
     ["emoji in a table", () => render(ramp, { characters: { chars: "🌿 ." } }),
       "characters.chars cannot hold emoji or other characters beyond U+FFFF"],

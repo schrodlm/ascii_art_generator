@@ -1,6 +1,6 @@
 // Checks index.d.ts by using the library as the site will. TypeScript compiles this file and never
 // runs it: the correct usage must type-check, and each line under @ts-expect-error must be rejected.
-import { plasma, render, tables, type Art, type ColoredArt, type Pixels, type Settings } from "@schrodlm/ascii-art";
+import { dithers, plasma, render, tables, type Art, type ColoredArt, type Dither, type Pixels, type Settings } from "@schrodlm/ascii-art";
 
 declare const imageData: ImageData;
 declare const wanted: boolean;
@@ -8,6 +8,7 @@ declare const wanted: boolean;
 // Correct usage, which must be accepted.
 
 const names: readonly string[] = tables;
+const ways: readonly Dither[] = dithers;
 const fromCanvas: Pixels = imageData;
 const fromPlasma: Pixels = plasma(7);
 const plasmaImage = new ImageData(plasma().data, 640, 480);
@@ -33,6 +34,7 @@ const maybe: Uint8ClampedArray | undefined = render(imageData, { colors: wanted 
 render(plasma());
 render({ data: new Uint8Array(4), width: 1, height: 1 }, { characters: { chars: " .:-=+*#%@" } });
 render(imageData, { characters: { limits: [[127, "#"], [255, "."]] } });
+render(imageData, { characters: { braille: "diffusion" } });
 
 // Mistakes, which must be rejected.
 
@@ -60,6 +62,10 @@ render({ data: [0, 0, 0, 255], width: 1, height: 1 });
 art.text = "";
 // @ts-expect-error the list of tables cannot be changed
 tables.push("mine");
+// @ts-expect-error the list of dithers cannot be changed
+dithers.push("ordered");
+// @ts-expect-error an unknown dither
+render(imageData, { characters: { braille: "floyd" } });
 // @ts-expect-error colours are only certain when asked for with colors: true
 const notAsked: Uint8ClampedArray = render(imageData).colors;
 // @ts-expect-error colors is true or false
