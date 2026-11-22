@@ -62,4 +62,20 @@ class ResizeFilterTest extends AnyFlatSpec with Matchers {
       an[IllegalArgumentException] should be thrownBy new ResizeFilter(4, cellAspect).apply(image)
     }
   }
+
+  it should "give each character several pixels when its cell asks for them" in {
+    val resized = new ResizeFilter(4, 0.5, cellWidth = 2, cellHeight = 4).apply(new RGBImage(8, 8, Array.fill(64)(px(0, 0, 0))))
+
+    // A square picture in cells half as wide as tall: 4 columns make 2 rows, each character 2 by 4 pixels.
+    (resized.getWidth(), resized.getHeight()) shouldBe ((4 * 2, 2 * 4))
+  }
+
+  it should "refuse output too large for an array, without the check itself overflowing" in {
+    val image = new RGBImage(4, 4, Array.fill(16)(px(0, 0, 0)))
+
+    for (cellAspect <- Seq(1e30, 2.305843009213694e18)) {
+      val error = the[IllegalArgumentException] thrownBy new ResizeFilter(1, cellAspect, 2, 4).apply(image)
+      error.getMessage shouldBe "Output would be too large"
+    }
+  }
 }
