@@ -1,0 +1,110 @@
+# Releases a version when its tag is pushed, for example v0.1.0:
+#   the Scala library to Maven Central (sbt-ci-release reads the version from the tag),
+#   the npm package (its package.json must already say the same version),
+#   and a GitHub release with the npm package attached.
+# It needs these repository secrets:
+#   SONATYPE_USERNAME, SONATYPE_PASSWORD  a Sonatype Central user token
+#   PGP_SECRET, PGP_PASSPHRASE            the signing key (base64 of the armored secret key) and its passphrase
+#   NPM_TOKEN                             an npm automation token allowed to publish clascii
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - name: The tag matches the npm package's version
+        run: |
+          version="$(node -p 'require("./js/package/package.json").version')"
+          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+            echo "The tag is $GITHUB_REF_NAME but js/package/package.json says $version" >&2
+            exit 1
+          fi
+      - uses: actions/setup-java@v6.2.0
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: sbt
+      - uses: sbt/setup-sbt@v1.5.14
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: js/package/package-lock.json
+      - run: npm ci
+        working-directory: js/package
+      - run: sbt test
+
+  maven:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0  # sbt-ci-release reads the version from the tag
+      - uses: actions/setup-java@v6.2.0
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: sbt
+      - uses: sbt/setup-sbt@v1.5.14
+      - run: sbt ci-release
+        env:
+          PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
+          PGP_SECRET: ${{ secrets.PGP_SECRET }}
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+
+  npm:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write  # lets npm record where the package was built (provenance)
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-java@v6.2.0
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: sbt
+      - uses: sbt/setup-sbt@v1.5.14
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: js/package/package-lock.json
+          registry-url: https://registry.npmjs.org
+      - run: npm ci
+        working-directory: js/package
+      - run: sbt js/npmPackage
+      - run: npm pack
+        working-directory: js/package
+      - run: npm publish --provenance
+        working-directory: js/package
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - uses: actions/upload-artifact@v7.0.2
+        with:
+          name: npm-package
+          path: js/package/clascii-*.tgz
+
+  github:
+    needs: [maven, npm]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v8.0.2
+        with:
+          name: npm-package
+      - run: gh release create "$GITHUB_REF_NAME" clascii-*.tgz --repo "$GITHUB_REPOSITORY" --title "Clascii ${GITHUB_REF_NAME#v}" --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}
