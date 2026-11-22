@@ -6,14 +6,14 @@
 [![Demo](https://github.com/schrodlm/clascii/actions/workflows/demo.yml/badge.svg)](https://github.com/schrodlm/clascii/actions/workflows/demo.yml)
 [![Licence: MIT](https://img.shields.io/github/license/schrodlm/clascii)](LICENSE)
 
-**Live demo: https://schrodlm.github.io/clascii/** (even with live camera, hell yeah)
-
-Clascii turns images, videos, really anything represented by bytes into ASCII art.
+Clascii turns images, videos, really anything you can turn into pixel, into ASCII art.
 
 - **Characters**: predefined tables, tables of your own, or braille with three ways of dithering.
 - **Colours**: optionally, each character carries the colour of the part of the picture it stands for.
 - **Filters**: rotate or flip the picture, change its brightness or contrast or invert it, and scale
   the finished art.
+
+**Live demo: https://schrodlm.github.io/clascii/** (even with live camera, hell yeah)
 
 It comes three ways:
 
