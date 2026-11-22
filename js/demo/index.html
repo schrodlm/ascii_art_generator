@@ -100,7 +100,7 @@
 
   <fieldset>
     <legend>Characters</legend>
-    <label><span>table</span><select id="table"></select></label>
+    <label><span>characters</span><select id="characters"></select></label>
     <label id="charsRow" class="hidden"><span>darkest first</span><input type="text" id="chars" value="@%#*+=-:. "></label>
   </fieldset>
 
@@ -138,7 +138,7 @@
 
 <script type="module">
 // The library, as built by sbt. Rebuild with: sbt js/fullLinkJS
-import { render, plasma, tables } from "../target/scala-2.13/js-opt/main.mjs";
+import { render, plasma, tables, dithers } from "../target/scala-2.13/js-opt/main.mjs";
 
 const $ = (id) => document.getElementById(id);
 const art = $("art"), status = $("status"), video = $("video");
@@ -151,18 +151,29 @@ let still = null;          // Pixels for plasma, an ImageBitmap for an image
 let stream = null;         // the camera's MediaStream
 let running = false;       // whether the frame loop is on
 
-// Table choices: the built-in names, read from the library, plus your own characters.
-for (const name of tables) $("table").add(new Option(name, name));
-$("table").add(new Option("your own…", "custom"));
+// Character choices, read from the library: the built-in tables, your own characters, and braille
+// with each way of dithering.
+for (const name of tables) $("characters").add(new Option(name, name));
+$("characters").add(new Option("your own…", "custom"));
+for (const dither of dithers) $("characters").add(new Option(`braille, ${dither}`, `braille:${dither}`));
+
+// The characters setting for the current choice.
+function characters() {
+  const choice = $("characters").value;
+  if (choice === "custom") return { chars: $("chars").value };
+  if (choice.startsWith("braille:")) return { braille: choice.slice("braille:".length) };
+  return choice;
+}
 
 // ---- Building the settings from the controls -------------------------------------------
 
 // A character cell's size in pixels, measured in the real font, so the art fits the stage
-// and cellAspect matches what is on screen.
+// and cellAspect matches what is on screen. Braille is measured on its own: IBM Plex Mono has no
+// braille, so the browser draws it in another font, whose characters may be wider.
 function cell() {
   const measure = $("measure");
   measure.style.fontSize = art.style.fontSize;
-  measure.textContent = "M".repeat(100);
+  measure.textContent = ($("characters").value.startsWith("braille:") ? "⣿" : "M").repeat(100);
   const width = measure.getBoundingClientRect().width / 100;
   const height = parseFloat(getComputedStyle(measure).lineHeight);
   return { width, height };
@@ -186,7 +197,7 @@ function settings() {
     maxColumns: Math.max(1, Math.floor(art.clientWidth / width)),
     maxRows: Math.max(1, Math.floor(art.clientHeight / height)),
     cellAspect: width / height,
-    characters: $("table").value === "custom" ? { chars: $("chars").value } : $("table").value,
+    characters: characters(),
     rgbFilters,
     greyFilters,
     colors: $("colors").checked,
@@ -216,7 +227,7 @@ function paint({ lines, colors, columns }) {
   let style = "";
   lines.forEach((line, row) => {
     for (let column = 0; column < line.length; column++) {
-      if (line[column] === " ") continue;
+      if (line[column] === " " || line[column] === "\u2800") continue; // nothing to paint
       const i = (row * columns + column) * 4;
       const next = `rgb(${colors[i]} ${colors[i + 1]} ${colors[i + 2]})`;
       if (next !== style) pen.fillStyle = style = next; // changing the colour is the slow part
@@ -363,7 +374,7 @@ $("videoFile").addEventListener("change", (e) => open(e.target.files[0]));
 $("seed").addEventListener("change", showPlasma);
 $("newSeed").addEventListener("click", () => { $("seed").value = Math.floor(Math.random() * 1e6); showPlasma(); });
 
-$("table").addEventListener("change", () => $("charsRow").classList.toggle("hidden", $("table").value !== "custom"));
+$("characters").addEventListener("change", () => $("charsRow").classList.toggle("hidden", $("characters").value !== "custom"));
 
 function showValues() {
   $("fontSizeOut").value = $("fontSize").value + "px";
