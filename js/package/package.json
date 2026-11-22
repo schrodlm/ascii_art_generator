@@ -1,8 +1,27 @@
 {
   "name": "@schrodlm/ascii-art",
-  "version": "1.0.0",
-  "description": "Turns pictures into ASCII art. Compiled from Scala with Scala.js.",
-  "private": true,
+  "version": "0.1.0",
+  "description": "Turns pictures into ASCII art, with tables of characters or braille. Compiled from Scala with Scala.js.",
+  "keywords": [
+    "ascii-art",
+    "ascii",
+    "braille",
+    "image",
+    "camera",
+    "scala-js"
+  ],
+  "license": "MIT",
+  "author": "Matěj Schrödl",
+  "homepage": "https://github.com/schrodlm/ascii_art_generator#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/schrodlm/ascii_art_generator.git",
+    "directory": "js/package"
+  },
+  "bugs": "https://github.com/schrodlm/ascii_art_generator/issues",
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "exports": {
     ".": {
