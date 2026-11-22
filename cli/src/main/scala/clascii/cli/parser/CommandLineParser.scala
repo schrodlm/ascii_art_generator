@@ -19,8 +19,8 @@ class CommandLineParser(val args: Array[String]) extends Parser {
 
   val usage: String =
     """
-      |Usage: asciiart (--image <path> | --image-random)
-      |                (--output-console | --output-file <path>) [options]
+      |Usage: clascii (--image <path> | --image-random)
+      |               (--output-console | --output-file <path>) [options]
       |
       |Turns an image into ASCII art.
       |
@@ -74,10 +74,10 @@ class CommandLineParser(val args: Array[String]) extends Parser {
       |step apply in the order you give them.
       |
       |Examples:
-      |  asciiart --image photo.jpg --output-console
-      |  asciiart --image photo.jpg --width 60 --invert --output-console
-      |  asciiart --image photo.jpg --color --output-console
-      |  asciiart --image-random --seed 7 --contrast 1.5 --output-file art.txt
+      |  clascii --image photo.jpg --output-console
+      |  clascii --image photo.jpg --width 60 --invert --output-console
+      |  clascii --image photo.jpg --color --output-console
+      |  clascii --image-random --seed 7 --contrast 1.5 --output-file art.txt
    """.stripMargin
 
   /**
