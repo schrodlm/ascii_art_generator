@@ -8,6 +8,12 @@ import asciiart.core.image.{AsciiArt, GrayscaleImage}
  */
 trait CharacterConverter {
 
-  /** The characters for this grey image. */
+  /** Grey pixels one character covers, across. */
+  def cellWidth: Int = 1
+
+  /** Grey pixels one character covers, down. */
+  def cellHeight: Int = 1
+
+  /** The characters for an image that holds cellWidth by cellHeight grey pixels per character. */
   def convert(image: GrayscaleImage): AsciiArt
 }
