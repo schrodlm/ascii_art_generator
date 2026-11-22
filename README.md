@@ -1,18 +1,26 @@
 # Clascii
 
+[![npm](https://img.shields.io/npm/v/clascii)](https://www.npmjs.com/package/clascii)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.schrodlm/clascii_2.13)](https://central.sonatype.com/artifact/io.github.schrodlm/clascii_2.13)
+[![GitHub release](https://img.shields.io/github/v/release/schrodlm/clascii)](https://github.com/schrodlm/clascii/releases)
+[![Demo](https://github.com/schrodlm/clascii/actions/workflows/demo.yml/badge.svg)](https://github.com/schrodlm/clascii/actions/workflows/demo.yml)
+[![Licence: MIT](https://img.shields.io/github/license/schrodlm/clascii)](LICENSE)
+
 **Live demo: https://schrodlm.github.io/clascii/** (even with live camera, hell yeah)
 
-Clascii turns pictures into ASCII art. It draws them with classic character tables, with characters
-of your own, or with braille, whose 2 by 4 dots per character show eight times the detail of a
-letter, and three ways of dithering keep its greys smooth. Every character can carry the colour of
-the part of the picture it stands for. Before drawing, you can rotate or flip the picture and change
-its brightness or contrast, or invert it; afterwards you can scale the finished art. The art fits
-whatever size you ask for, in columns, rows and the shape of your font's characters, and it is quick
-enough to draw a live camera in the browser.
+Clascii turns pictures into ASCII art.
 
-It comes three ways: a package for JavaScript and TypeScript, a Scala library for the JVM and
-Scala.js, and a command-line tool that reads PNG, JPEG, GIF, BMP and TIFF files, or draws a picture
-of its own, and prints the art to your terminal in 24-bit colour or writes it to a file.
+- **Characters**: predefined tables, tables of your own, or braille with three ways of dithering.
+- **Colours**: optionally, each character carries the colour of the part of the picture it stands for.
+- **Filters**: rotate or flip the picture, change its brightness or contrast or invert it, and scale
+  the finished art.
+
+It comes three ways:
+
+- a package for JavaScript and TypeScript
+- a Scala library for the JVM and Scala.js
+- a command-line tool that reads PNG, JPEG, GIF, BMP and TIFF files and prints the art to your
+  terminal, or to a file, in 24-bit colour
 
 ![The Great Wave off Kanagawa drawn in coloured ASCII characters in a terminal](docs/terminal-ascii.png)
 
