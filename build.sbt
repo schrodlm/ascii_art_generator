@@ -42,6 +42,7 @@ lazy val cli = project
   .settings(commonSettings, publish / skip := true)
 
 lazy val npmPackage = taskKey[File]("Puts the minified release build and the licence into js/package, ready for npm")
+lazy val demo = taskKey[File]("Puts the minified release build next to the demo page, so js/demo is a static site")
 
 // The JS library: an ES module that other JavaScript imports.
 lazy val js = project
@@ -69,6 +70,13 @@ lazy val js = project
       if (Process(minify).! != 0) throw new MessageOnlyException("esbuild could not minify the release build")
       IO.copyFile((LocalRootProject / baseDirectory).value / "LICENSE", dir / "LICENSE")
       log.info(s"Packaged $bundle, ${bundle.length / 1024} KB")
+      dir
+    },
+    // The demo page loads ./main.mjs, the same bundle npm ships, so the folder can be served as it is.
+    demo := {
+      val dir = baseDirectory.value / "demo"
+      IO.copyFile(npmPackage.value / "main.mjs", dir / "main.mjs")
+      streams.value.log.info(s"The demo is ready in $dir")
       dir
     },
     // The library is tested from JavaScript, as its users call it: node runs the tests in

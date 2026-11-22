@@ -151,8 +151,8 @@
 <video id="video" playsinline muted loop class="hidden"></video>
 
 <script type="module">
-// The library, as built by sbt. Rebuild with: sbt js/fullLinkJS
-import { render, plasma, tables, dithers } from "../target/scala-2.13/js-opt/main.mjs";
+// The library: the minified build npm ships, put next to this page by: sbt js/demo
+import { render, plasma, tables, dithers } from "./main.mjs";
 
 const $ = (id) => document.getElementById(id);
 const art = $("art"), status = $("status"), video = $("video");

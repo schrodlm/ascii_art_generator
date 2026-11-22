@@ -176,6 +176,8 @@ node_modules/
 # Copied into the npm package by sbt js/npmPackage.
 js/package/main.mjs
 js/package/LICENSE
+# Copied next to the demo page by sbt js/demo.
+js/demo/main.mjs
 
 ### Scala ###
 *.class
