@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 
-const library = await import("@schrodlm/ascii-art");
+const library = await import("clascii");
 const packageDir = new URL("..", import.meta.url);
 
 test("exports exactly what index.d.ts declares", () => {

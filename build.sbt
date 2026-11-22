@@ -6,14 +6,14 @@ ThisBuild / scalaVersion := "2.13.18"
 // What Maven Central shows about the library. The version comes from the git tag being released
 // (v0.1.0 publishes 0.1.0), which sbt-ci-release reads.
 ThisBuild / organization := "io.github.schrodlm"
-ThisBuild / homepage := Some(url("https://github.com/schrodlm/ascii_art_generator"))
+ThisBuild / homepage := Some(url("https://github.com/schrodlm/clascii"))
 ThisBuild / licenses := List(License.MIT)
 ThisBuild / developers := List(
   Developer("schrodlm", "Matěj Schrödl", "matej.schrodl@gmail.com", url("https://github.com/schrodlm"))
 )
 ThisBuild / scmInfo := Some(ScmInfo(
-  url("https://github.com/schrodlm/ascii_art_generator"),
-  "scm:git:https://github.com/schrodlm/ascii_art_generator.git"
+  url("https://github.com/schrodlm/clascii"),
+  "scm:git:https://github.com/schrodlm/clascii.git"
 ))
 
 lazy val commonSettings = Seq(
@@ -24,7 +24,7 @@ lazy val commonSettings = Seq(
 lazy val root = project
   .in(file("."))
   .aggregate(core.jvm, core.js, cli, js)
-  .settings(name := "ascii-art", publish / skip := true)
+  .settings(name := "clascii-root", publish / skip := true)
 
 // The platform-free image pipeline, compiled for both the JVM and the browser. The one module
 // published to Maven Central, once for each.
@@ -33,7 +33,7 @@ lazy val core = crossProject(JVMPlatform, JSPlatform)
   .in(file("core"))
   .settings(
     commonSettings,
-    name := "ascii-art-core",
+    name := "clascii",
     description := "Turns pictures into ASCII art, with tables of characters or braille."
   )
 

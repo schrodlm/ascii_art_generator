@@ -1,6 +1,6 @@
 // Checks index.d.ts by using the library as the site will. TypeScript compiles this file and never
 // runs it: the correct usage must type-check, and each line under @ts-expect-error must be rejected.
-import { dithers, plasma, render, tables, type Art, type ColoredArt, type Dither, type Pixels, type Settings } from "@schrodlm/ascii-art";
+import { dithers, plasma, render, tables, type Art, type ColoredArt, type Dither, type Pixels, type Settings } from "clascii";
 
 declare const imageData: ImageData;
 declare const wanted: boolean;

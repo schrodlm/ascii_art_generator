@@ -1,5 +1,5 @@
 /**
- * Turns pictures into ASCII art. Compiled from the Scala library ascii-art-core with Scala.js.
+ * Clascii turns pictures into ASCII art. Compiled from the Scala library of the same name with Scala.js.
  *
  * Every function checks its arguments when it runs and throws an Error that says what is wrong,
  * so plain JavaScript gets the same protection these types give TypeScript.
