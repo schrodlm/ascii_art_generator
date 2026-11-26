@@ -5,7 +5,7 @@
 [![GitHub release](https://img.shields.io/github/v/release/schrodlm/clascii)](https://github.com/schrodlm/clascii/releases)
 [![Tests](https://github.com/schrodlm/clascii/actions/workflows/ci.yml/badge.svg)](https://github.com/schrodlm/clascii/actions/workflows/ci.yml)
 [![Demo](https://github.com/schrodlm/clascii/actions/workflows/demo.yml/badge.svg)](https://github.com/schrodlm/clascii/actions/workflows/demo.yml)
-[![Licence: MIT](https://img.shields.io/github/license/schrodlm/clascii)](LICENSE)
+[![Licence: MIT](https://img.shields.io/github/license/schrodlm/clascii)](https://github.com/schrodlm/clascii/blob/master/LICENSE)
 
 Clascii turns images, videos, really anything you can turn into pixel, into ASCII art.
 
@@ -23,7 +23,7 @@ It comes three ways:
 - a command-line tool that reads PNG, JPEG, GIF, BMP and TIFF files and prints the art to your
   terminal, or to a file, in 24-bit colour
 
-![The Great Wave off Kanagawa drawn in coloured ASCII characters in a terminal](docs/terminal-ascii.png)
+![The Great Wave off Kanagawa drawn in coloured ASCII characters in a terminal](https://raw.githubusercontent.com/schrodlm/clascii/master/docs/terminal-ascii.png)
 
 ## JavaScript and TypeScript
 
@@ -116,7 +116,7 @@ sbt "cli/run --help"
 
 The screenshots write `clascii` for `sbt "cli/run …"`.
 
-![The Great Wave drawn in colour braille in a terminal](docs/terminal-braille.png)
+![The Great Wave drawn in colour braille in a terminal](https://raw.githubusercontent.com/schrodlm/clascii/master/docs/terminal-braille.png)
 
 ## Demo page
 
@@ -125,7 +125,7 @@ generated picture, an image or a video of your own, or your camera. Nothing leav
 stats panel shows the frame rate, how long each part of a frame takes, and how the picture is shrunk
 into characters.
 
-![The demo page showing the Great Wave in colour braille, with its stats panel](docs/demo.png)
+![The demo page showing the Great Wave in colour braille, with its stats panel](https://raw.githubusercontent.com/schrodlm/clascii/master/docs/demo.png)
 
 To run it locally, build it next to the page and serve the folder:
 
@@ -137,7 +137,7 @@ python3 -m http.server 8137 --directory js/demo
 
 ## How it works
 
-![The stages from a picture to text](docs/pipeline.png)
+![The stages from a picture to text](https://raw.githubusercontent.com/schrodlm/clascii/master/docs/pipeline.png)
 
 Every picture goes through the same steps, left to right:
 
@@ -157,7 +157,7 @@ filters change the characters not the colours.
 
 ## Architecture
 
-![UML class diagram of the cli, core and js modules](docs/architecture.png)
+![UML class diagram of the cli, core and js modules](https://raw.githubusercontent.com/schrodlm/clascii/master/docs/architecture.png)
 
 The project has three sbt modules:
 
@@ -191,5 +191,5 @@ and the same for `architecture.dot`.
 
 ## Licence
 
-[MIT](LICENSE). The picture in the screenshots is *The Great Wave off Kanagawa* by Katsushika
+[MIT](https://github.com/schrodlm/clascii/blob/master/LICENSE). The picture in the screenshots is *The Great Wave off Kanagawa* by Katsushika
 Hokusai (about 1831), which is in the public domain.
