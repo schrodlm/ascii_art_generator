@@ -56,7 +56,7 @@ lazy val js = project
         .withOutputPatterns(OutputPatterns.fromJSFile("%s.mjs"))
     },
     // The npm package is js/package: the hand-written index.d.ts and package.json, plus the
-    // release build, minified, and the licence, both copied in here.
+    // release build, minified, the licence and the README, all copied in here.
     npmPackage := {
       val log = streams.value.log
       val dir = baseDirectory.value / "package"
@@ -68,7 +68,9 @@ lazy val js = project
       val bundle = dir / "main.mjs"
       val minify = Seq(esbuild.getPath, release.getPath, "--minify", "--format=esm", "--log-level=warning", s"--outfile=$bundle")
       if (Process(minify).! != 0) throw new MessageOnlyException("esbuild could not minify the release build")
-      IO.copyFile((LocalRootProject / baseDirectory).value / "LICENSE", dir / "LICENSE")
+      val root = (LocalRootProject / baseDirectory).value
+      IO.copyFile(root / "LICENSE", dir / "LICENSE")
+      IO.copyFile(root / "README.md", dir / "README.md")
       log.info(s"Packaged $bundle, ${bundle.length / 1024} KB")
       dir
     },

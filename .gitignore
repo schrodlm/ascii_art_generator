@@ -176,6 +176,7 @@ node_modules/
 # Copied into the npm package by sbt js/npmPackage.
 js/package/main.mjs
 js/package/LICENSE
+js/package/README.md
 # Copied next to the demo page by sbt js/demo.
 js/demo/main.mjs
 

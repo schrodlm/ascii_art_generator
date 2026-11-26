@@ -22,8 +22,8 @@ test("draws art", () => {
   assert.equal(art.lines.length, art.rows);
 });
 
-test("packs the licence, the types, the bundle and package.json, nothing else", () => {
+test("packs the licence, the README, the types, the bundle and package.json, nothing else", () => {
   const [pack] = JSON.parse(execFileSync("npm", ["pack", "--dry-run", "--json"], { cwd: packageDir, encoding: "utf8" }));
 
-  assert.deepEqual(pack.files.map((file) => file.path).sort(), ["LICENSE", "index.d.ts", "main.mjs", "package.json"]);
+  assert.deepEqual(pack.files.map((file) => file.path).sort(), ["LICENSE", "README.md", "index.d.ts", "main.mjs", "package.json"]);
 });
