@@ -1,6 +1,6 @@
 {
   "name": "clascii",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Turns pictures into ASCII art, with tables of characters or braille. Compiled from Scala with Scala.js.",
   "keywords": [
     "ascii-art",

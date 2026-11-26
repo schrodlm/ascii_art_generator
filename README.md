@@ -83,7 +83,7 @@ const colours = new ImageData(art.colors, art.columns, art.rows);
 ## Scala
 
 ```scala
-libraryDependencies += "io.github.schrodlm" %%% "clascii" % "0.1.0"
+libraryDependencies += "io.github.schrodlm" %%% "clascii" % "0.1.1"
 ```
 
 The library is plain Scala with no dependencies, for the JVM and for Scala.js. You hand it an image
