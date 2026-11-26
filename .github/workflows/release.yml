@@ -5,7 +5,8 @@
 # It needs these repository secrets:
 #   SONATYPE_USERNAME, SONATYPE_PASSWORD  a Sonatype Central user token
 #   PGP_SECRET, PGP_PASSPHRASE            the signing key (base64 of the armored secret key) and its passphrase
-#   NPM_TOKEN                             an npm automation token allowed to publish clascii
+#
+# npm needs no secret: clascii's settings on npmjs.com name this workflow as a trusted publisher.
 name: Release
 
 on:
@@ -67,7 +68,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write  # lets npm record where the package was built (provenance)
+      id-token: write  # lets npm know this workflow published it (trusted publishing, provenance)
     steps:
       - uses: actions/checkout@v7.0.1
       - uses: actions/setup-java@v6.2.0
@@ -87,10 +88,11 @@ jobs:
       - run: sbt js/npmPackage
       - run: npm pack
         working-directory: js/package
-      - run: npm publish --provenance
+      # npm trusts this workflow by its GitHub identity (trusted publishing), so there is no token.
+      # That needs npm 11.5.1 or later, newer than the one Node 22 comes with.
+      - run: npm install -g npm@11.6.2
+      - run: npm publish
         working-directory: js/package
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - uses: actions/upload-artifact@v7.0.2
         with:
           name: npm-package
